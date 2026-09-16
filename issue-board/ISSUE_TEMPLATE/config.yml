@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation (wiki)
+    url: https://github.com/<owner>/<repo>/wiki
+    about: Installation, quick start, component reference, troubleshooting, FAQ.
+  - name: IDAC @ TUHH
+    url: https://www.tuhh.de/idac
+    about: The institute behind the plugin.

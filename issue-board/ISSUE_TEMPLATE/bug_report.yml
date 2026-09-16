@@ -1,0 +1,69 @@
+name: Bug report
+description: Something behaves wrongly or crashes
+title: "[bug] "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Three things make a bug report actionable: the version, the `info` output
+        of the failing component, and a minimal `.gh` file that reproduces the problem.
+  - type: input
+    id: version
+    attributes:
+      label: Plugin version
+      description: Place an IAMLab Version component on the canvas and copy the summary line.
+      placeholder: "IAMLab Slicer 2.6.0 (2026-09-01, net7 runtime)"
+    validations:
+      required: true
+  - type: input
+    id: rhino
+    attributes:
+      label: Rhino version
+      placeholder: "Rhino 8 SR15 (8.15.xxxxx), Windows 11"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Slicing (Slice, non-planar modes)
+        - Placement, Print Bed
+        - G-code generation, Save, Restart
+        - Robot Definition, Robot Simulation
+        - UR Program, URScript
+        - Analyze (Overhang, Print Stats)
+        - Calibration (DoE, RSM, Desirability)
+        - Duet machine control (7 Print)
+        - Installation, loading
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: Describe the steps, the expected result, and the actual result.
+    validations:
+      required: true
+  - type: textarea
+    id: info-output
+    attributes:
+      label: "`info` output and error text"
+      description: Paste the `info` output of the failing component and the text of any red or orange balloon.
+      render: text
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: |
+        Attach a minimal `.gh` file that shows the problem (zip the file first; GitHub rejects bare `.gh` files).
+        Clear the Duet password input before attaching. Screenshots of the canvas are helpful.
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Machine involvement
+      options:
+        - label: The problem involved a real machine (Duet control or a robot arm)
+        - label: The Troubleshooting page of the wiki has been checked

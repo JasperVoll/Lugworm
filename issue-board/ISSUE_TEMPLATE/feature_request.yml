@@ -1,0 +1,44 @@
+name: Feature request
+description: Propose an improvement or a new capability
+title: "[feat] "
+labels: ["enhancement", "triage"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: Which task is currently difficult or impossible with the plugin? A concrete workflow is more useful than a general wish.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: How should the feature work? A new component, a new input, or a change in behaviour?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Slicing
+        - Placement, Print Bed
+        - G-code generation
+        - Robots, simulation
+        - Duet machine control
+        - Calibration, DoE
+        - Analyze
+        - Documentation
+        - Other
+  - type: textarea
+    id: workaround
+    attributes:
+      label: Current workaround
+      description: How is the task solved today, if at all?
+  - type: input
+    id: machine
+    attributes:
+      label: Machine and material
+      description: Helps to judge how general the need is.
+      placeholder: "Potterbot SCARA with stoneware; generic Duet delta with earthenware"

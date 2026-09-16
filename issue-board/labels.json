@@ -1,0 +1,20 @@
+[
+  { "name": "bug",            "color": "d73a4a", "description": "Something behaves wrongly" },
+  { "name": "enhancement",    "color": "a2eeef", "description": "Feature request / improvement" },
+  { "name": "question",       "color": "d876e3", "description": "Usage question" },
+  { "name": "triage",         "color": "ededed", "description": "Not yet assessed by the maintainer" },
+  { "name": "confirmed",      "color": "b60205", "description": "Reproduced by the maintainer" },
+  { "name": "needs-repro",    "color": "fbca04", "description": "Waiting for a minimal .gh / more info" },
+  { "name": "safety",         "color": "000000", "description": "Touches gates, homing, trust, or kinematic checks" },
+  { "name": "needs-hardware", "color": "c5def5", "description": "Can only be verified on a real machine" },
+  { "name": "area:slicing",   "color": "0e8a16", "description": "Slice / non-planar / infill" },
+  { "name": "area:gcode",     "color": "0e8a16", "description": "G-code generation, save, restart" },
+  { "name": "area:robots",    "color": "0e8a16", "description": "Robot Definition / Simulation / machine profiles" },
+  { "name": "area:duet",      "color": "0e8a16", "description": "7 Print machine control" },
+  { "name": "area:doe",       "color": "0e8a16", "description": "Calibration / DoE / RSM / Desirability" },
+  { "name": "area:docs",      "color": "0075ca", "description": "Wiki, guides, README" },
+  { "name": "area:install",   "color": "0e8a16", "description": "Packaging, Yak, loading" },
+  { "name": "good-first-issue", "color": "7057ff", "description": "Well-scoped for a newcomer" },
+  { "name": "wontfix",        "color": "ffffff", "description": "Deliberate behaviour or out of scope - explained in the issue" },
+  { "name": "duplicate",      "color": "cfd3d7", "description": "Already tracked elsewhere" }
+]

@@ -1,0 +1,27 @@
+name: Question
+description: A usage question that the wiki does not answer
+title: "[q] "
+labels: ["question", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please check the wiki first: [Quick Start](../../wiki/Quick-Start),
+        [Troubleshooting](../../wiki/Troubleshooting), and [FAQ](../../wiki/FAQ).
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What is the goal, and at which point does the plugin behave differently from what is expected?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Plugin version
+      placeholder: "2.6.0"
+  - type: textarea
+    id: context
+    attributes:
+      label: Setup
+      description: Machine, material, document units, and anything else that is relevant.

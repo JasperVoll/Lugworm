@@ -1,0 +1,93 @@
+# IAMLab Interlayer Time
+
+IAMLab Interlayer Time shows, for every point of the print, how long
+ago the material directly underneath it was laid down. This interlayer
+time governs adhesion and collapse in clay: too short, and the layer
+below has not stiffened enough to carry the next one; too long, and it
+has skinned over and the next layer will not bond to it. The clock
+comes from the G-code's own feeds, or from the timestamps of a
+connected print log when one is wired in. The toolpath, or the printed
+beads, are coloured on a Plasma scale between your two thresholds.
+
+Panel: `5 Analyze`. Nickname: `Interlayer`. Compute button: no (runs on every change).
+
+<!-- IMAGE TODO: Interlayer Time on a clay print, layer slider partway up, alternating layer shading visible. A short screen recording saved as GIF can replace the image. -->
+![IAMLab Interlayer Time on the canvas](images/comp-interlayer-time.png)
+
+## Inputs
+
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `gcode` | Text (list) |  | G-code as one string or a list of lines. Optional when a print log is connected, since the log's own samples become the path |
+| `gcodePath` | Text |  | Optional G-code file path, read in the background. With a print log its exact bytes anchor the log's file positions to the moves |
+| `log` | Text (list) |  | Print log CSV lines from a retained job log. When connected, the log's clock replaces the estimate |
+| `logPath` | Text |  | Optional print log CSV file path, printlog_*.csv or a retained job log |
+| `layer` | Integer | 0 | Top visible layer, counted from 1 (0 or not connected = all). Wire a slider to scroll through the print. It scrolls the preview and cuts the emitted trees to the visible layers |
+| `isolate` | Boolean | false | Show only the top visible layer instead of everything up to it |
+| `minTime` | Number | 0 | Too fast threshold, s. An interlayer time below it is flagged because the bead below has not stiffened (0 = off) |
+| `maxTime` | Number | 120 | Too slow threshold, s. An interlayer time above it is flagged because the bead below has skinned over (0 = off) |
+| `legendMax` | Number | 0 | Color scale maximum, s (0 = auto: 1.5 x maxTime, else the 95th percentile). Fixed per analysis so a color keeps its meaning |
+
+### Optional group: Bead geometry inputs (width, height, radius)
+
+Right-click the component to switch this group on. The inputs appear only while the group is enabled.
+
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `width` | Number | 0 | Bead width, mm (0 = the file's LINEWIDTH header, else 10) |
+| `height` | Number | 0 | Layer height, mm (0 = the file's LAYERHEIGHT header, else the median Z step) |
+| `radius` | Number | 0 | Search radius for the bead below, mm (0 = bead width, or 3 x the sample spacing for log only paths) |
+
+### Optional group: Feed override inputs (estimated clock)
+
+Right-click the component to switch this group on. The inputs appear only while the group is enabled.
+
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `printFeed` | Number | 25 | Print feed where a move has no F word, mm/s |
+| `travelFeed` | Number | 50 | Travel feed where a move has no F word, mm/s |
+| `accel` | Number | 0 | XY acceleration, mm/s² (0 = commanded feeds only). Adds the trapezoidal ramp model of Print Stats to the estimated clock |
+
+### Optional group: Display inputs (lines/beads, layer shading)
+
+Right-click the component to switch this group on. The inputs appear only while the group is enabled.
+
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `display` | Integer | 0 | 0 = toolpath lines, 1 = extruded beads as a vertex colored mesh |
+| `shade` | Integer | 1 | Tell adjacent layers apart: 0 = none, 1 = alternate layers tinted, 2 = a bottom to top ramp. Preview only, the colors output stays the unshaded scale color |
+
+## Outputs
+
+| Name | Type | Description |
+|---|---|---|
+| `report` | Text | Readable report of the whole print: clock source, thresholds, totals and a table per layer. Connect a panel |
+| `perLayer` | Number (tree) | Data for the visible layers, one branch per layer: layer, Z mm, start s, duration s, min s, mean s, max s, too fast samples, too slow samples |
+| `times` | Number (tree) | Interlayer time per path vertex, s. Branches match the path output, cut to the visible layers (-1 = no bead below inside the radius) |
+| `path` | Curve (tree) | Extrusion runs as polylines, one branch per layer and run, document units, cut to the visible layers |
+| `colors` | Colour (tree) | Plasma color per path vertex, branches cut like the path output, for a custom preview. The unshaded scale color, whatever shade draws |
+| `layers` | Integer | Layer count of the whole print, not of the visible cut |
+| `info` | Text | Diagnostics |
+| `legend` | Text | Legend spec for IAMLab Legend: the Plasma scale, its maximum and the fast and slow thresholds this analysis used |
+
+## Notes
+
+- `layer` scrolls the preview: wire a slider to step through the print
+  one layer at a time. It also cuts the `perLayer`, `times`, `path` and
+  `colors` outputs down to the layers it leaves visible - `report`,
+  `layers` and `info` always describe the whole print.
+- `minTime` flags interlayer times that are too short (bead below still
+  soft); `maxTime` flags times that are too long (bead below skinned
+  over). Either is off at `0`.
+- `shade` tells adjacent layers apart when their times are similar:
+  `0` none, `1` alternating tint per layer (default), `2` a
+  bottom-to-top ramp. Shading is display only - the `colors` output
+  always carries the plain unshaded scale.
+- With a print log wired to `log` (from [[IAMLab Live View]] or a saved
+  CSV), the real recorded timestamps replace the estimate from feeds.
+- The `legend` output is an `iamlab-legend:v1` wire - connect it to
+  [[IAMLab Legend]] so the legend always matches the colours drawn here.
+- The Feed override group only matters for the estimated clock; it has
+  no effect once a print log supplies real timestamps.
+
+Back to [[Components]].
