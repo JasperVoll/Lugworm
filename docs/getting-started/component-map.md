@@ -29,7 +29,7 @@ carry data between them; the label on an arrow is the name of the value.
 #iamlab-map .ext { fill: #ffffff; stroke: #adb5bd; stroke-width: 1.2; stroke-dasharray: 5 4; }
 #iamlab-map .extt { fill: #6c757d; font-size: 11px; text-anchor: middle; }
 #iamlab-map .note { fill: #868e96; font-size: 10.5px; }
-#iamlab-map a { cursor: pointer; }
+#iamlab-map a { cursor: pointer; text-decoration: none; }
 #iamlab-map a:hover .box, #iamlab-map a:hover .box-d { stroke: #28699f; stroke-width: 2; }
 #iamlab-map a:hover .nm { fill: #28699f; }
 #iamlab-map a:focus-visible .box, #iamlab-map a:focus-visible .box-d { stroke: #28699f; stroke-width: 2.4; }
