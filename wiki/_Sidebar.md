@@ -42,15 +42,6 @@
   - [[IAMLab Machine Console]]
   - [[IAMLab Machine Files]]
   - [[IAMLab Scara Fit]]
-- Older (hidden, still open in saved files)
-  - [[IAMLab Duet Connect]]
-  - [[IAMLab Duet Status]]
-  - [[IAMLab Duet Jog]]
-  - [[IAMLab Duet Terminal]]
-  - [[IAMLab Duet Print]]
-
 **Help**
 - [[Troubleshooting]]
 - [[FAQ]]
-- [[Component Test Round 2026-09-08]]
-- [[Release Notes]]

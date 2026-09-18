@@ -8,8 +8,7 @@ ordinary printer), `generic-duet-cartesian` (an ordinary printer with a
 Duet board), `potterbot-scara-v4` (the SCARA arm of the lab),
 `generic-klipper` and `generic-marlin` (Cartesian machines whose default
 G-code dialect is Klipper or Marlin; neither is controlled over the
-network - generate the file and transfer it yourself
-on by default).
+network - generate the file and transfer it yourself).
 
 Panel: `4 Robot`. Nickname: `Robot Def`. Compute button: no (runs on every change).
 
@@ -38,8 +37,7 @@ Panel: `4 Robot`. Nickname: `Robot Def`. Compute button: no (runs on every chang
 
 - The profile can also be typed into a text panel: `"scara"` or
   `"none"` are accepted.
-- Components that have no definition connected behave as before version
-  2.0: the G-code Generator and the Machine Console assume the SCARA
+- Without a connected definition, the G-code Generator and the Machine Console assume the SCARA
   arm of the lab. See [[Robots and Machine Control]].
 - `process` reports whether the profile prints paste (ram or pump) or
   `Paste (LDM)`; `flavor` reports which G-code

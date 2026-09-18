@@ -4,9 +4,7 @@ IAMLab Machine Console is the one window for controlling a printer with
 a Duet board from Grasshopper. It handles connecting, homing, jogging,
 capturing the bed origin and the nozzle height, checking and uploading a
 job, starting, pausing and cancelling it, sending single commands,
-driving to calibration points, and keeping the job logs. It replaces the
-older Duet Connect, Status, Jog, Terminal and Print components, which
-still open in saved files but are no longer on the ribbon. The connected
+driving to calibration points, and keeping the job logs. The connected
 `robot` profile must advertise Duet control; a profile that does not is
 refused with "use a Duet profile".
 
@@ -65,13 +63,9 @@ Right-click the component to switch this group on. The inputs appear only while 
 
 - `host` is `hostname[:port]`. `password` is the Duet password.
 - The window has five pages: Dashboard, Control, Job, Terminal and Logs.
-  The Thermals page of 4.0.0 was removed in 4.1.0 together with
-  thermoplastic support.
 - `dryRun` runs a firmware simulation (M37) before the real print.
 - `speedFactor` and `flowFactor` report the machine's M220/M221
-  overrides; `-1` means the machine did not report that value. The five
-  heater and fan outputs of 4.0.0 were removed in 4.1.0, so **re-check
-  this component's output wires once** after loading a 4.0.0 document.
+  overrides; `-1` means the machine did not report that value. Check the component's output wires before use.
 - Without a Robot Definition, the console assumes the SCARA arm of the
   lab. With a Cartesian Duet definition, it controls that printer
   instead and checks moves against its own travel limits.

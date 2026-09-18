@@ -74,7 +74,7 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `alternatives` | Number (tree) | Distinct local optima of the scalarized D, not a Pareto set (see the pareto output). One branch per recipe: factor values, then D |
 | `sweep` | Number (tree) | Sweep recipes, one branch per target: target, factors, D, predictions |
 | `info` | Text | Diagnostics |
-| `interval` | Number (tree) | 95% prediction interval at the recommendation, one branch per response: low, predicted, high. Empty when the model carries no covariance (JSON from before 2.3.0) |
+| `interval` | Number (tree) | 95% prediction interval at the recommendation, one branch per response: low, predicted, high. Empty when the model carries no covariance |
 | `pareto` | Number (tree) | Pareto front recipes, with the pareto group enabled. One branch per recipe: factor values, d per active goal, D. Objectives follow the model order, skipping 'none' goals. See the report for axis names |
 
 ## Notes

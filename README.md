@@ -5,7 +5,7 @@ Slicer repository on GitHub: a wiki (`wiki/`) and an issue board
 (`issue-board/`). The build does not read this folder. The content is
 deployed with the steps below.
 
-The wiki has one page per component (IAMLab-*.md), an index, and guide pages. Maintain these Markdown files against the current component sources. The previously documented tools/Generate-ComponentPages.ps1 is not present in this repository; do not rely on an unavailable generator or overwrite manually maintained explanations.
+The wiki has one page per component (IAMLab-*.md), an index, and guide pages. Maintain these Markdown files against the current component sources. Preserve manually maintained explanations.
 
 Every wiki page that needs a screenshot carries an
 `<!-- IMAGE TODO: ... -->` comment describing the capture, next to an
@@ -30,7 +30,7 @@ wiki is opened for the first time.
    New-Item -ItemType Directory <repo>.wiki\images -Force
    Copy-Item <your-screenshots>\*.png <repo>.wiki\images\
    cd <repo>.wiki
-   git add -A; git commit -m "Wiki for v2.6.0"; git push
+   git add -A; git commit -m "Publish wiki"; git push
    ```
 
 3. `Home.md` becomes the landing page. `_Sidebar.md` and `_Footer.md`
@@ -63,8 +63,5 @@ wiki is opened for the first time.
 
 ## 3. Maintenance
 
-- `wiki/Release-Notes.md` summarises the released versions. Add a
-  section per release; the changelogs in `docs/2-changelog/` remain the
-  source of truth.
 - The wiki mirrors the user guide in `docs/user-guide/`. When the guide
   changes, update the affected wiki page as well.

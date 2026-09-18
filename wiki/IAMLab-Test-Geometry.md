@@ -146,8 +146,5 @@ seam at the same end on every layer.
 - Standard specimens ignore `height`, `radius`, `length` and `width`:
   their dimensions come from the standard, scaled only by
   `specimenScale`.
-- The dimensions and the zig-zag path live in Rhino-free Core code
-  (`IAMLabSlicer.Core/Calibration/TestSpecimens.cs`) and are unit-tested,
-  so the numbers cannot drift silently.
 
 Back to [[Components]].

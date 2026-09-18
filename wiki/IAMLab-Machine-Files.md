@@ -14,7 +14,7 @@ Panel: `7 Print`. Nickname: `Files`. Compute button: no (runs on every change).
 
 | Name | Type | Description |
 |---|---|---|
-| `host` | Text | Host string from the Machine Console or Duet Connect host output |
+| `host` | Text | Host string from the Machine Console host output |
 | `dir` | Text | Directory to browse on the board |
 | `savePath` | Text | Local file or folder for Download. A folder keeps the file name from the board |
 | `moveTo` | Text | Move target: a new name, a directory ending in '/', or a full 0:/ path |

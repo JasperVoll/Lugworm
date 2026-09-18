@@ -53,6 +53,6 @@ One image per component page. A short screen recording saved as a GIF works as w
 | `comp-test-geometry.png` | IAMLab Test Geometry | Test Geometry with the dropdown open and a twisted vase in the viewport. |
 | `comp-calib-points.png` | IAMLab Calib Points | Calib Points with the mark grid drawn on the bed in the viewport. |
 | `comp-live-view.png` | IAMLab Live View | Live View during a print: posed arm, bed plate, and the bead printed so far. |
-| `comp-machine-console.png` | IAMLab Machine Console | The Machine Console dashboard with the Dashboard page open: connection state, job progress and the action buttons visible (the Thermals tab of 4.0.0 no longer exists). |
+| `comp-machine-console.png` | IAMLab Machine Console | The Machine Console dashboard with the Dashboard page open: connection state, job progress and the action buttons visible. |
 | `comp-machine-files.png` | IAMLab Machine Files | Machine Files with the directory listing in a panel. |
 | `comp-scara-fit.png` | IAMLab Scara Fit | Scara Fit with the report output in a panel and the residual values listed. |

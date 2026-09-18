@@ -16,7 +16,7 @@ Panel: `7 Print`. Nickname: `CalPts`. Compute button: no (runs on every change).
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `host` | Text |  | Host string from the Machine Console or Duet Connect host output. Optional, the grid is generated without a connection |
+| `host` | Text |  | Host string from the Machine Console host output. Optional, the grid is generated without a connection |
 | `nRadii` | Integer | 3 | Number of radii. The fit wants at least 3 |
 | `nAngles` | Integer | 5 | Points per radius |
 | `rMin` | Number | 350 | Innermost radius, mm |

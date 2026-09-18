@@ -1,28 +1,21 @@
 # Installation
 
-Requirements: Rhino 8 on Windows. Nothing else needs to be installed.
-
-The plugin ships as a `.yak` package. Get it from
-[Food4Rhino](https://www.food4rhino.com), from the repository's
-[Releases](../../releases) page, or build it from source.
+Requires Rhino 8 on Windows. Get the `.yak` package from
+[Food4Rhino](https://www.food4rhino.com) or [Releases](../../releases), or build
+from source. See [[No warranty|Home#no-warranty]] before use.
 
 ## Install with Yak (recommended)
 
-1. Save `iamlab-slicer-<version>-rh8_0-*.yak` into a folder of its own,
-   for example `C:\Temp\iamlab`.
-2. Open PowerShell and run:
+1. Save `iamlab-slicer-<version>-rh8_0-*.yak` in its own folder, such as
+   `C:\Temp\iamlab`.
+2. Run PowerShell (`--source` points to that folder):
 
    ```powershell
    & "C:\Program Files\Rhino 8\System\Yak.exe" install --source "C:\Temp\iamlab" iamlab-slicer
    ```
 
-   The `--source` flag points Yak at your folder instead of the public
-   package server.
-3. Start or restart Rhino 8 and run the `Grasshopper` command.
-
-To confirm the installation, look for an **IAMLab** tab on the
-component ribbon. It has seven panels: `1 Slice`, `2 Place`,
-`3 G-code`, `4 Robot`, `5 Analyze`, `6 Calibrate` and `7 Print`.
+3. Restart Rhino 8, run `Grasshopper`, and look for the **IAMLab** ribbon tab:
+   `1 Slice`, `2 Place`, `3 G-code`, `4 Robot`, `5 Analyze`, `6 Calibrate`, `7 Print`.
 
 <!-- IMAGE TODO: screenshot of the Grasshopper ribbon with the IAMLab tab
      open and all seven panels visible. Crop to the ribbon. -->
@@ -30,17 +23,14 @@ component ribbon. It has seven panels: `1 Slice`, `2 Place`,
 
 ## Install by hand
 
-A `.yak` file is a renamed zip archive. Copy it, rename the copy to
-`.zip`, open it, and copy every file from the `net7.0-windows` folder
-(`IAMLabSlicer.gha` and three `.dll` files) into:
+Rename a copy of the `.yak` archive to `.zip`. Extract every file from
+`net7.0-windows` (`IAMLabSlicer.gha` and three `.dll` files) into:
 
 ```
 %APPDATA%\Grasshopper\Libraries\
 ```
 
-Then unblock the files. Windows marks downloaded files as blocked, and
-Grasshopper skips blocked assemblies without any error message, so the
-plugin would not appear at all:
+Unblock downloaded files so Grasshopper can load them:
 
 ```powershell
 Get-ChildItem "$env:APPDATA\Grasshopper\Libraries" -Recurse | Unblock-File
@@ -48,18 +38,17 @@ Get-ChildItem "$env:APPDATA\Grasshopper\Libraries" -Recurse | Unblock-File
 
 Restart Rhino and Grasshopper.
 
-## Updating
+## Reinstall
 
-Close Rhino, uninstall the old version, then install the new file:
+Close Rhino, then run:
 
 ```powershell
 & "C:\Program Files\Rhino 8\System\Yak.exe" uninstall iamlab-slicer
 & "C:\Program Files\Rhino 8\System\Yak.exe" install --source "C:\Temp\iamlab" iamlab-slicer
 ```
 
-If you ever copied files into `Grasshopper\Libraries` by hand, remove
-them as well. An old `.gha` next to a new package makes Grasshopper
-load the plugin twice.
+Remove any manually installed copies from `Grasshopper\Libraries` to prevent
+duplicate loading.
 
 ## Installation problems
 
@@ -72,9 +61,6 @@ load the plugin twice.
 
 ## Before sharing a `.gh` definition
 
-The password input of the Duet Connect component can be internalized
-into the Grasshopper document. When it is, the password is stored inside
-the `.gh` file, where anyone who receives the file can read it. Clear
-the password input before sharing a definition that connects to a
-machine, or leave the machine on the firmware default `reprap` and rely
-on network isolation.
+IAMLab Machine Console's `password` input can be stored in the `.gh` file,
+readable by anyone receiving it. Clear it before sharing, or leave the machine
+on the firmware default `reprap` and rely on network isolation.

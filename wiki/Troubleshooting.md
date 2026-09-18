@@ -1,7 +1,6 @@
 # Troubleshooting
 
-Installation problems are covered on [[Installation]]. This page
-covers problems during use.
+For installation failures, see [[Installation]].
 
 ## Slicing and G-code
 
@@ -31,11 +30,8 @@ covers problems during use.
 |---|---|
 | Robot Simulation shows the red error "targets are outside robot limits" | Do not ignore the error. Move the part with `printCenter`, reduce the speeds, or change the geometry, then simulate again. |
 | A machine action is refused with a message about the machine identity | A different board answers at this address than the one the definition was set up with, or the board could not be identified. Verify the address, then use "Trust connected machine" in the context menu of the Machine Console component. |
-| A Duet action is refused with "machine envelope unknown" | For an ordinary printer, the plugin reads the travel limits from the firmware. Home the machine, check `config.g` (Duet) or `printer.cfg` (Klipper), or connect the limits explicitly. |
+| A Duet action is refused with "machine envelope unknown" | For an ordinary printer, the plugin reads the travel limits from the firmware. Home the machine, check `config.g` (Duet), or connect the limits explicitly. `printer.cfg` is the Klipper configuration; Klipper has no live connection. |
 | Jog or print is refused after commands were sent to the machine by other means | Expected. When the machine was moved by something other than the plugin, the plugin no longer trusts the position. Home the machine or reconnect. |
 
-If the problem persists, [open a bug report](../../issues/new/choose).
-The template asks for the version (available from an IAMLab Version
-component), the `info` output of the failing component, and a small
-`.gh` file that reproduces the problem. A screenshot of the error
-balloon is helpful.
+For persistent problems, follow [[FAQ]]'s bug-report checklist: installed version
+from IAMLab Version, failing `info`, an error screenshot and a minimal `.gh` file.

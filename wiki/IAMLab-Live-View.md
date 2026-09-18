@@ -15,7 +15,7 @@ Panel: `7 Print`. Nickname: `Live`. Compute button: no (runs on every change).
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `host` | Text | Host string from the Machine Console or Duet Connect host output |
+| `host` | Text | Host string from the Machine Console host output |
 | `enable` | Boolean | Refresh this component on every poll |
 | `gcode` | Text (list) | Fallback intended path, used only while the Machine Console has no job. The console's own job wins whenever it has one. G-code words are machine coordinates and the path is drawn in the Rhino frame |
 | `bedWidth` | Number | 1000 | Bed plate width along RHINO X, mm |

@@ -1,27 +1,17 @@
 # Non-Planar Slicing
 
-IAMLab Slice has two modes: `0` planar (flat layers, the default) and
-`1` conical (layers shaped like cones). Conical assumes a nozzle that
-never tilts: the layers bend, the tool stays vertical.
-
-A third mode, the heat method (`mode = 2`), was retired in 4.0.0: it
-emitted perimeter rings only and fell back to planar on most real
-meshes. An old definition that still carries `mode = 2` slices planar
-and reports a warning.
-
-After slicing in adaptive or conical mode, enable the `varh`
-group (variable layer-height flow) on the G-code Generator. In these
-modes the required vertical spacing can differ from the nominal generator
-height; without `varh` the amount of extruded material is only approximate.
+IAMLab Slice uses `mode = 0` for planar layers and `mode = 1` for conical
+layers with a vertical, non-tilting nozzle. `mode = 2` slices planar and warns.
+After adaptive or conical slicing, enable Generator's `varh` group: actual
+vertical gaps can differ from nominal height, making extrusion approximate
+without variable-height flow.
 
 ## Conical mode (`mode = 1`)
 
-Conical mode tilts the slicing planes into cones (`coneAngle`,
-typically 15° to 25°), which can improve bead-on-bead alignment for some
-shapes. It does not certify support or collision-free printing. The
-`nozzleClear` input is a collision guard. If `info` warns that the cone
-exceeds the nozzle clearance, reduce `coneAngle`; raising `nozzleClear`
-can hide a real collision risk.
+Set `coneAngle` (typically 15° to 25°) for conical layers. Improved bead alignment
+does not certify support or collision-free printing. `nozzleClear` guards
+clearance: if `info` warns, reduce `coneAngle`. Raising `nozzleClear` can hide
+a real collision risk.
 
 <!-- IMAGE TODO: side-by-side viewport: the same dome sliced planar and
      conical, contour colours visible. -->
@@ -29,44 +19,26 @@ can hide a real collision risk.
 
 ## Adaptive layers
 
-The Adaptive group is available in planar mode. For each candidate layer
-interval, Slice checks the worst active face inclination inside that interval
-and chooses a height between `hMin` and `hMax`: shallow or overhanging surface
-regions receive thinner layers, while steep regions can use thicker layers.
-Horizontal global caps are ignored, but internal horizontal ledges force the
-minimum height. A small feature therefore influences the geometric height
-decision instead of being averaged away by coarse slope sampling; this says
-nothing about whether the feature is printable.
-The chosen gap is the largest one allowed by the faces it actually reaches.
-On a dome, this avoids applying the crown's thin spacing to the lower layers
-simply because the crown lies within a maximum-height lookahead.
-The calculation is independent per object, with one shared horizontal layer
-height for each object. `firstLayer` behavior is preserved.
+In planar mode, Adaptive chooses the largest gap between `hMin` and `hMax`
+allowed by face inclinations within that gap. Shallow/overhanging regions get
+thinner layers; steep regions can get thicker ones. Global horizontal caps are
+ignored; internal horizontal ledges force `hMin`. Small features affect spacing,
+which does not establish printability. Each object is calculated independently,
+with shared horizontal heights within it; `firstLayer` still applies.
 
-Enable the G-code Generator's `varh` group after adaptive slicing. Set
-`varhMin` no higher than `hMin / nominalHeight` and `varhMax` no lower than
-`hMax / nominalHeight`; use the same nominal height as the first-layer/base
-extrusion setting. Variable-height flow scales extrusion locally, but does not
-prove support or bridge stability. Near-horizontal surfaces and bridges still
-need manual inspection and a controlled test print.
+Enable `varh`; set `varhMin` no higher than `hMin / nominalHeight` and `varhMax`
+no lower than `hMax / nominalHeight`. Match nominal height to the first-layer/base
+extrusion setting. Local flow scaling does not prove support or bridge stability:
+manually inspect near-horizontal surfaces and bridges and run a controlled test print.
 
-## Checking printability
+## Check printability
 
-Run IAMLab Overhang on the result. The component measures, for each
-segment, how far the bead hangs out over the bead below, and colours
-the segments with the configured continuous magma scale (or the safe,
-warning, and critical colours). On non-planar layers, this
-bead-on-bead overhang is one input to a printability review; it cannot decide
-whether an arbitrary part can be printed.
-The default thresholds are placeholders; calibrate them for the
-material with a test print of a stepped cone. Overhang output is one analysis
-of the toolpath, not a physical printability guarantee.
+Run IAMLab Overhang to measure bead overhang per segment. It colours results with
+a continuous magma scale or safe/warning/critical colours. Calibrate placeholder
+thresholds using a stepped-cone print in your material. Overhang analysis cannot
+decide arbitrary printability or guarantee a physical print.
 
-The adaptive rule here is IAMLab Slicer's own conservative geometric
-heuristic; it is not a reproduction or validation of a published method.
-For background on adaptive/non-planar toolpath research, see the abstracts by
-[Dolenc & Mäkelä (1994)](https://doi.org/10.1016/0010-4485(94)90032-9) and
-[Ma & He (1999)](https://doi.org/10.1016/S0924-0136(99)00043-6).
+Adaptive spacing is a geometric heuristic, not validation of a published method.
 
 <!-- IMAGE TODO: Overhang component viewport output on a twisted vase:
      continuous magma colours with the legend visible. -->

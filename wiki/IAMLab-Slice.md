@@ -20,7 +20,7 @@ Panel: `1 Slice`. Nickname: `Slice`. Compute button: yes (runs only when the but
 | `layerHeight` | Number | 3 | Layer spacing, mm |
 | `firstLayer` | Number | 3 | Height of the first section, mm (0 = half the layer spacing) |
 | `wallCount` | Integer | 1 | Number of perimeters, at least 1 |
-| `spacing` | Number | 10 | Legacy curve spacing, mm. Fallback for wallDistance and infillDistance when they are unset |
+| `spacing` | Number | 10 | Curve spacing, mm. Fallback for wallDistance and infillDistance when they are unset |
 | `wallDistance` | Number | 10 | Distance between walls and from the last wall to infill, mm (defaults to spacing) |
 | `infillDistance` | Number | 10 | Distance between infill passes, mm (defaults to spacing) |
 | `mode` | Integer |  | 0 = planar, 1 = conical |
@@ -109,8 +109,7 @@ Right-click the component to switch this group on. The inputs appear only while 
   not read them from the curves.
 - `mode`: `0` planar is the normal choice. `1` conical is the
   non-planar mode; see [[Non Planar Slicing]] before using it, and
-  enable the `varh` group on the G-code Generator afterwards. The heat
-  method (`mode = 2`) was retired in 4.0.0; a saved `2` slices planar
+  enable the `varh` group on the G-code Generator afterwards. `mode = 2` slices planar
   and warns.
 - `infill`: `4` (fermat) and `3` (spiral) produce one continuous path
   per layer; `1` (zigzag) and `2` (concentric) produce many separate
@@ -145,8 +144,7 @@ Right-click the component to switch this group on. The inputs appear only while 
   beyond that two consecutive layers would intersect. Walls are never
   modulated, only infill.
 - Neither the bricklayer nor the non-planar pass has been printed yet.
-  Both are covered by unit tests only; treat the first run as a
-  bring-up.
+  Treat the first run of either as an untested machine trial.
 - Adaptive layer height (group): in planar mode the slicer chooses the largest
   gap compatible with the surface inclinations inside that gap. A distant dome
   crown therefore does not force the lower layers to use the same thin spacing.

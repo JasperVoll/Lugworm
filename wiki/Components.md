@@ -64,14 +64,3 @@ Every component on the IAMLab tab has a page of its own with a short explanation
 | [[IAMLab Machine Console]] | IAMLab Machine Console is the one window for controlling a printer with a Duet board from Grasshopper. |
 | [[IAMLab Machine Files]] | IAMLab Machine Files browses the file storage of the connected machine - the Duet's SD card. |
 | [[IAMLab Scara Fit]] | IAMLab Scara Fit calculates the real arm lengths of the SCARA from the difference between the commanded and the measured mark positions of a calibration run. Has a compute button. |
-
-## Older components
-
-The source currently contains 31 concrete components: 25 on the seven IAMLab
-ribbon panels and six hidden compatibility components. Hidden components still
-load in saved Grasshopper documents, but are not the starting point for new
-workflows.
-
-IAMLab Robot from versions before 2.0 is hidden from the ribbon but still opens and works in saved files. New files should use [[IAMLab Robot Definition]] and [[IAMLab Robot Simulation]].
-
-Since 3.0.0 the same applies to [[IAMLab Duet Connect]], [[IAMLab Duet Status]], [[IAMLab Duet Jog]], [[IAMLab Duet Terminal]] and [[IAMLab Duet Print]]: they still open and work in saved files, with the same inputs, outputs and safety checks, but they are no longer on the ribbon. New files should use [[IAMLab Machine Console]], which does everything they did in one window. Since 4.1.0 it connects to Duet machines only - Klipper survives only as a G-code dialect written to file, not a live connection. Their pages stay as a reference for old definitions.
