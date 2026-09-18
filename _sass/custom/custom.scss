@@ -1,3 +1,11 @@
+// custom.scss is imported into EVERY just-the-docs stylesheet variant
+// (default, light, dark), but the iamlab palette is only imported into the
+// iamlab variant. Without these !default fallbacks the light and dark builds
+// fail with "Undefined variable". The iamlab scheme sets the real values
+// first, so !default leaves them untouched there.
+$iamlab-experiment: #a92764 !default;
+$iamlab-note:       #14773c !default;
+
 .site-header { border-top: 5px solid $link-color; }
 .site-title { font-weight: 650; color: $body-heading-color; letter-spacing: -0.025em; }
 .main-content { line-height: 1.7; }
@@ -6,7 +14,7 @@
 .main-content a { text-underline-offset: 0.2em; }
 .main-content table { font-size: 0.875rem; }
 .main-content th { background: $sidebar-color; color: $body-heading-color; }
-.main-content blockquote { border-left: 3px solid $iamlab-note; padding-left: 1rem; margin-left: 0; }
+.main-content blockquote:not([class]) { border-left: 3px solid $iamlab-note; padding-left: 1rem; margin-left: 0; }
 .nav-list .nav-list-item .nav-list-link.active { color: $link-color; font-weight: 650; }
 .site-footer { color: $body-text-color; }
 .iamlab-intro { font-size: 1.2rem; color: $body-heading-color; }
