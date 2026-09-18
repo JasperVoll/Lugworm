@@ -1,0 +1,11 @@
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+.bundle/
+.tools/
+vendor/
+*.log
+verification.json
+
+iamlab-slicer.wiki/

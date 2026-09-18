@@ -1,0 +1,54 @@
+title: IAMLab Slicer
+description: Laboratory slicing, experiments, and machine control in Grasshopper.
+url: "https://jaspervoll.github.io"
+baseurl: "/iamlab-slicer-documentation"
+repository: JasperVoll/iamlab-slicer-documentation
+remote_theme: just-the-docs/just-the-docs@v0.10.1
+permalink: pretty
+color_scheme: iamlab
+search_enabled: true
+search:
+  heading_level: 3
+  previews: 3
+  rel_url: true
+heading_anchors: true
+enable_copy_code_button: true
+nav_sort: case_insensitive
+nav_error_report: true
+aux_links:
+  "Download package":
+    - https://github.com/JasperVoll/iamlab-slicer-documentation/releases
+  "Report an issue":
+    - https://github.com/JasperVoll/iamlab-slicer-documentation/issues
+back_to_top: true
+back_to_top_text: Back to top
+gh_edit_link: true
+gh_edit_link_text: Edit this page on GitHub
+gh_edit_repository: https://github.com/JasperVoll/iamlab-slicer-documentation
+gh_edit_branch: main
+gh_edit_view_mode: edit
+footer_content: 'IAMLab Slicer is released under the MIT license. Copyright &copy; 2026 Jasper Vollmert, <a href="https://www.tuhh.de/idac/news">IDAC</a>, Hamburg University of Technology. <a href="https://github.com/JasperVoll/iamlab-slicer-documentation/issues">Report an issue</a>.'
+plugins:
+  - jekyll-remote-theme
+  - jekyll-seo-tag
+  - jekyll-include-cache
+  - jekyll-sitemap
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - vendor/
+  - .tools/
+  - .bundle/
+  - .jekyll-cache/
+  - .sass-cache/
+  - tools/
+  - SETUP.md
+  - README.md
+  - "*.log"
+  - verification.json
+  - assets/images/README.md

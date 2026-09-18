@@ -1,0 +1,18 @@
+{%- comment -%}
+Screenshot slot. Renders the image once the file exists in assets/images/,
+otherwise renders a pending note that names the expected file.
+Usage: {% include figure.html src="components/iamlab-slice.png" alt="..." %}
+{%- endcomment -%}
+{%- capture target -%}/assets/images/{{ include.src }}{%- endcapture -%}
+{%- assign found = false -%}
+{%- for f in site.static_files -%}
+  {%- if f.path == target -%}{%- assign found = true -%}{%- endif -%}
+{%- endfor -%}
+{%- if found -%}
+<figure class="iamlab-figure">
+  <img src="{{ target | relative_url }}" alt="{{ include.alt }}" loading="lazy">
+  <figcaption>{{ include.alt }}</figcaption>
+</figure>
+{%- else -%}
+<p class="screenshot-pending">Screenshot pending: {{ include.alt }} <code>{{ include.src }}</code></p>
+{%- endif -%}

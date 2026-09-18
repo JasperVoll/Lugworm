@@ -1,0 +1,25 @@
+.site-header { border-top: 5px solid $link-color; }
+.site-title { font-weight: 650; color: $body-heading-color; letter-spacing: -0.025em; }
+.main-content { line-height: 1.7; }
+.main-content h1 { font-weight: 650; letter-spacing: -0.025em; }
+.main-content h2 { margin-top: 2rem; }
+.main-content a { text-underline-offset: 0.2em; }
+.main-content table { font-size: 0.875rem; }
+.main-content th { background: $sidebar-color; color: $body-heading-color; }
+.main-content blockquote { border-left: 3px solid $iamlab-note; padding-left: 1rem; margin-left: 0; }
+.nav-list .nav-list-item .nav-list-link.active { color: $link-color; font-weight: 650; }
+.site-footer { color: $body-text-color; }
+.iamlab-intro { font-size: 1.2rem; color: $body-heading-color; }
+.iamlab-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin: 1.5rem 0; }
+.iamlab-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 1rem; margin: 1.5rem 0 2rem; }
+.iamlab-card { border: 1px solid $border-color; border-top: 3px solid $link-color; border-radius: 6px; padding: 1rem; background: $sidebar-color; }
+.iamlab-card.experiment { border-top-color: $iamlab-experiment; }
+.iamlab-card.machine { border-top-color: $iamlab-note; }
+.iamlab-card h2 { font-size: 1.05rem; margin-top: 0; }
+.iamlab-card p { margin-bottom: 0; font-size: 0.9rem; }
+.iamlab-figure { margin: 1.5rem 0; }
+.iamlab-figure img { max-width: 100%; height: auto; display: block; border: 1px solid $border-color; border-radius: 6px; }
+.iamlab-figure figcaption { font-size: 0.8rem; color: $body-text-color; margin-top: 0.5rem; }
+.screenshot-pending code { font-size: 0.75rem; }
+.screenshot-pending { color: $body-text-color; font-size: 0.8rem; border-left: 2px solid $border-color; padding-left: 0.75rem; }
+:focus-visible { outline: 2px solid $link-color; outline-offset: 3px; }

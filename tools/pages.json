@@ -1,0 +1,204 @@
+{
+  "Calibration-and-DoE": {
+    "title": "Calibration and DoE",
+    "path": "docs/workflows/calibration-and-doe.md",
+    "url": "/docs/workflows/calibration-and-doe/",
+    "parent": "Workflows"
+  },
+  "Components": {
+    "title": "Components",
+    "path": "docs/components/index.md",
+    "url": "/docs/components/"
+  },
+  "FAQ": {
+    "title": "FAQ",
+    "path": "docs/help/faq.md",
+    "url": "/docs/help/faq/",
+    "parent": "Help"
+  },
+  "Home": {
+    "title": "Home",
+    "path": "index.md",
+    "url": "/"
+  },
+  "IAMLab-Calib-Points": {
+    "title": "IAMLab Calib Points",
+    "path": "docs/components/iamlab-calib-points.md",
+    "url": "/docs/components/iamlab-calib-points/",
+    "parent": "Components"
+  },
+  "IAMLab-Desirability": {
+    "title": "IAMLab Desirability",
+    "path": "docs/components/iamlab-desirability.md",
+    "url": "/docs/components/iamlab-desirability/",
+    "parent": "Components"
+  },
+  "IAMLab-DoE-Design": {
+    "title": "IAMLab DoE Design",
+    "path": "docs/components/iamlab-doe-design.md",
+    "url": "/docs/components/iamlab-doe-design/",
+    "parent": "Components"
+  },
+  "IAMLab-G-code-Generator": {
+    "title": "IAMLab G-code Generator",
+    "path": "docs/components/iamlab-g-code-generator.md",
+    "url": "/docs/components/iamlab-g-code-generator/",
+    "parent": "Components"
+  },
+  "IAMLab-G-code-Restart": {
+    "title": "IAMLab G-code Restart",
+    "path": "docs/components/iamlab-g-code-restart.md",
+    "url": "/docs/components/iamlab-g-code-restart/",
+    "parent": "Components"
+  },
+  "IAMLab-Graph-Mapper": {
+    "title": "IAMLab Graph Mapper",
+    "path": "docs/components/iamlab-graph-mapper.md",
+    "url": "/docs/components/iamlab-graph-mapper/",
+    "parent": "Components"
+  },
+  "IAMLab-Interlayer-Time": {
+    "title": "IAMLab Interlayer Time",
+    "path": "docs/components/iamlab-interlayer-time.md",
+    "url": "/docs/components/iamlab-interlayer-time/",
+    "parent": "Components"
+  },
+  "IAMLab-Legend": {
+    "title": "IAMLab Legend",
+    "path": "docs/components/iamlab-legend.md",
+    "url": "/docs/components/iamlab-legend/",
+    "parent": "Components"
+  },
+  "IAMLab-Live-View": {
+    "title": "IAMLab Live View",
+    "path": "docs/components/iamlab-live-view.md",
+    "url": "/docs/components/iamlab-live-view/",
+    "parent": "Components"
+  },
+  "IAMLab-Load-Settings": {
+    "title": "IAMLab Load Settings",
+    "path": "docs/components/iamlab-load-settings.md",
+    "url": "/docs/components/iamlab-load-settings/",
+    "parent": "Components"
+  },
+  "IAMLab-Machine-Console": {
+    "title": "IAMLab Machine Console",
+    "path": "docs/components/iamlab-machine-console.md",
+    "url": "/docs/components/iamlab-machine-console/",
+    "parent": "Components"
+  },
+  "IAMLab-Machine-Files": {
+    "title": "IAMLab Machine Files",
+    "path": "docs/components/iamlab-machine-files.md",
+    "url": "/docs/components/iamlab-machine-files/",
+    "parent": "Components"
+  },
+  "IAMLab-Overhang": {
+    "title": "IAMLab Overhang",
+    "path": "docs/components/iamlab-overhang.md",
+    "url": "/docs/components/iamlab-overhang/",
+    "parent": "Components"
+  },
+  "IAMLab-Pareto-Select": {
+    "title": "IAMLab Pareto Select",
+    "path": "docs/components/iamlab-pareto-select.md",
+    "url": "/docs/components/iamlab-pareto-select/",
+    "parent": "Components"
+  },
+  "IAMLab-Place": {
+    "title": "IAMLab Place",
+    "path": "docs/components/iamlab-place.md",
+    "url": "/docs/components/iamlab-place/",
+    "parent": "Components"
+  },
+  "IAMLab-Print-Bed": {
+    "title": "IAMLab Print Bed",
+    "path": "docs/components/iamlab-print-bed.md",
+    "url": "/docs/components/iamlab-print-bed/",
+    "parent": "Components"
+  },
+  "IAMLab-Print-Stats": {
+    "title": "IAMLab Print Stats",
+    "path": "docs/components/iamlab-print-stats.md",
+    "url": "/docs/components/iamlab-print-stats/",
+    "parent": "Components"
+  },
+  "IAMLab-Robot-Definition": {
+    "title": "IAMLab Robot Definition",
+    "path": "docs/components/iamlab-robot-definition.md",
+    "url": "/docs/components/iamlab-robot-definition/",
+    "parent": "Components"
+  },
+  "IAMLab-Robot-Simulation": {
+    "title": "IAMLab Robot Simulation",
+    "path": "docs/components/iamlab-robot-simulation.md",
+    "url": "/docs/components/iamlab-robot-simulation/",
+    "parent": "Components"
+  },
+  "IAMLab-RSM-Evaluate": {
+    "title": "IAMLab RSM Evaluate",
+    "path": "docs/components/iamlab-rsm-evaluate.md",
+    "url": "/docs/components/iamlab-rsm-evaluate/",
+    "parent": "Components"
+  },
+  "IAMLab-Save-G-code": {
+    "title": "IAMLab Save G-code",
+    "path": "docs/components/iamlab-save-g-code.md",
+    "url": "/docs/components/iamlab-save-g-code/",
+    "parent": "Components"
+  },
+  "IAMLab-Scara-Fit": {
+    "title": "IAMLab Scara Fit",
+    "path": "docs/components/iamlab-scara-fit.md",
+    "url": "/docs/components/iamlab-scara-fit/",
+    "parent": "Components"
+  },
+  "IAMLab-Slice": {
+    "title": "IAMLab Slice",
+    "path": "docs/components/iamlab-slice.md",
+    "url": "/docs/components/iamlab-slice/",
+    "parent": "Components"
+  },
+  "IAMLab-Test-Geometry": {
+    "title": "IAMLab Test Geometry",
+    "path": "docs/components/iamlab-test-geometry.md",
+    "url": "/docs/components/iamlab-test-geometry/",
+    "parent": "Components"
+  },
+  "IAMLab-Version": {
+    "title": "IAMLab Version",
+    "path": "docs/components/iamlab-version.md",
+    "url": "/docs/components/iamlab-version/",
+    "parent": "Components"
+  },
+  "Installation": {
+    "title": "Installation",
+    "path": "docs/getting-started/installation.md",
+    "url": "/docs/getting-started/installation/",
+    "parent": "Getting started"
+  },
+  "Non-Planar-Slicing": {
+    "title": "Non-Planar Slicing",
+    "path": "docs/workflows/non-planar-slicing.md",
+    "url": "/docs/workflows/non-planar-slicing/",
+    "parent": "Workflows"
+  },
+  "Quick-Start": {
+    "title": "Quick Start",
+    "path": "docs/getting-started/quick-start.md",
+    "url": "/docs/getting-started/quick-start/",
+    "parent": "Getting started"
+  },
+  "Robots-and-Machine-Control": {
+    "title": "Robots and Machine Control",
+    "path": "docs/workflows/robots-and-machine-control.md",
+    "url": "/docs/workflows/robots-and-machine-control/",
+    "parent": "Workflows"
+  },
+  "Troubleshooting": {
+    "title": "Troubleshooting",
+    "path": "docs/help/troubleshooting.md",
+    "url": "/docs/help/troubleshooting/",
+    "parent": "Help"
+  }
+}

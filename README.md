@@ -1,67 +1,77 @@
-# GitHub presence kit
+# IAMLab Slicer
 
-This folder holds ready-to-deploy content for the public IAMLab
-Slicer repository on GitHub: a wiki (`wiki/`) and an issue board
-(`issue-board/`). The build does not read this folder. The content is
-deployed with the steps below.
+A Grasshopper plugin for slicing and controlling clay and cementitious-material 3D printing in Rhino.
 
-The wiki has one page per component (IAMLab-*.md), an index, and guide pages. Maintain these Markdown files against the current component sources. Preserve manually maintained explanations.
+## What it is and who it is for
 
-Every wiki page that needs a screenshot carries an
-`<!-- IMAGE TODO: ... -->` comment describing the capture, next to an
-`![...](images/....png)` reference. Once the images are placed in the
-`images/` folder of the wiki under those names, the pages are complete
-without further text edits. `IMAGES-TODO.md` lists all of them.
+"I am a laboratory slicer." IAMLab Slicer grew out of a materials laboratory, where repeatable test specimens and controlled experiments matter more than production throughput. It is intended for researchers and practitioners working with clay, concrete, and other liquid-deposition materials.
 
-## 1. Deploy the wiki
+The plugin brings the workflow into Grasshopper: plan experiments, create and slice specimens, vary parameters, generate G-code, review robot motion, and operate supported Duet machines. Planar, adaptive, and conical slicing cover both conventional and non-planar work.
 
-A GitHub wiki is a separate git repository that is created when the
-wiki is opened for the first time.
+IAMLab Slicer is distributed as a packaged Grasshopper plugin. This repository provides the releases, the documentation site, and the issue tracker.
 
-1. In the public repository, enable the wiki under Settings, Features,
-   Wikis. Open the Wiki tab once and create any page. This step
-   initialises the wiki repository; the content is overwritten in the
-   next step.
-2. Clone the wiki repository and copy the content:
+## What's in it
 
-   ```powershell
-   git clone https://github.com/<owner>/<repo>.wiki.git
-   Copy-Item docs\github\wiki\* <repo>.wiki\ -Recurse -Force
-   New-Item -ItemType Directory <repo>.wiki\images -Force
-   Copy-Item <your-screenshots>\*.png <repo>.wiki\images\
-   cd <repo>.wiki
-   git add -A; git commit -m "Publish wiki"; git push
-   ```
+### Testing protocols and design of experiments
 
-3. `Home.md` becomes the landing page. `_Sidebar.md` and `_Footer.md`
-   are rendered on every page automatically.
+The calibration workflow is built around planned tests. **DoE Design** creates a series of test prints; **Test Geometry** provides repeatable sample shapes; and **RSM Evaluate** fits measured results. **Desirability** recommends settings from the fitted models, while **Pareto Select** exposes trade-offs and keeps the selected recipe with the Grasshopper document. **Calib Points** and **Scara Fit** support measurement-based calibration of the laboratory SCARA.
 
-## 2. Deploy the issue board
+### Parameters along the toolpath
 
-1. Copy the templates into the repository. Unlike the wiki, the
-   templates live in the version-controlled `.github/` folder:
+The rewritten **Legend** component presents continuous ramps, thresholded classes, named groups, or size scales. **Graph Mapper** passes parameter values through a curve drawn directly on the component. Together they support readable, controlled parameter changes along a toolpath.
 
-   ```powershell
-   New-Item -ItemType Directory <repo>\.github -Force
-   Copy-Item docs\github\issue-board\ISSUE_TEMPLATE <repo>\.github\ -Recurse
-   Copy-Item docs\github\issue-board\PULL_REQUEST_TEMPLATE.md <repo>\.github\
-   ```
+### Direct machine control
 
-   Replace `<owner>/<repo>` in `ISSUE_TEMPLATE\config.yml` with the
-   real names before committing.
+**Machine Console** controls Duet 3 machines from inside Grasshopper over WiFi. It covers connection, homing, jogging, job checks and uploads, print control, commands, calibration positions, and logs. **Machine Files** manages files on the connected machine, and **Live View** shows the bed, arm, nozzle position, and deposited bead while a job runs.
 
-2. Create the labels that the templates use (requires the `gh` CLI):
+### Slicing, placement, and G-code
 
-   ```powershell
-   Get-Content docs\github\issue-board\labels.json | ConvertFrom-Json | ForEach-Object {
-     gh label create $_.name --color $_.color --description $_.description --force
-   }
-   ```
+**Slice** creates planar, adaptive, and conical layers. **Place** positions layers on a **Print Bed** and sets their seams. **G-code Generator** produces Marlin, Duet RepRapFirmware, or Klipper G-code; **G-code Restart** prepares a file for continuing an interrupted print; and **Save G-code** writes the result without silently overwriting an earlier file. **Print Stats**, **Overhang**, and **Interlayer Time** help review the planned print.
 
-3. Optionally, set up a Projects board for triage as described in
-   `issue-board/PROJECT_BOARD.md`.
+### Robots and project support
 
-## 3. Maintenance
+**Robot Definition** selects the machine profile and coordinate frame. **Robot Simulation** previews a job and checks SCARA reach, joint limits, and speeds before hardware is run. **Load Settings** restores saved component settings, and **Version** reports the installed plugin and runtime information.
 
-- The wiki mirrors the user guide in `docs/user-guide/`. When the guide
-  changes, update the affected wiki page as well.
+## Installation
+
+**Requirements: Rhino 8 on Windows. Nothing else to install.** The released `.yak` package includes the plugin and its dependencies.
+
+- [GitHub Releases](https://github.com/JasperVoll/iamlab-slicer-documentation/releases)
+- **Food4Rhino:** plugin page link to be added
+
+Save `iamlab-slicer-<version>-rh8_0-*.yak` in its own folder. Then run PowerShell, pointing `--source` to that folder:
+
+```powershell
+& "C:\Program Files\Rhino 8\System\Yak.exe" install --source "C:\Temp\iamlab" iamlab-slicer
+```
+
+Restart Rhino 8, run the `Grasshopper` command, and look for the **IAMLab** ribbon tab with the groups **1 Slice**, **2 Place**, **3 G-code**, **4 Robot**, **5 Analyze**, **6 Calibrate**, and **7 Print**.
+
+## Documentation
+
+The [IAMLab Slicer documentation site](https://jaspervoll.github.io/iamlab-slicer-documentation/) covers installation, quick-start guidance, component references, calibration, and machine control.
+
+- [Installation](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/getting-started/installation/)
+- [Quick Start](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/getting-started/quick-start/)
+- [Components](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/components/)
+- [Troubleshooting](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/help/troubleshooting/)
+
+## Issues and contact
+
+Use the [issue tracker](https://github.com/JasperVoll/iamlab-slicer-documentation/issues) for bugs, questions, and feature requests. For direct contact, email Jasper Vollmert at [jasper.vollmert@tuhh.de](mailto:jasper.vollmert@tuhh.de).
+
+## Citing
+
+When IAMLab Slicer contributes to published work, please credit Jasper Vollmert ([ORCID 0009-0001-6245-912X](https://orcid.org/0009-0001-6245-912X)), the [Institute of Digital and Autonomous Construction (IDAC)](https://www.tuhh.de/idac/news), Hamburg University of Technology.
+
+## License and third-party notices
+
+IAMLab Slicer is licensed under the MIT License. The distributed package also includes or depends on third-party components under their respective licenses, including Clipper2, Math.NET Numerics, SkiaSharp, and OpenTK. Rhino and Grasshopper require a licensed Rhino 8 installation.
+
+## No warranty
+
+IAMLab Slicer is provided as is, with no warranty of any kind. Machine control has been tested only on our own machine. We accept no responsibility for the firmware connection or for any problem with a robot, printer, or material, including damage, injury, or lost work.
+
+Treat every other machine as untested. Check every G-code file and robot program in Robot Simulation, keep the emergency stop within reach, and do not leave a running print unattended.
+
+Direct contact is welcome if you would like to work with us on compatibility for your machine: [jasper.vollmert@tuhh.de](mailto:jasper.vollmert@tuhh.de).
