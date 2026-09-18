@@ -2,7 +2,7 @@
 title: "IAMLab Robot Definition"
 nav_order: 18
 parent: "Components"
-description: "IAMLab Robot Definition: component inputs, outputs, and usage notes."
+description: "IAMLab Robot Definition: component inputs and outputs."
 permalink: /docs/components/iamlab-robot-definition/
 ---
 
@@ -39,16 +39,5 @@ Panel: `4 Robot`. Nickname: `Robot Def`. Compute button: no (runs on every chang
 | `info` | Text | Selected profile summary |
 | `process` | Text | Deposition process |
 | `flavor` | Text | G-code dialect the generator uses while its firmware input is not connected |
-
-## Notes
-
-- The profile can also be typed into a text panel: `"scara"` or
-  `"none"` are accepted.
-- Without a connected definition, the G-code Generator and the Machine Console assume the SCARA
-  arm of the lab. See [Robots and Machine Control]({{ '/docs/workflows/robots-and-machine-control/' | relative_url }}).
-- `process` reports whether the profile prints paste (ram or pump) or
-  `Paste (LDM)`; `flavor` reports which G-code
-  dialect the G-code Generator uses while its own `firmware` input is
-  left unwired.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

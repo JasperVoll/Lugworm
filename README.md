@@ -49,12 +49,12 @@ Restart Rhino 8, run the `Grasshopper` command, and look for the **IAMLab** ribb
 
 ## Documentation
 
-The [IAMLab Slicer documentation site](https://jaspervoll.github.io/iamlab-slicer-documentation/) covers installation, quick-start guidance, component references, calibration, and machine control.
+The [IAMLab Slicer documentation site](https://jaspervoll.github.io/iamlab-slicer-documentation/) covers installation, a map of how the components connect, component references, calibration, and machine control.
 
 - [Installation](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/getting-started/installation/)
-- [Quick Start](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/getting-started/quick-start/)
+- [Component Map](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/getting-started/component-map/)
 - [Components](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/components/)
-- [Troubleshooting](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/help/troubleshooting/)
+- [About](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/about/)
 
 ## Issues and contact
 
@@ -70,8 +70,10 @@ IAMLab Slicer is licensed under the MIT License. The distributed package also in
 
 ## No warranty
 
-IAMLab Slicer is provided as is, with no warranty of any kind. Machine control has been tested only on our own machine. We accept no responsibility for the firmware connection or for any problem with a robot, printer, or material, including damage, injury, or lost work.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Treat every other machine as untested. Check every G-code file and robot program in Robot Simulation, keep the emergency stop within reach, and do not leave a running print unattended.
+This is the warranty disclaimer of the MIT license under which IAMLab Slicer is released; it is repeated here because the software commands real machinery. Nothing is warranted, including that the software is useful or fit for your purpose, and no responsibility is accepted for the firmware connection or for any problem with a robot, printer, or material, including damage, injury, or lost work.
+
+Machine control has been tested only on our own machine. Treat every other machine as untested. Check every G-code file and robot program in Robot Simulation, keep the emergency stop within reach, and do not leave a running print unattended.
 
 Direct contact is welcome if you would like to work with us on compatibility for your machine: [jasper.vollmert@tuhh.de](mailto:jasper.vollmert@tuhh.de).

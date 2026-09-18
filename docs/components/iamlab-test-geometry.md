@@ -2,7 +2,7 @@
 title: "IAMLab Test Geometry"
 nav_order: 24
 parent: "Components"
-description: "IAMLab Test Geometry: component inputs, outputs, and usage notes."
+description: "IAMLab Test Geometry: component inputs and outputs."
 permalink: /docs/components/iamlab-test-geometry/
 ---
 
@@ -144,14 +144,5 @@ between passes tell you whether the flow matches the spacing.
 
 Stacked layers alternate their start side, so a stack does not put its
 seam at the same end on every layer.
-
-## Notes
-
-- The Profile group shapes the vase (waves and twist), the polygon
-  cross-section, and the frustum ratio. The Wall/box group sets the
-  length and thickness of wall and box.
-- Standard specimens ignore `height`, `radius`, `length` and `width`:
-  their dimensions come from the standard, scaled only by
-  `specimenScale`.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

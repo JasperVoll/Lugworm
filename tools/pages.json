@@ -1,20 +1,30 @@
 {
+  "About": {
+    "title": "About",
+    "path": "docs/about/index.md",
+    "url": "/docs/about/"
+  },
   "Calibration-and-DoE": {
     "title": "Calibration and DoE",
     "path": "docs/workflows/calibration-and-doe.md",
     "url": "/docs/workflows/calibration-and-doe/",
     "parent": "Workflows"
   },
+  "Component-Map": {
+    "title": "Component Map",
+    "path": "docs/getting-started/component-map.md",
+    "url": "/docs/getting-started/component-map/",
+    "parent": "Getting started"
+  },
   "Components": {
     "title": "Components",
     "path": "docs/components/index.md",
     "url": "/docs/components/"
   },
-  "FAQ": {
-    "title": "FAQ",
-    "path": "docs/help/faq.md",
-    "url": "/docs/help/faq/",
-    "parent": "Help"
+  "Getting-started": {
+    "title": "Getting started",
+    "path": "docs/getting-started/index.md",
+    "url": "/docs/getting-started/"
   },
   "Home": {
     "title": "Home",
@@ -123,6 +133,12 @@
     "url": "/docs/components/iamlab-print-stats/",
     "parent": "Components"
   },
+  "IAMLab-RSM-Evaluate": {
+    "title": "IAMLab RSM Evaluate",
+    "path": "docs/components/iamlab-rsm-evaluate.md",
+    "url": "/docs/components/iamlab-rsm-evaluate/",
+    "parent": "Components"
+  },
   "IAMLab-Robot-Definition": {
     "title": "IAMLab Robot Definition",
     "path": "docs/components/iamlab-robot-definition.md",
@@ -133,12 +149,6 @@
     "title": "IAMLab Robot Simulation",
     "path": "docs/components/iamlab-robot-simulation.md",
     "url": "/docs/components/iamlab-robot-simulation/",
-    "parent": "Components"
-  },
-  "IAMLab-RSM-Evaluate": {
-    "title": "IAMLab RSM Evaluate",
-    "path": "docs/components/iamlab-rsm-evaluate.md",
-    "url": "/docs/components/iamlab-rsm-evaluate/",
     "parent": "Components"
   },
   "IAMLab-Save-G-code": {
@@ -183,22 +193,15 @@
     "url": "/docs/workflows/non-planar-slicing/",
     "parent": "Workflows"
   },
-  "Quick-Start": {
-    "title": "Quick Start",
-    "path": "docs/getting-started/quick-start.md",
-    "url": "/docs/getting-started/quick-start/",
-    "parent": "Getting started"
-  },
   "Robots-and-Machine-Control": {
     "title": "Robots and Machine Control",
     "path": "docs/workflows/robots-and-machine-control.md",
     "url": "/docs/workflows/robots-and-machine-control/",
     "parent": "Workflows"
   },
-  "Troubleshooting": {
-    "title": "Troubleshooting",
-    "path": "docs/help/troubleshooting.md",
-    "url": "/docs/help/troubleshooting/",
-    "parent": "Help"
+  "Workflows": {
+    "title": "Workflows",
+    "path": "docs/workflows/index.md",
+    "url": "/docs/workflows/"
   }
 }

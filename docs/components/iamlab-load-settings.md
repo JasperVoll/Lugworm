@@ -2,7 +2,7 @@
 title: "IAMLab Load Settings"
 nav_order: 10
 parent: "Components"
-description: "IAMLab Load Settings: component inputs, outputs, and usage notes."
+description: "IAMLab Load Settings: component inputs and outputs."
 permalink: /docs/components/iamlab-load-settings/
 ---
 
@@ -36,26 +36,5 @@ Panel: `1 Slice`. Nickname: `Settings`. Compute button: no (runs on every change
 | `files` | Text (list) | One line per match: the component key and the file it takes its inputs from |
 | `unmatched` | Text (list) | Files that were not used: unreadable ones with their error, duplicate claims on one component, and files naming a component this build does not have |
 | `info` | Text | Diagnostics |
-
-## Notes
-
-- Files are matched by the `component` name written inside the JSON,
-  never by file name, so a file can be called `clay-fast.iamset.json`
-  or anything else that is meaningful to you.
-- The `apply` button applies every matching file to the canvas at once,
-  as one undo step. An input with nothing connected gets a new object
-  carrying the file's value; an input already connected to exactly one
-  slider, toggle, panel or value list is updated in place; anything
-  more complex upstream is left alone and listed in the report.
-- `watch` re-checks the folder on the next solve when a file's name,
-  size or timestamp changed. Turn it off only if the per-solve
-  directory listing is a measured problem.
-- `unmatched` lists files this build could not use: unreadable files,
-  two files claiming the same component, and files naming a component
-  that does not exist in this build.
-- Only one Load Settings component is allowed per document; a second
-  one is refused rather than silently taking over.
-- Geometry, points, planes, colours and tree inputs are never saved or
-  loaded; the save report says so.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

@@ -2,7 +2,7 @@
 title: "IAMLab G-code Generator"
 nav_order: 4
 parent: "Components"
-description: "IAMLab G-code Generator: component inputs, outputs, and usage notes."
+description: "IAMLab G-code Generator: component inputs and outputs."
 permalink: /docs/components/iamlab-g-code-generator/
 ---
 
@@ -165,57 +165,5 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `pump` | Text (list) | Pump mode summary from the pump toggle group: required flow in l/min, recommended setting and warnings |
 | `start` | Point | First print location in Rhino coordinates, including the Z offset. Hang the extruder here before a run. The startGcode output carries the machine's own numbers |
 | `startGcode` | Text | Block to paste into a terminal: jog to the start XY at Z0 so you can set the nozzle to just touch, then start the print |
-
-## Notes
-
-- `layerHeight` must be the same as on [IAMLab Slice]({{ '/docs/components/iamlab-slice/' | relative_url }}), and `width`
-  should match the `spacing` used there.
-- `ramDiameter` is the inside diameter of the material cartridge. It
-  sets how far the ram must move for a given amount of material.
-- `retraction` chooses how seams are handled: `0` never pulls the ram
-  back, `1` connects seams that are close together without pulling
-  back, `2` pulls back and pushes again at every seam.
-- `zOffset` is a small correction for the nozzle height, with a default
-  of 0. The layers are already at the right height, so do not enter the
-  layer height here.
-- `robot`: without a Robot Definition the G-code is written for the
-  SCARA arm of the lab, whose X and Y axes are mirrored. On an ordinary
-  printer, connect a [IAMLab Robot Definition]({{ '/docs/components/iamlab-robot-definition/' | relative_url }}) with
-  `generic-cartesian`. See [Robots and Machine Control]({{ '/docs/workflows/robots-and-machine-control/' | relative_url }}).
-- `firmware` picks the G-code dialect: Duet RRF, Marlin, or Klipper.
-  Left unwired, it follows the connected Robot Definition's own default
-  dialect (Duet RRF for the Potterbot or no definition at all). A
-  dialect the connected robot cannot run raises a warning (a remark
-  instead when the mismatch is only against the robot's own default
-  dialect, or when no Robot Definition is connected at all). Only Duet
-  machines are driven over the network; a Klipper or Marlin machine is
-  a G-code target, so generate the file and transfer it yourself.
-- Arcs group: the component replaces runs of short straight segments by
-  arc commands (G2/G3), which produces smoother motion and smaller
-  files. The ArcWelder group uses the external ArcWelder program for the
-  same job and needs the path to `ArcWelderConsole.exe`; if the program
-  is missing or fails, the G-code stays unwelded and a message is
-  reported. Use one of the two, not both.
-- Pump group: for a pump instead of a ram, the component calculates
-  the pump setting that delivers the required flow, from a measured
-  table of setting against flow rate. The shipped table is a
-  placeholder that must be replaced with your own measurements. The
-  group never changes the extrusion values in the G-code.
-- Varh group: enable after adaptive or conical slicing. For adaptive planar
-  trees, the generator uses the vertical delta between successive layer
-  branches (when object/layer IDs are available), then clamps the local flow
-  to `varhMin..varhMax` times nominal height. The first-layer/base rule is
-  preserved. For conical paths, local geometry can also change the required
-  flow. The two inputs limit deviation from nominal; they do not certify bead
-  width or printability.
-- Ecomp group: an experimental correction for extra flow on leaning
-  walls. Leave the group off unless you have measured the value with
-  a test print of an inclined wall.
-- Skirt, Floors, and Header override: a purge ring before the part,
-  solid base layers with an optional pause, and a replacement for the
-  automatic header and footer.
-- `start` and `startGcode` give the first print position and a short
-  G-code block that moves the nozzle there, so that the nozzle height
-  can be set before the print starts.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

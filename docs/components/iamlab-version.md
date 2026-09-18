@@ -2,7 +2,7 @@
 title: "IAMLab Version"
 nav_order: 25
 parent: "Components"
-description: "IAMLab Version: component inputs, outputs, and usage notes."
+description: "IAMLab Version: component inputs and outputs."
 permalink: /docs/components/iamlab-version/
 ---
 
@@ -32,12 +32,5 @@ Panel: `1 Slice`. Nickname: `Version`. Compute button: no (runs on every change)
 | `build` | Text | Build date (UTC, stamped at compile time) |
 | `runtime` | Text | Compiled target framework and the runtime actually loaded |
 | `summary` | Text | One line summary, with the update status appended when checked |
-
-## Notes
-
-- The update check contacts the release source at most once per Rhino
-  session and only while `check` is true. If no release source is
-  configured in the build, the check reports that no source is
-  available.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

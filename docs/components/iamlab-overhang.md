@@ -2,7 +2,7 @@
 title: "IAMLab Overhang"
 nav_order: 13
 parent: "Components"
-description: "IAMLab Overhang: component inputs, outputs, and usage notes."
+description: "IAMLab Overhang: component inputs and outputs."
 permalink: /docs/components/iamlab-overhang/
 ---
 
@@ -54,22 +54,5 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `info` | Text | Diagnostics |
 | `legend` | Text | Legend spec for IAMLab Legend: the three overhang classes, or the continuous magma ramp, at the thresholds and reference this analysis used |
 | `colors` | Colour (tree) | Color per segment in the active color mode and reference, cut like angles, for a custom preview |
-
-## Notes
-
-- `angles` measures the overhang relative to the layer below (local),
-  which is what matters for non-planar layers. `anglesWorld` measures
-  the angle against the vertical (global) instead. Both are always
-  output; `global` decides which one the thresholds classify, and with
-  it the viewport colours, `colors`, the class percentages in `summary`
-  and the legend (its title reads "overhang (global)" when on). With
-  `global` on, `summary` starts with a comment line that says so.
-- The Export group writes a per-layer summary as a CSV file.
-- `legend` is an `iamlab-legend:v1` wire carrying the same colours drawn
-  in the viewport - the three classes, or in `colorMode` 1 the magma ramp
-  with the warning and critical thresholds marked - connect it to
-  [IAMLab Legend]({{ '/docs/components/iamlab-legend/' | relative_url }}) so a legend never disagrees with the painted colours.
-- `colors` gives one colour per segment for a Custom Preview of your own;
-  it follows `colorMode` too.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

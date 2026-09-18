@@ -9,7 +9,7 @@ has_toc: false
 
 # Components
 
-Every component on the IAMLab tab has a page of its own with a short explanation, a table of inputs and outputs, and notes on the inputs that need more than one line. The pages are grouped by panel below. Components with a compute button run only when the button is clicked; all others run on every change.
+Every component on the IAMLab tab has a page of its own with a short explanation and a table of inputs and outputs. The pages are grouped by panel below. Components with a compute button run only when the button is clicked; all others run on every change. For how the components connect to each other, see the [Component Map]({{ '/docs/getting-started/component-map/' | relative_url }}).
 
 {% include figure.html src="components/iamlab-ribbon.png" alt="The IAMLab ribbon" %}
 

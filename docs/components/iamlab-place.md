@@ -2,7 +2,7 @@
 title: "IAMLab Place"
 nav_order: 15
 parent: "Components"
-description: "IAMLab Place: component inputs, outputs, and usage notes."
+description: "IAMLab Place: component inputs and outputs."
 permalink: /docs/components/iamlab-place/
 ---
 
@@ -54,18 +54,5 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `moved` | Curve (tree) | Placed and reseamed contour tree |
 | `seams` | Point (tree) | Seam start point per contour |
 | `info` | Text | Diagnostics |
-
-## Notes
-
-- `printCenter` overrides the print centre of a connected
-  [IAMLab Print Bed]({{ '/docs/components/iamlab-print-bed/' | relative_url }}). Without either, the built-in default is the
-  usual position on the lab bed.
-- `seamMode`: `0` keep, `1` align (default; `seamAngle` sets the
-  direction), `2` stagger (`seamAngle` is the step per layer), `3`
-  nearest (`seamPoint`), `4` guide (`seamCurve`, drawn in world
-  coordinates where the placed part stands), `5` track (each seam above
-  the seam of the layer below).
-- Whether the placed part can be reached by the robot is checked by
-  [IAMLab Robot Simulation]({{ '/docs/components/iamlab-robot-simulation/' | relative_url }}), not here.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

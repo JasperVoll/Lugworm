@@ -2,7 +2,7 @@
 title: "IAMLab Save G-code"
 nav_order: 21
 parent: "Components"
-description: "IAMLab Save G-code: component inputs, outputs, and usage notes."
+description: "IAMLab Save G-code: component inputs and outputs."
 permalink: /docs/components/iamlab-save-g-code/
 ---
 
@@ -42,12 +42,5 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `path` | Text | Full target file path |
 | `written` | Boolean | True if the file was written this solve |
 | `info` | Text | Diagnostics |
-
-## Notes
-
-- The file is written in the background. The component first reports
-  "writing", and `written` becomes true on the following solve.
-- With the Override group, the timestamp and the name format can be set
-  by hand.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

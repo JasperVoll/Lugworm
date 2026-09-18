@@ -65,4 +65,4 @@ body:
       label: Machine involvement
       options:
         - label: The problem involved a real machine (Duet control or a robot arm)
-        - label: The Troubleshooting page of the documentation has been checked
+        - label: The component reference and the Component Map have been checked

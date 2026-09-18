@@ -2,7 +2,7 @@
 title: "IAMLab Desirability"
 nav_order: 2
 parent: "Components"
-description: "IAMLab Desirability: component inputs, outputs, and usage notes."
+description: "IAMLab Desirability: component inputs and outputs."
 permalink: /docs/components/iamlab-desirability/
 ---
 
@@ -83,20 +83,5 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `info` | Text | Diagnostics |
 | `interval` | Number (tree) | 95% prediction interval at the recommendation, one branch per response: low, predicted, high. Empty when the model carries no covariance |
 | `pareto` | Number (tree) | Pareto front recipes, with the pareto group enabled. One branch per recipe: factor values, d per active goal, D. Objectives follow the model order, skipping 'none' goals. See the report for axis names |
-
-## Notes
-
-- `goals` uses a short text per result: `max`, `min`, `target=7 in
-  6..8` (aim for 7, accept 6 to 8), `range=6..8`, or `none`. Add `w=2`
-  to weight a goal or `s=2` to change the shape of the ramp.
-- `alternatives` lists other good combinations for the same overall
-  goal. For the best trade-offs between the individual goals, enable
-  the Pareto group and read the `pareto` output.
-- The Sweep group produces one recipe per target value, for example one
-  set of settings for each desired bead width.
-- `interval` gives the uncertainty of the predicted results at the
-  recommended settings.
-- After the first solve, a small draggable curve appears below the
-  desirability plot; the goal ramps can be adjusted there.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

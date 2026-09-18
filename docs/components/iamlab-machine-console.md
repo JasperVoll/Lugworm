@@ -2,7 +2,7 @@
 title: "IAMLab Machine Console"
 nav_order: 11
 parent: "Components"
-description: "IAMLab Machine Console: component inputs, outputs, and usage notes."
+description: "IAMLab Machine Console: component inputs and outputs."
 permalink: /docs/components/iamlab-machine-console/
 ---
 
@@ -65,23 +65,5 @@ Right-click the component to switch this group on. The inputs appear only while 
 
 | Name | Type | Description |
 |---|---|---|
-
-## Notes
-
-- `host` is `hostname[:port]`. `password` is the Duet password.
-- The window has five pages: Dashboard, Control, Job, Terminal and Logs.
-- `dryRun` runs a firmware simulation (M37) before the real print.
-- `speedFactor` and `flowFactor` report the machine's M220/M221
-  overrides; `-1` means the machine did not report that value. Check the component's output wires before use.
-- Without a Robot Definition, the console assumes the SCARA arm of the
-  lab. With a Cartesian Duet definition, it controls that printer
-  instead and checks moves against its own travel limits.
-- Right-click the component for "Trust connected machine", a raw
-  object-model dump, and the console's renderer and motion-reduction
-  settings.
-- Every job is recorded to a local buffer first. Kept jobs (Keep all job
-  logs, or Save this job) are copied to the folder chosen in the Logs
-  tab's Change location picker. The header's **Log:** button shows the
-  current job log's status and opens the Logs tab.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

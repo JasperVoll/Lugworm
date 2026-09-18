@@ -19,7 +19,7 @@ We work with clay and cementitious materials in a materials laboratory. The focu
 
 <div class="iamlab-actions">
 <a class="btn btn-primary" href="{{ '/docs/getting-started/installation/' | relative_url }}">Install the package</a>
-<a class="btn" href="{{ '/docs/getting-started/quick-start/' | relative_url }}">Print a first specimen</a>
+<a class="btn" href="{{ '/docs/getting-started/component-map/' | relative_url }}">See the component map</a>
 </div>
 
 <div class="iamlab-cards">
@@ -39,13 +39,12 @@ Hamburg University of Technology.
 | Task | Page |
 |---|---|
 | Install the plugin | [Installation]({{ '/docs/getting-started/installation/' | relative_url }}) |
-| Slice a first part | [Quick Start]({{ '/docs/getting-started/quick-start/' | relative_url }}) |
+| See how the components connect | [Component Map]({{ '/docs/getting-started/component-map/' | relative_url }}) |
 | Look up a component | [Components]({{ '/docs/components/' | relative_url }}) |
-| Learn common terms and checks | [Quick Start]({{ '/docs/getting-started/quick-start/' | relative_url }}) |
 | Print with a robot arm or control a Duet machine | [Robots and Machine Control]({{ '/docs/workflows/robots-and-machine-control/' | relative_url }}) |
 | Slice non-planar (conical) | [Non-Planar Slicing]({{ '/docs/workflows/non-planar-slicing/' | relative_url }}) |
 | Calibrate settings for a new material | [Calibration and DoE]({{ '/docs/workflows/calibration-and-doe/' | relative_url }}) |
-| Solve a problem | [Troubleshooting]({{ '/docs/help/troubleshooting/' | relative_url }}), [FAQ]({{ '/docs/help/faq/' | relative_url }}) |
+| Report a problem or get in touch | [About]({{ '/docs/about/' | relative_url }}) |
 
 ## Capabilities
 
@@ -71,11 +70,25 @@ the drawn model.
 
 ## No warranty
 
-This plugin is provided as is, with no warranty of any kind. No responsibility is accepted for the firmware connection or for any problem with your robot, printer, or material, including damage, injury, or lost work.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 
-Machine control has been tested only on our own machine. Other firmwares and other machines have not been tested extensively. Treat any machine other than the one this was developed on as untested.
+This is the warranty disclaimer of the MIT license under which IAMLab Slicer is
+released; it is reproduced here because the software commands real machinery.
+Nothing is warranted, including that the software is useful or fit for your
+purpose, and no responsibility is accepted for the firmware connection or for
+any problem with a robot, printer, or material, including damage, injury, or
+lost work.
 
-If you would like to collaborate and have your machine made compatible with the plugin, contact me directly: jasper.vollmert@tuhh.de
+Machine control has been tested only on our own machine. Other firmwares and
+other machines have not been tested extensively. Treat any machine other than
+the one this was developed on as untested. To collaborate on making a machine
+compatible, see [About]({{ '/docs/about/' | relative_url }}).
 
 ## Workflow
 
@@ -84,9 +97,9 @@ If you would like to collaborate and have your machine made compatible with the 
 Definition for the coordinate frame, kinematics, firmware dialect and extrusion
 process; select `none` for model-free preview. Read each `info` report after
 computing. Preserve Slice's layer branches (`{object; layer}` for multiple
-objects). See [Quick Start]({{ '/docs/getting-started/quick-start/' | relative_url }}) for wiring and settings.
+objects). See [Component Map]({{ '/docs/getting-started/component-map/' | relative_url }}) for how the components connect.
 
 ## License and contact
 
 MIT license. Copyright 2026 Jasper Vollmert, IDAC, Hamburg University of
-Technology. Use the [issue tracker](https://github.com/JasperVoll/iamlab-slicer-documentation/issues); see [FAQ]({{ '/docs/help/faq/' | relative_url }}) for report details.
+Technology. Use the [issue tracker](https://github.com/JasperVoll/iamlab-slicer-documentation/issues); see [About]({{ '/docs/about/' | relative_url }}) for report details, team, publications and contact.

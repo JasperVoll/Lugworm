@@ -6,8 +6,8 @@ body:
   - type: markdown
     attributes:
       value: |
-        Please check the documentation first: [Quick Start](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/getting-started/quick-start/),
-        [Troubleshooting](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/help/troubleshooting/), and [FAQ](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/help/faq/).
+        Please check the documentation first: [Component Map](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/getting-started/component-map/),
+        [Components](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/components/), and [About](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/about/).
   - type: textarea
     id: question
     attributes:

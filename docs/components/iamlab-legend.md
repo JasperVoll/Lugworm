@@ -2,7 +2,7 @@
 title: "IAMLab Legend"
 nav_order: 8
 parent: "Components"
-description: "IAMLab Legend: component inputs, outputs, and usage notes."
+description: "IAMLab Legend: component inputs and outputs."
 permalink: /docs/components/iamlab-legend/
 ---
 
@@ -87,35 +87,5 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `frames` | Plane (list) | Text planes matching labels |
 | `spec` | Text | The resolved scale as a legend spec wire. Forward it to another Legend |
 | `info` | Text | Diagnostics |
-
-## Notes
-
-- `type`: `0` continuous ramp, `1` classes (thresholded bands), `2`
-  groups (named categories), `3` size (a circle-size scale).
-- `scheme` picks a named palette from three families - matplotlib
-  colormaps (`mpl`), R `grDevices` palettes (`R`) and the ggsci package
-  (`ggsci`) - or `traffic`, or `custom`, which reads the `colors` input
-  instead. Names are case-insensitive; the old IAMLab ramp names
-  (`blues`, `greens`, `greys`, `pinks`, `ambers`) still resolve.
-  Categorical palettes hand their colours to classes and groups one by
-  one; ramps are sampled evenly.
-- `gradient` reads Grasshopper's Gradient component directly - colour
-  stops and their positions - so an uneven gradient is reproduced
-  exactly; the positions travel on the wire as `stops=`.
-- `mesh` and `frames` are preview-hidden outputs: the component draws
-  the legend itself, so their automatic preview would only add wire
-  edges, plane icons and a second static copy in the floating placement.
-- `placement`: `0` a fixed overlay anchored to a corner or edge of the
-  viewport, `1` fixed to a `plane` in model space, `2` floating at a
-  `point` as a camera-facing billboard whose screen size stays constant
-  while you orbit or zoom.
-- `orientation` chooses horizontal or vertical for any placement.
-- The component doubles as a colouriser: the `colors` output gives one
-  colour per `values` entry from the same scale, so any geometry can be
-  painted consistently with the legend.
-- `mesh`, `labels` and `frames` give a bakeable vertex-coloured legend
-  and its text planes for the plane and floating placements.
-- `spec` re-emits the resolved scale as an `iamlab-legend:v1` wire, so
-  one Legend can feed the exact same scale to another.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

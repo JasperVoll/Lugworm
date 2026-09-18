@@ -2,7 +2,7 @@
 title: "IAMLab Print Bed"
 nav_order: 16
 parent: "Components"
-description: "IAMLab Print Bed: component inputs, outputs, and usage notes."
+description: "IAMLab Print Bed: component inputs and outputs."
 permalink: /docs/components/iamlab-print-bed/
 ---
 
@@ -39,13 +39,5 @@ Panel: `2 Place`. Nickname: `Bed`. Compute button: no (runs on every change).
 | `printCenter` | Point | Default print center |
 | `outline` | Curve | Bed plate outline |
 | `info` | Text | Bed summary |
-
-## Notes
-
-- `center` is the middle of the plate. `printCenter` is where the
-  bottom centre of a part lands, which is usually not the middle of the
-  plate. Keep the two separate.
-- Reach - the ring-shaped area a SCARA arm can cover - is no longer set
-  here. It stays the robot profile's alone; see [IAMLab Robot Definition]({{ '/docs/components/iamlab-robot-definition/' | relative_url }}).
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

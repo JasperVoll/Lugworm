@@ -2,7 +2,7 @@
 title: "IAMLab Robot Simulation"
 nav_order: 19
 parent: "Components"
-description: "IAMLab Robot Simulation: component inputs, outputs, and usage notes."
+description: "IAMLab Robot Simulation: component inputs and outputs."
 permalink: /docs/components/iamlab-robot-simulation/
 ---
 
@@ -46,19 +46,5 @@ Panel: `4 Robot`. Nickname: `Robot Sim`. Compute button: no (runs on every chang
 | `problems` | Point (list) | Flagged target positions |
 | `messages` | Text (list) | Validation messages |
 | `info` | Text | Profile and preview diagnostics |
-
-## Notes
-
-- A point that cannot be reached sets `reachOK` to false, lists the
-  point in `problems`, and raises a red error on the component. Do not
-  run a program while that error is shown.
-- Printed material is drawn as a bead; travel moves are drawn as thin
-  ochre lines.
-- The drawn bed comes from the connected [IAMLab Print Bed]({{ '/docs/components/iamlab-print-bed/' | relative_url }}) when one
-  is wired, otherwise from the robot profile's own defaults (SCARA:
-  1000x700 mm; other machines: 800x800 mm).
-- The SCARA arm mode used when the G-code does not start with a homing
-  command comes from the robot profile's own homed arm mode; it is no
-  longer set on this component.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

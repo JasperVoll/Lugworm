@@ -2,7 +2,7 @@
 title: "IAMLab DoE Design"
 nav_order: 3
 parent: "Components"
-description: "IAMLab DoE Design: component inputs, outputs, and usage notes."
+description: "IAMLab DoE Design: component inputs and outputs."
 permalink: /docs/components/iamlab-doe-design/
 ---
 
@@ -72,17 +72,5 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `table` | Text | Readable run table. Connect a panel |
 | `info` | Text | Design summary and warnings |
 | `power` | Text | Monte Carlo power per factor at α = 0.05. Enable the power group and connect a panel |
-
-## Notes
-
-- `design`: DSD screens many settings with few prints; BBD is the usual
-  choice when the effect of each setting should be modelled with
-  curvature; Taguchi, FullFact2, and FracFact2 are further standard
-  plans.
-- The Power group estimates whether the plan has enough runs to detect
-  an effect of a given size, using the scatter of a previous campaign
-  (`powerSigma`). A warning is shown when the plan is too small.
-- The Advanced group sets centre points, the number of levels for
-  Taguchi plans, and a random run order.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

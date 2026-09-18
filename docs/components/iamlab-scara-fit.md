@@ -2,7 +2,7 @@
 title: "IAMLab Scara Fit"
 nav_order: 22
 parent: "Components"
-description: "IAMLab Scara Fit: component inputs, outputs, and usage notes."
+description: "IAMLab Scara Fit: component inputs and outputs."
 permalink: /docs/components/iamlab-scara-fit/
 ---
 
@@ -56,15 +56,5 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `robotXml` | Text | Corrected robot.xml link snippet |
 | `m669` | Text | Corrected M669 line for config.g, with homing notes |
 | `report` | Text | Full fit report, including conditioning |
-
-## Notes
-
-- `commanded` comes from the `points` output of [IAMLab Calib Points]({{ '/docs/components/iamlab-calib-points/' | relative_url }});
-  `measured` are the positions measured on the bed, in the same order.
-- The Fit group chooses which values are fitted. `fitJ1` is normally
-  off because a J1 offset cannot be told apart from a rotation of the
-  measurement grid.
-- Copy `m669` into `config.g` on the board and `robotXml` into the
-  robot description of the plugin.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

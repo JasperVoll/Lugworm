@@ -2,7 +2,7 @@
 title: "IAMLab Graph Mapper"
 nav_order: 6
 parent: "Components"
-description: "IAMLab Graph Mapper: component inputs, outputs, and usage notes."
+description: "IAMLab Graph Mapper: component inputs and outputs."
 permalink: /docs/components/iamlab-graph-mapper/
 ---
 
@@ -45,24 +45,5 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `equation` | Text | The curve as a formula over normalized t |
 | `info` | Text | Graph type, domains, value count |
 | `map` | Text | The curve itself, for components that evaluate it. Connect it into the profile input of IAMLab Slice to drive a graph wave infill |
-
-## Notes
-
-- Curve types are chosen from the dropdown on the component. Polyline
-  and Spline are fully editable: double-click adds a point, double-click
-  on a point removes it, and any other curve type can be converted into
-  them.
-- Spline points carry tangent handles. Hover a point to reveal them; a
-  plain drag keeps the point smooth (both handles follow together),
-  Shift moves one side only and turns the point into a corner, Ctrl
-  snaps the dragged handle's slope to a quarter step, and double-click
-  a handle returns it to the automatic tangent. A point converted from
-  another curve type starts with automatic handles the same way.
-- While dragging a point, Ctrl snaps to steps of 0.05 and Shift to
-  steps of 0.01. Ctrl+Z undoes the last edit; the reset button restores
-  the current curve type.
-- The Domain group sets which input values map to the left and right
-  edge of the graph and which output values the bottom and top edge
-  represent.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

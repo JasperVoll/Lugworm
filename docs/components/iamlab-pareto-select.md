@@ -2,7 +2,7 @@
 title: "IAMLab Pareto Select"
 nav_order: 14
 parent: "Components"
-description: "IAMLab Pareto Select: component inputs, outputs, and usage notes."
+description: "IAMLab Pareto Select: component inputs and outputs."
 permalink: /docs/components/iamlab-pareto-select/
 ---
 
@@ -65,14 +65,5 @@ a bound changed - the component keeps the stored numbers, sets `current` to fals
 says *front changed* on the component; it never quietly switches to another recipe. A
 recipe that still matches is shown dashed as a candidate; click it to accept the new
 front. Two identical recipes on one front are reported as ambiguous.
-
-## Notes
-
-- The front that Desirability produces is a thinned sample of the trade-off, with the
-  optimum re-inserted (so it can hold one recipe more than `maxFront`). With factor
-  priors, the recommendation from Desirability may not be on the front at all; the plot
-  then says so instead of marking the wrong point.
-- Reopening a document restores the recipe, the last front (labelled *archived*) and the
-  marker without running the DoE components, and never opens a window.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

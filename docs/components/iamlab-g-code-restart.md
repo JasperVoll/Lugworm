@@ -2,7 +2,7 @@
 title: "IAMLab G-code Restart"
 nav_order: 5
 parent: "Components"
-description: "IAMLab G-code Restart: component inputs, outputs, and usage notes."
+description: "IAMLab G-code Restart: component inputs and outputs."
 permalink: /docs/components/iamlab-g-code-restart/
 ---
 
@@ -44,24 +44,5 @@ Panel: `3 G-code`. Nickname: `Restart`. Compute button: yes (runs only when the 
 | `printed` | Curve (list) | Already printed path that the restart skips. Check it matches the part on the bed |
 | `remaining` | Curve (list) | Path the restart file prints |
 | `info` | Text | Diagnostics |
-
-## Notes
-
-- Connect only one of `z`, `percent`, and `point`. When more than one
-  is connected, `point` wins over `percent`, and `percent` wins over
-  `z`.
-- `percent` works exactly only when `gcodePath` points to the original
-  file, because the Duet counts bytes of the file. Without the file,
-  the position is approximate.
-- `point` is in Rhino document coordinates. For the lab machine frame,
-  raw Duet `(X, Y, Z)` maps to Rhino `(-Y, -X, Z)` in millimetres.
-  A Live or Console position output avoids applying that conversion manually.
-  For example, raw Duet `(200, -500, 400)` mm is Rhino `(500, -200, 400)` mm,
-  or Rhino `(19.6850, -7.8740, 15.7480)` in an inch document.
-- Check the `printed` output against the part on the bed before
-  starting the restart file: the curves must match what is already
-  printed.
-- `primeE` pushes some material before the first move to refill the
-  nozzle after an air gap.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

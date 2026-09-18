@@ -14,14 +14,11 @@ paths out of frame.
 |---|---|---|
 | `home/pipeline-and-simulation.png` | IAMLab Slicer pipeline and SCARA simulation | `index.md` |
 
-## Getting started (4)
+## Getting started (1)
 
 | File | Caption | Page |
 |---|---|---|
-| `getting-started/compute-button.png` | The compute button on a Heavy component | `docs/getting-started/quick-start.md` |
 | `getting-started/iamlab-tab.png` | The IAMLab tab after installation | `docs/getting-started/installation.md` |
-| `getting-started/minimal-pipeline.png` | The minimal pipeline | `docs/getting-started/quick-start.md` |
-| `getting-started/preview-and-travel.png` | Preview and travel moves in the viewport | `docs/getting-started/quick-start.md` |
 
 ## Components (26)
 
@@ -68,4 +65,4 @@ paths out of frame.
 | `workflows/reach-violation.png` | An out-of-reach placement caught before it reaches hardware | `docs/workflows/robots-and-machine-control.md` |
 | `workflows/robot-profile.png` | Selecting a robot profile | `docs/workflows/robots-and-machine-control.md` |
 
-40 slots in total.
+37 slots in total.

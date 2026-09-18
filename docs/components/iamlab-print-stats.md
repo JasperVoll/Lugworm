@@ -2,7 +2,7 @@
 title: "IAMLab Print Stats"
 nav_order: 17
 parent: "Components"
-description: "IAMLab Print Stats: component inputs, outputs, and usage notes."
+description: "IAMLab Print Stats: component inputs and outputs."
 permalink: /docs/components/iamlab-print-stats/
 ---
 
@@ -58,17 +58,5 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `travelLen` | Number | Travel length, mm |
 | `layers` | Integer | Layer count |
 | `perLayer` | Number (tree) | Data per layer, one branch each: z, length mm, time min |
-
-## Notes
-
-- With G-code input and `ramDiameter` set, the material amount is
-  calculated from the extrusion values in the file. With a toolpath, or
-  with `ramDiameter = 0`, the amount is estimated from `width` and
-  `height`.
-- `accel` switches on a time model that accounts for speeding up and
-  slowing down at corners. Without a value, the time is a lower bound.
-- With a Robot Definition for an arm connected, the time estimate also
-  respects the joint speeds of the arm, which slow the print near the
-  edge of the reachable area.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

@@ -2,7 +2,7 @@
 title: "IAMLab Machine Files"
 nav_order: 12
 parent: "Components"
-description: "IAMLab Machine Files: component inputs, outputs, and usage notes."
+description: "IAMLab Machine Files: component inputs and outputs."
 permalink: /docs/components/iamlab-machine-files/
 ---
 
@@ -34,13 +34,5 @@ Panel: `7 Print`. Nickname: `Files`. Compute button: no (runs on every change).
 | `selected` | Text | Full board path of the selected entry |
 | `size` | Number | Selected file size, bytes |
 | `info` | Text | Diagnostics |
-
-## Notes
-
-- `host` accepts a Duet host string from
-  [IAMLab Machine Console]({{ '/docs/components/iamlab-machine-console/' | relative_url }}); the component works the same way on both.
-- `dir` is the folder on the machine, for example `0:/gcodes` on a Duet
-.
-- `savePath` is the local file or folder for a download.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

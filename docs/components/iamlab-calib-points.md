@@ -2,7 +2,7 @@
 title: "IAMLab Calib Points"
 nav_order: 1
 parent: "Components"
-description: "IAMLab Calib Points: component inputs, outputs, and usage notes."
+description: "IAMLab Calib Points: component inputs and outputs."
 permalink: /docs/components/iamlab-calib-points/
 ---
 
@@ -71,13 +71,5 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `index` | Integer | Current mark index |
 | `sheet` | Text | Printable measurement protocol |
 | `info` | Text | Diagnostics |
-
-## Notes
-
-- The marks are laid out on several radii and angles around the arm.
-  At least three radii are recommended for the fit.
-- `points` is connected to the `commanded` input of Scara Fit; the
-  `sheet` output is a printable measurement protocol.
-- Buttons on the component step through the marks and move the machine.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

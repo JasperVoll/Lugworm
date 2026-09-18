@@ -2,7 +2,7 @@
 title: "IAMLab Interlayer Time"
 nav_order: 7
 parent: "Components"
-description: "IAMLab Interlayer Time: component inputs, outputs, and usage notes."
+description: "IAMLab Interlayer Time: component inputs and outputs."
 permalink: /docs/components/iamlab-interlayer-time/
 ---
 
@@ -76,25 +76,5 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `layers` | Integer | Layer count of the whole print, not of the visible cut |
 | `info` | Text | Diagnostics |
 | `legend` | Text | Legend spec for IAMLab Legend: the Plasma scale, its maximum and the fast and slow thresholds this analysis used |
-
-## Notes
-
-- `layer` scrolls the preview: wire a slider to step through the print
-  one layer at a time. It also cuts the `perLayer`, `times`, `path` and
-  `colors` outputs down to the layers it leaves visible - `report`,
-  `layers` and `info` always describe the whole print.
-- `minTime` flags interlayer times that are too short (bead below still
-  soft); `maxTime` flags times that are too long (bead below skinned
-  over). Either is off at `0`.
-- `shade` tells adjacent layers apart when their times are similar:
-  `0` none, `1` alternating tint per layer (default), `2` a
-  bottom-to-top ramp. Shading is display only - the `colors` output
-  always carries the plain unshaded scale.
-- With a print log wired to `log` (from [IAMLab Live View]({{ '/docs/components/iamlab-live-view/' | relative_url }}) or a saved
-  CSV), the real recorded timestamps replace the estimate from feeds.
-- The `legend` output is an `iamlab-legend:v1` wire - connect it to
-  [IAMLab Legend]({{ '/docs/components/iamlab-legend/' | relative_url }}) so the legend always matches the colours drawn here.
-- The Feed override group only matters for the estimated clock; it has
-  no effect once a print log supplies real timestamps.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

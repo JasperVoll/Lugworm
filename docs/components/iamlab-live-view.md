@@ -2,7 +2,7 @@
 title: "IAMLab Live View"
 nav_order: 9
 parent: "Components"
-description: "IAMLab Live View: component inputs, outputs, and usage notes."
+description: "IAMLab Live View: component inputs and outputs."
 permalink: /docs/components/iamlab-live-view/
 ---
 
@@ -89,20 +89,5 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `log` | Text (list) | Print-log CSV header and rows |
 | `path` | Point (list) | Recorded print-log positions, in RHINO coordinates (the streaming CSV keeps the machine's own numbers) |
 | `logInfo` | Text | Print-log diagnostics |
-
-## Notes
-
-- `host` accepts a Duet host string from
-  [IAMLab Machine Console]({{ '/docs/components/iamlab-machine-console/' | relative_url }}).
-- Connect the job G-code to `gcode` so that the bead preview follows
-  the print.
-- The picture is drawn straight into the Rhino viewport and animated
-  smoothly (up to 60 fps) without re-solving the canvas, so the
-  definition can keep being edited while the print runs.
-- The Log group records the nozzle path with timestamps, layer changes,
-  and speed. `logFolder` writes the file while the print runs;
-  `logExport` writes the recorded data to a new file.
-- With a `generic-duet-cartesian` definition, the
-  plate, the position, and the bead are shown without an arm.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

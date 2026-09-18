@@ -10,4 +10,4 @@ has_toc: false
 # Getting started
 
 - [Installation]({{ '/docs/getting-started/installation/' | relative_url }})
-- [Quick Start]({{ '/docs/getting-started/quick-start/' | relative_url }})
+- [Component Map]({{ '/docs/getting-started/component-map/' | relative_url }})

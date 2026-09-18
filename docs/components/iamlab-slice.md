@@ -2,7 +2,7 @@
 title: "IAMLab Slice"
 nav_order: 23
 parent: "Components"
-description: "IAMLab Slice: component inputs, outputs, and usage notes."
+description: "IAMLab Slice: component inputs and outputs."
 permalink: /docs/components/iamlab-slice/
 ---
 
@@ -108,79 +108,5 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `contours` | Curve (tree) | One branch per layer, walls then infill. With several objects the branch path is object, then layer |
 | `layers` | Integer | Number of layers over all objects |
 | `info` | Text | Diagnostics and warnings |
-
-## Notes
-
-- `layerHeight` and `spacing` must be repeated on IAMLab G-code
-  Generator (`layerHeight`, `width`), because the G-code Generator does
-  not read them from the curves.
-- `mode`: `0` planar is the normal choice. `1` conical is the
-  non-planar mode; see [Non-Planar Slicing]({{ '/docs/workflows/non-planar-slicing/' | relative_url }}) before using it, and
-  enable the `varh` group on the G-code Generator afterwards. `mode = 2` slices planar
-  and warns.
-- `infill`: `4` (fermat) and `3` (spiral) produce one continuous path
-  per layer; `1` (zigzag) and `2` (concentric) produce many separate
-  lines or rings. Concentric, spiral and fermat start at the seam of the
-  innermost wall, so the hop from wall to infill is one `spacing`. A
-  layer with several islands falls back to separate rings.
-- `infill` `5` and `6` (wave) lay the same parallel rows as zigzag, but
-  each row follows a wave and neighbouring rows are mirrored, so one
-  row's peaks face the next row's troughs. `waveTangent` makes them
-  touch exactly; otherwise they stop `waveClearance` short. `5` uses a
-  sine, `6` uses whatever curve you draw in [IAMLab Graph Mapper]({{ '/docs/components/iamlab-graph-mapper/' | relative_url }}) -
-  wire its `map` output into `profile`. With `waveRepeat` off the curve
-  is mirrored at every period end, so any shape tiles smoothly even if
-  its two ends do not match.
-- **Bricklayer** (group) shifts adjacent wall loops by half a layer
-  height so the beads bond in a running bond instead of stacking into
-  one continuous seam. Two loops interlock only when they are within one
-  bead width **and** run alongside each other for more than
-  `brickOverlap` of the shorter loop, so a ring that merely brushes past
-  another is left alone. The outermost wall stays flat unless
-  `brickOuter` is set, and `brickRamp` layers stay flat at the bottom
-  and the top so the print sits flat on the bed and ends flat.
-  **Enable the G-code Generator's `varh` group with it**: a shifted loop
-  sits 1.5 layer heights above the one below on the ramp-in layer and
-  0.5 on the ramp-out layer, and `varh` is what makes the flow follow
-  that gap. The component says so whenever it actually shifts anything.
-- **Non-planar infill** (group) waves the infill up and down in Z so
-  successive layers mesh into each other. `npPhase` `0.5` puts the next
-  layer's trough over this layer's crest. The amplitude ramps to zero
-  over `npRamp` layers at the bottom and the top, and an amplitude above
-  0.4 x the layer height is refused rather than quietly clamped -
-  beyond that two consecutive layers would intersect. Walls are never
-  modulated, only infill.
-- Neither the bricklayer nor the non-planar pass has been printed yet.
-  Treat the first run of either as an untested machine trial.
-- Adaptive layer height (group): in planar mode the slicer chooses the largest
-  gap compatible with the surface inclinations inside that gap. A distant dome
-  crown therefore does not force the lower layers to use the same thin spacing.
-  It chooses a smaller height near shallow or overhanging surfaces and a
-  larger height on steep surfaces, bounded by `hMin` and `hMax`. Small features
-  are retained rather than averaged away; horizontal base/top caps are ignored,
-  while internal horizontal ledges remain active and force `hMin`. Each input object is analysed
-  independently, but its layers share horizontal heights. `info` reports the
-  realised range and first/last gaps between sections. A dome should show
-  decreasing gaps toward its crown; the final full gap need not equal `hMin`
-  exactly. This heuristic does not prove support or bridge stability;
-  inspect the toolpath and run Overhang for those decisions.
-- How to use it: enable the Adaptive group, choose `hMin` and `hMax` in mm,
-  click Compute, and read the realised range in `info`. Then enable the
-  Generator's `varh` group. If the nominal generator height is `H`, set
-  `varhMin <= hMin/H` and `varhMax >= hMax/H`; the first section uses the
-  existing `firstLayer` rule (when `firstLayer = 0`, the first section is
-  half `hMin` above the geometry base). The Generator uses its nominal
-  `layerHeight` for first-layer extrusion, so match it to that first-layer
-  thickness. These settings control geometric spacing and local flow;
-  they do not establish a printable or physically supported part.
-- `cornerRadius` rounds sharp corners slightly so that the nozzle does
-  not over-fill them.
-- The Spiralize group prints the whole part as one continuous helix
-  (vase mode). Every layer must then consist of exactly one closed
-  curve; `wallCount` and `infill` are ignored and `info` says so.
-- Brep and surface inputs are meshed internally with a tolerance-driven
-  setting. Prepare the mesh upstream if you need control over it.
-- With a list of shapes, the shapes are printed one after the other;
-  the Multi-object group sets the order.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

@@ -2,7 +2,7 @@
 title: "IAMLab RSM Evaluate"
 nav_order: 20
 parent: "Components"
-description: "IAMLab RSM Evaluate: component inputs, outputs, and usage notes."
+description: "IAMLab RSM Evaluate: component inputs and outputs."
 permalink: /docs/components/iamlab-rsm-evaluate/
 ---
 
@@ -67,17 +67,5 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `json` | Text (list) | Model coefficients as JSON for archiving or external tools |
 | `info` | Text | Diagnostics |
 | `diag` | Text (list) | Regression diagnostics per response: leverage, studentized residuals, Cook's distance and VIF. Connect a panel |
-
-## Notes
-
-- `tablePath` accepts the Excel or CSV file exported by DoE Design with
-  the measurement columns filled in. CSV files may use English (`1.5`)
-  or German (`1,5`) numbers; a file that mixes both is refused.
-- `model`: Linear fits straight effects, 2FI adds interactions between
-  settings, Quadratic adds curvature.
-- A weak fit (adjusted R² below 0.5) is flagged. A recommendation from
-  a weak formula is only as reliable as that formula.
-- The Direct group accepts the data as Grasshopper trees instead of a
-  file.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).
