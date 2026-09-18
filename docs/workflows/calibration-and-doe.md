@@ -2,74 +2,58 @@
 title: "Calibration and DoE"
 nav_order: 1
 parent: "Workflows"
-description: "Calibration and DoE: instructions and practical checks for IAMLab Slicer."
+description: "Plan test prints, fit measured results, and select a material recipe."
 permalink: /docs/workflows/calibration-and-doe/
 ---
 
 # Calibration and DoE
 
-Use design of experiments (DoE) to find material settings with planned prints:
+Use design of experiments (DoE) to compare material settings through a planned series of prints. Keep the specimen shape consistent, measure each run, and use the results to choose settings for a confirmation print.
 
-```
-IAMLab DoE Design --> print and measure the runs --> IAMLab RSM Evaluate --> IAMLab Desirability
-        ^
-        |
-IAMLab Test Geometry  (the same sample shape for every run)
-```
+The sequence is **DoE Design → print and measure → RSM Evaluate → Desirability → Pareto Select**. Test Geometry supplies the specimen; printing and measurement happen between planning and fitting.
 
 {% include figure.html src="workflows/calibration-loop.png" alt="The calibration loop on the canvas" %}
 
-## 1. Plan (DoE Design)
+## 1. Plan the runs
 
-Enter two to six settings, such as `printSpeed`, `pressureOffset`, `layerHeight`,
-with low/high bounds. Choose DSD for screening, BBD for detailed modelling,
-or Taguchi/factorial. Export Excel or CSV; each row defines one print.
-The optional power group estimates whether enough runs exist to detect a
-specified effect and warns if the plan is too small.
+In [IAMLab DoE Design]({{ '/docs/components/iamlab-doe-design/' | relative_url }}), enter two to six settings, such as `printSpeed`, `pressureOffset`, and `layerHeight`, with a low and high bound for each. Choose a design: DSD for screening, BBD for detailed modelling, or a Taguchi or factorial design.
+
+Export the plan to Excel or CSV. Each row defines one print. The optional power group estimates whether the plan has enough runs to detect a specified effect and warns when it is too small.
 
 ## 2. Print and measure
 
-Print one Test Geometry sample per row. Enter measured dimensional error,
-surface score or collapse height in the exported table.
+Use [IAMLab Test Geometry]({{ '/docs/components/iamlab-test-geometry/' | relative_url }}) to keep the sample shape the same for every run. Print one sample per row, then enter measurements such as dimensional error, surface score, or collapse height in the exported table. Keep each measurement with the settings that produced it.
 
 {% include figure.html src="workflows/doe-coupons.png" alt="Printed DoE coupons" %}
 
-## 3. Fit (RSM Evaluate)
+## 3. Fit and review the models
 
-Set `tablePath` to completed Excel or CSV data. CSV accepts English (`1.5`) or
-German (`1,5`) numbers; mixed formats are refused with the line identified.
-Choose Linear, 2FI (interactions) or Quadratic (curvature).
-Read fit quality, setting effects and diagnostics for distorting runs or
-correlated settings. Weak fits are flagged: recommendations depend on fit quality.
+Set `tablePath` on [IAMLab RSM Evaluate]({{ '/docs/components/iamlab-rsm-evaluate/' | relative_url }}) to the completed Excel or CSV file. CSV accepts English (`1.5`) or German (`1,5`) numbers. Mixed formats are refused, with the affected line identified.
 
-## 4. Recommend (Desirability)
+Choose **Linear**, **2FI** for interactions, or **Quadratic** for curvature. Read the fit quality, setting effects, and diagnostics for influential runs or correlated settings. Resolve weak-fit warnings before relying on recommendations: the recommendations depend on these models.
 
-Set each goal: `max`, `min`, `target=7 in 6..8`, or `range=2..5`, optionally
-weighted with `w=` and shaped with `s=`. Read `settings`, `D` (0 to 1) and the report.
-`within-PI` marks alternatives whose predictions all lie inside the recommendation's
-prediction intervals. This coverage check cannot rank them or prove equality;
-no marker appears without model intervals. Enable `pareto` for trade-offs.
+## 4. Define the goals
 
-## 5. Select (Pareto Select)
+Connect the fitted models to [IAMLab Desirability]({{ '/docs/components/iamlab-desirability/' | relative_url }}). Set a goal for each response: `max`, `min`, `target=7 in 6..8`, or `range=2..5`. Use `w=` to weight a goal and `s=` to shape it when needed.
 
-Wire `pareto`, factor names and active goal names into [IAMLab Pareto Select]({{ '/docs/components/iamlab-pareto-select/' | relative_url }}).
-Click a recipe on the two-goal scatter or multi-goal parallel-axis plot. Its
-settings are stored in the document, allowing DoE components to be switched off.
-Recomputing Desirability with changed goals/weights preserves the recipe but
-flags *front changed* until you select again; it is never silently replaced.
+Read the recommended `settings`, the combined desirability `D` (0 to 1), and the report. After solving, drag the curve below the component to edit the goal ramp, target, and shape.
 
-{% include figure.html src="workflows/pareto-pick.png" alt="Picking a recipe on the front" %}
-
-After solving, drag the curve below Desirability to edit goal ramp, target and shape.
+The `within-PI` marker identifies alternatives whose predictions all lie within the recommendation's prediction intervals. It does not rank those alternatives or prove they are equivalent. The marker is absent when model intervals are unavailable.
 
 {% include figure.html src="workflows/desirability-goals.png" alt="Desirability profile with the goal-curve editor" %}
 
-## Related calibrations
+## 5. Choose and confirm a recipe
 
-- **Pump (MAI 2PUMP PICTOR-3D):** measure flow at several settings by pumping into
-  a bucket and weighing. Generator's pump group recommends a setting from this
-  table; the shipped table is a placeholder. It never changes G-code extrusion.
-- **Overhang:** `warnDeg` and `failDeg` (25° and 45°) are placeholders;
-  calibrate with a stepped-cone print.
-- **SCARA:** [IAMLab Calib Points]({{ '/docs/components/iamlab-calib-points/' | relative_url }}) drives to marks; [IAMLab Scara Fit]({{ '/docs/components/iamlab-scara-fit/' | relative_url }}) fits
-  arm lengths from measured positions.
+Enable `pareto` on Desirability to explore trade-offs. Connect `pareto`, the factor names, and the active goal names to [IAMLab Pareto Select]({{ '/docs/components/iamlab-pareto-select/' | relative_url }}). Choose a recipe on the two-goal scatter plot or the multi-goal parallel-axis plot.
+
+The selected settings are stored in the Grasshopper document, so you can switch off the DoE components afterward. If you change goals or weights and recompute Desirability, the recipe stays in place and is flagged *front changed* until you select again.
+
+Print the chosen recipe and compare the measurements with the prediction before adopting it for further work.
+
+{% include figure.html src="workflows/pareto-pick.png" alt="Picking a recipe on the Pareto front" %}
+
+## Other calibration tasks
+
+- **Pump flow (MAI 2PUMP PICTOR-3D):** pump into a bucket and weigh the output at several settings. Generator's pump group uses the resulting table to recommend a setting. Replace the shipped placeholder table with measurements; the recommendation does not change G-code extrusion.
+- **Overhang limits:** calibrate `warnDeg` and `failDeg` with a stepped-cone print. The defaults of 25° and 45° are placeholders.
+- **SCARA geometry:** use [Calib Points]({{ '/docs/components/iamlab-calib-points/' | relative_url }}) with Machine Console to visit measurement marks, then [Scara Fit]({{ '/docs/components/iamlab-scara-fit/' | relative_url }}) to fit arm lengths from measured positions.

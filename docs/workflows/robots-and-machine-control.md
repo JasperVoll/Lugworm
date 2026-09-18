@@ -2,80 +2,73 @@
 title: "Robots and Machine Control"
 nav_order: 3
 parent: "Workflows"
-description: "Robots and Machine Control: instructions and practical checks for IAMLab Slicer."
+description: "Choose a machine profile, review motion, and run or export a job."
 permalink: /docs/workflows/robots-and-machine-control/
 ---
 
 # Robots and Machine Control
 
-Choose IAMLab Robot Definition once and wire its profile text to each `robot`
-input. Text panels containing `"scara"` or `"none"` also work.
-See [No warranty]({{ '/' | relative_url }}#no-warranty) before use.
+Choose a machine profile, review the generated motion, then transfer or run the job. Direct control is available for supported Duet machines; Marlin and Klipper use exported G-code files.
 
-| Profile | Machine type | Program written | Direct control |
+## 1. Choose the machine profile
+
+Add [IAMLab Robot Definition]({{ '/docs/components/iamlab-robot-definition/' | relative_url }}) and connect its profile text to each component's `robot` input. Text panels containing `scara` or `none` also work.
+
+| Profile | Use it for | G-code dialect | Direct control |
 |---|---|---|---|
-| `none` | no machine, toolpath only | RepRap G-code | no |
-| `generic-cartesian` | printer with X, Y, and Z axes | RepRap G-code | no |
-| `generic-duet-cartesian` | printer with X, Y, and Z axes and a Duet board | RepRap G-code | yes (7 Print) |
-| `potterbot-scara-v4` | the SCARA arm of the lab | RepRap G-code | yes (7 Print) |
-| `generic-klipper` | Cartesian printer running Klipper | RepRap G-code, Klipper dialect | no |
-| `generic-marlin` | Cartesian printer running Marlin | RepRap G-code, Marlin dialect | no |
+| `none` | Toolpath preview without a machine model | RepRap | No |
+| `generic-cartesian` | A printer with X, Y, and Z axes | RepRap | No |
+| `generic-duet-cartesian` | A Cartesian printer with a Duet board | RepRap | Yes |
+| `potterbot-scara-v4` | The laboratory SCARA arm | RepRap | Yes |
+| `generic-klipper` | A Cartesian printer running Klipper | Klipper | No |
+| `generic-marlin` | A Cartesian printer running Marlin | Marlin | No |
+
+An unwired Generator `robot` input uses the laboratory SCARA's mirrored X/Y axes. For a Cartesian printer, connect the appropriate Cartesian profile; use `none` for a model-free preview. Read `frame:` in Generator's `info` output to confirm the coordinate convention.
 
 {% include figure.html src="workflows/robot-profile.png" alt="Selecting a robot profile" %}
 
-## Coordinate frame
+## 2. Review the motion
 
-An unwired Generator `robot` input selects the lab SCARA's mirrored X/Y axes.
-For an ordinary printer, wire `generic-cartesian`, `generic-duet-cartesian`,
-or `none`. Check `frame:` in `info` to confirm the convention.
+Connect the same Robot Definition and the generated G-code to [IAMLab Robot Simulation]({{ '/docs/components/iamlab-robot-simulation/' | relative_url }}). Move `sim` from `0` to `1` to inspect the print. Beads show extrusion; ochre lines show travel.
 
-## Check in Robot Simulation
+For a SCARA profile, the checks cover reach, joint angles and speeds, and firmware-compatible movement between points. Unreachable targets set `reachOK` to false, appear in `problems`, and produce a red error. Correct the placement, speed, or geometry as appropriate, then regenerate and review the job before running it.
 
-Connect the definition and G-code to IAMLab Robot Simulation.
+{% include figure.html src="workflows/reach-violation.png" alt="An out-of-reach placement detected in Robot Simulation" %}
 
-- Move `sim` from 0 to 1 to review the print: beads show extrusion, ochre lines travel.
-- SCARA checks cover reach, joint angles and speeds, and firmware-compatible
-  movement between points.
-- Unreachable points set `reachOK` false, appear in `problems`, and cause a red
-  error. Do not run while that error is shown. Move the part, reduce speeds,
-  or change the geometry.
+## 3. Connect a Duet machine
 
-{% include figure.html src="workflows/reach-violation.png" alt="An out-of-reach placement caught before it reaches hardware" %}
+The **7 Print** group contains three components:
 
-## Direct control (7 Print)
+- [Machine Console]({{ '/docs/components/iamlab-machine-console/' | relative_url }}) connects over WiFi and provides homing, press-and-hold jogging, origin capture, job checking and upload, print controls, commands, calibration positions, and logs.
+- [Live View]({{ '/docs/components/iamlab-live-view/' | relative_url }}) shows the machine, nozzle position, and deposited bead.
+- [Machine Files]({{ '/docs/components/iamlab-machine-files/' | relative_url }}) manages files on the connected machine.
 
-[IAMLab Machine Console]({{ '/docs/components/iamlab-machine-console/' | relative_url }}) controls Duet machines over WiFi: connect, home,
-press-and-hold jog, capture origin, check/upload jobs, start/pause/cancel,
-send commands, visit calibration points and keep logs. [IAMLab Live View]({{ '/docs/components/iamlab-live-view/' | relative_url }})
-shows the machine and bead; [IAMLab Machine Files]({{ '/docs/components/iamlab-machine-files/' | relative_url }}) manages storage.
+Connect the Robot Definition before operating the console. Without one, control assumes the laboratory SCARA. For other Duet Cartesian printers, select `generic-duet-cartesian`; moves are checked against firmware travel limits. Calib Points and Scara Fit require the SCARA.
 
-Before motion, the plugin checks machine state. Jobs are checked against machine
-limits before upload; uploads are checksum-verified. Homing is verified, and the
-firmware machine type must match the profile. Movement outside the plugin
-invalidates the position and requires homing again. The first connection records
-the board identity; a different board at the same address blocks actions until
-you accept it with "Trust connected machine". Any failed check blocks the action
-and displays its reason beside the disabled button. Emergency stop works in
-every state.
+### Read the checks before moving
 
-Without a Robot Definition, control assumes the lab SCARA. For other Duet
-printers, use `generic-duet-cartesian`; moves are checked against firmware travel
-limits. [IAMLab Calib Points]({{ '/docs/components/iamlab-calib-points/' | relative_url }}) and [IAMLab Scara Fit]({{ '/docs/components/iamlab-scara-fit/' | relative_url }}) require the SCARA.
+The plugin checks machine state and verifies homing before motion. The firmware machine type must match the profile. Movement outside the plugin invalidates the position and requires homing again.
 
-{% include figure.html src="workflows/live-control.png" alt="Live control from the canvas" %}
+The first connection records the board identity. If a different board appears at the same address, actions are blocked until you verify the machine and choose **Trust connected machine**. A failed check displays its reason beside the disabled button. The emergency-stop control remains available in every state.
 
-Jobs record nozzle positions, timestamps, layer changes and speed to a local
-buffer. In Logs, choose *Save this job* or *Keep all job logs* and a destination
-folder. If a network folder disconnects, the buffer is retained and copying
-resumes on reconnection. Live View can colour deviation from the intended path.
+### Upload and run a reviewed job
 
-## Klipper and Marlin
+Use Machine Console to check and upload the job. Jobs are checked against machine limits before upload, and uploads are checksum-verified. Review the reported result before starting the print; use the console to start, pause, or cancel it.
 
-`generic-klipper` and `generic-marlin` set the coordinate frame and default
-G-code dialect on [IAMLab G-code Generator]({{ '/docs/components/iamlab-g-code-generator/' | relative_url }}). Transfer the file yourself.
-Klipper is a G-code target only; there is no live Klipper connection. Marlin
-also has no live connection. Machine Console, Live View and Machine Files refuse
-these profiles with "use a Duet profile".
+{% include figure.html src="workflows/live-control.png" alt="Live control from the Grasshopper canvas" %}
 
-Klipper emits `SET_VELOCITY_LIMIT`, `SET_PRESSURE_ADVANCE` and
-`SET_PRINT_STATS_INFO`; the job validator accepts exactly these three Klipper commands.
+### Keep the print log
+
+Jobs record nozzle positions, timestamps, layer changes, and speed in a local buffer. In **Logs**, choose **Save this job** or **Keep all job logs**, then select a destination folder. If a network folder disconnects, the buffer is retained and copying resumes when the connection returns. Live View can colour deviation from the intended path.
+
+## Transfer files to Klipper or Marlin
+
+The `generic-klipper` and `generic-marlin` profiles set the coordinate frame and default dialect in [G-code Generator]({{ '/docs/components/iamlab-g-code-generator/' | relative_url }}). Write the reviewed file with [Save G-code]({{ '/docs/components/iamlab-save-g-code/' | relative_url }}) and transfer it using your machine's usual workflow.
+
+There is no live connection for either firmware. Machine Console, Live View, and Machine Files refuse these profiles with the message *use a Duet profile*.
+
+For Klipper, Generator emits `SET_VELOCITY_LIMIT`, `SET_PRESSURE_ADVANCE`, and `SET_PRINT_STATS_INFO`. These are the three Klipper-specific commands accepted by the job validator.
+
+## Before running hardware
+
+Machine control has been tested on the laboratory machine; treat other machines as untested. Review every job, keep the emergency stop within reach, and stay with a running print. Read the [safety and warranty information]({{ '/' | relative_url }}#safety) before use.
