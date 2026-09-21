@@ -44,7 +44,7 @@ The `within-PI` marker identifies alternatives whose predictions all lie within 
 
 ## 5. Choose and confirm a recipe
 
-Enable `pareto` on Desirability to explore trade-offs. Connect `pareto`, the factor names, and the active goal names to [IAMLab Pareto Select]({{ '/docs/components/iamlab-pareto-select/' | relative_url }}). Choose a recipe on the two-goal scatter plot or the multi-goal parallel-axis plot.
+Enable `pareto` on Desirability to explore trade-offs. Connect its `pareto` and `objectives` outputs and the factor names to [IAMLab Pareto Select]({{ '/docs/components/iamlab-pareto-select/' | relative_url }}). Choose a recipe on the two-goal scatter plot or the multi-goal parallel-axis plot. The plot's axes are the goal scores from 0 to 1, so target goals can be traded off too, and the front does not depend on the goal weights: those are your preference, and you apply it here, by clicking or by wiring a `weights` list to see where it would land.
 
 The selected settings are stored in the Grasshopper document, so you can switch off the DoE components afterward. If you change goals or weights and recompute Desirability, the recipe stays in place and is flagged *front changed* until you select again.
 
@@ -56,4 +56,4 @@ Print the chosen recipe and compare the measurements with the prediction before 
 
 - **Pump flow (MAI 2PUMP PICTOR-3D):** pump into a bucket and weigh the output at several settings. Generator's pump group uses the resulting table to recommend a setting. Replace the shipped placeholder table with measurements; the recommendation does not change G-code extrusion.
 - **Overhang limits:** calibrate `warnDeg` and `failDeg` with a stepped-cone print. The defaults of 25° and 45° are placeholders.
-- **SCARA geometry:** use [Calib Points]({{ '/docs/components/iamlab-calib-points/' | relative_url }}) with Machine Console to visit measurement marks, then [Scara Fit]({{ '/docs/components/iamlab-scara-fit/' | relative_url }}) to fit arm lengths from measured positions.
+- **SCARA geometry:** the plugin no longer fits arm lengths. Drive measurement marks through the `points` input of [Machine Console]({{ '/docs/components/iamlab-machine-console/' | relative_url }}) and its go-to selector, then fit the geometry outside the plugin.

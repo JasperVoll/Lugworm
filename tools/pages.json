@@ -31,12 +31,6 @@
     "path": "index.md",
     "url": "/"
   },
-  "IAMLab-Calib-Points": {
-    "title": "IAMLab Calib Points",
-    "path": "docs/components/iamlab-calib-points.md",
-    "url": "/docs/components/iamlab-calib-points/",
-    "parent": "Components"
-  },
   "IAMLab-Desirability": {
     "title": "IAMLab Desirability",
     "path": "docs/components/iamlab-desirability.md",
@@ -155,12 +149,6 @@
     "title": "IAMLab Save G-code",
     "path": "docs/components/iamlab-save-g-code.md",
     "url": "/docs/components/iamlab-save-g-code/",
-    "parent": "Components"
-  },
-  "IAMLab-Scara-Fit": {
-    "title": "IAMLab Scara Fit",
-    "path": "docs/components/iamlab-scara-fit.md",
-    "url": "/docs/components/iamlab-scara-fit/",
     "parent": "Components"
   },
   "IAMLab-Slice": {

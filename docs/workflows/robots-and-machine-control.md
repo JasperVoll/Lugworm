@@ -43,7 +43,7 @@ The **7 Print** group contains three components:
 - [Live View]({{ '/docs/components/iamlab-live-view/' | relative_url }}) shows the machine, nozzle position, and deposited layer.
 - [Machine Files]({{ '/docs/components/iamlab-machine-files/' | relative_url }}) manages files on the connected machine.
 
-Connect the Robot Definition before operating the console. Without one, control assumes the laboratory SCARA. For other Duet Cartesian printers, select `generic-duet-cartesian`; moves are checked against firmware travel limits. Calib Points and Scara Fit require the SCARA.
+Connect the Robot Definition before operating the console. Without one, control assumes the laboratory SCARA. For other Duet Cartesian printers, select `generic-duet-cartesian`; moves are checked against firmware travel limits.
 
 ### Read the checks before moving
 

@@ -37,7 +37,7 @@ The [Getting started guide]({{ '/docs/getting-started/' | relative_url }}) walks
 
 The plugin also supports vase mode, running-bond walls, and planar or height-varying wave infill. Graph Mapper shapes parameter values, while Legend explains analysis colours. G-code output supports Duet RepRapFirmware, Marlin, and Klipper, with ram/pump flow and pressure controls. G-code Restart helps prepare an interrupted print for continuation.
 
-Direct machine control is available for Duet machines over WiFi, including jogging, print controls, heaters, and fans. Transfer Marlin and Klipper files using your usual machine workflow.
+Direct machine control is available for Duet machines over WiFi, including homing, jogging, and print controls. Transfer Marlin and Klipper files using your usual machine workflow.
 
 ## Find the right guide
 

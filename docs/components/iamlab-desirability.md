@@ -59,7 +59,7 @@ Right-click the component to switch this group on. The inputs appear only while 
 
 | Name | Type | Description |
 |---|---|---|
-| `paretoOn` | Boolean | Also collect the Pareto front of tradeoffs over the individual response desirabilities. Off by default because it evaluates every goal even where the scalarized D is 0 |
+| `paretoOn` | Boolean | Also collect the Pareto front of tradeoffs over the individual response desirabilities. Off by default because it evaluates every goal even where the scalarized D is 0. The front depends on the goals and their bounds, not on the weights |
 | `maxFront` | Integer | Front thinning cap by crowding distance. The best recipe per objective always survives |
 
 ### Optional group: Excel export input
@@ -82,6 +82,7 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `sweep` | Number (tree) | Sweep recipes, one branch per target: target, factors, D, predictions |
 | `info` | Text | Diagnostics |
 | `interval` | Number (tree) | 95% prediction interval at the recommendation, one branch per response: low, predicted, high. Empty when the model carries no covariance |
-| `pareto` | Number (tree) | Pareto front recipes, with the pareto group enabled. One branch per recipe: factor values, d per active goal, D. Objectives follow the model order, skipping 'none' goals. See the report for axis names |
+| `pareto` | Number (tree) | Pareto front recipes, with the pareto group enabled. One branch per recipe: factor values, d per active goal, D. Objectives follow the model order, skipping 'none' goals. Wire to Pareto Select `front` |
+| `objectives` | Text (list) | The names of the active goals in model order, without `none` goals: the axes of `pareto`. Wire to Pareto Select `objectiveNames`. Emitted whether or not the pareto group is on |
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

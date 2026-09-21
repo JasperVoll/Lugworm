@@ -14,7 +14,7 @@ IAMLab Slicer is distributed as a packaged Grasshopper plugin. This repository p
 
 ### Testing protocols and design of experiments
 
-The calibration workflow is built around planned tests. **DoE Design** creates a series of test prints; **Test Geometry** provides repeatable sample shapes; and **RSM Evaluate** fits measured results. **Desirability** recommends settings from the fitted models, while **Pareto Select** exposes trade-offs and keeps the selected recipe with the Grasshopper document. **Calib Points** and **Scara Fit** support measurement-based calibration of the laboratory SCARA.
+The calibration workflow is built around planned tests. **DoE Design** creates a series of test prints; **Test Geometry** provides repeatable sample shapes; and **RSM Evaluate** fits measured results. **Desirability** recommends settings from the fitted models, while **Pareto Select** exposes trade-offs and keeps the selected recipe with the Grasshopper document.
 
 ### Parameters along the toolpath
 

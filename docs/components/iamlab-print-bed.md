@@ -32,7 +32,7 @@ Panel: `2 Place`. Nickname: `Bed`. Compute button: no (runs on every change).
 
 | Name | Type | Description |
 |---|---|---|
-| `bed` | Text | Print Bed definition. Connect it into the bed input of Place, Robot Simulation, Live View and Calib Points |
+| `bed` | Text | Print Bed definition. Connect it into the bed input of Place, Robot Simulation and Live View |
 | `width` | Number | Bed width, mm |
 | `depth` | Number | Bed depth, mm |
 | `center` | Point | Bed plate center |

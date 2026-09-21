@@ -24,7 +24,6 @@ paths out of frame.
 
 | File | Caption | Page |
 |---|---|---|
-| `components/iamlab-calib-points.png` | IAMLab Calib Points on the canvas | `docs/components/iamlab-calib-points.md` |
 | `components/iamlab-desirability.png` | IAMLab Desirability on the canvas | `docs/components/iamlab-desirability.md` |
 | `components/iamlab-doe-design.png` | IAMLab DoE Design on the canvas | `docs/components/iamlab-doe-design.md` |
 | `components/iamlab-g-code-generator.png` | IAMLab G-code Generator on the canvas | `docs/components/iamlab-g-code-generator.md` |
@@ -46,7 +45,6 @@ paths out of frame.
 | `components/iamlab-robot-simulation.png` | IAMLab Robot Simulation on the canvas | `docs/components/iamlab-robot-simulation.md` |
 | `components/iamlab-rsm-evaluate.png` | IAMLab RSM Evaluate on the canvas | `docs/components/iamlab-rsm-evaluate.md` |
 | `components/iamlab-save-g-code.png` | IAMLab Save G-code on the canvas | `docs/components/iamlab-save-g-code.md` |
-| `components/iamlab-scara-fit.png` | IAMLab Scara Fit on the canvas | `docs/components/iamlab-scara-fit.md` |
 | `components/iamlab-slice.png` | IAMLab Slice on the canvas | `docs/components/iamlab-slice.md` |
 | `components/iamlab-test-geometry.png` | IAMLab Test Geometry on the canvas | `docs/components/iamlab-test-geometry.md` |
 | `components/iamlab-version.png` | IAMLab Version on the canvas | `docs/components/iamlab-version.md` |

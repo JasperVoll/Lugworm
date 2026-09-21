@@ -24,10 +24,11 @@ Panel: `6 Calibrate`. Nickname: `Pareto`. Compute button: no (runs on every chan
 |---|---|---|
 | `front` | Number (tree) | The `pareto` output of IAMLab Desirability: one branch per recipe with the factor values, one desirability per active goal, and `D` |
 | `factorNames` | Text (list) | The factor names in model order (from RSM Evaluate or DoE Design) |
-| `objectiveNames` | Text (list) | The names of the **active** goals in model order - skip goals set to `none` |
+| `objectiveNames` | Text (list) | The names of the **active** goals in model order: wire the `objectives` output of Desirability, which is exactly that list |
 | `selectionKey` | Text | Pick a recipe without the mouse: the `key` this component gave out earlier. A key from a different front is refused, not remapped. Wins over `selectionIndex` |
 | `selectionIndex` | Integer | Pick a recipe without the mouse: the branch number (from 0) of the front that is wired right now. A one-time request - when the front changes, the same number is not applied again |
 | `optimumSettings` | Number (list) | Optional: wire Desirability's `settings` to mark its recommendation on the plot. Without it, the recipe with the largest `D` on the front is marked as *best D in supplied front* |
+| `weights` | Number (list) | Optional: one importance per active goal, in `objectiveNames` order, 0 or more each. Marks the recipe that scores best for that weighting (green square) without recomputing anything upstream. A weight of 0 leaves that goal out. A wrong count, a negative value or all zeros is refused with a warning |
 
 All inputs are optional. Without a front the component still emits a recipe it stored earlier.
 
@@ -45,16 +46,39 @@ All inputs are optional. Without a front the component still emits a recipe it s
 ## How to use it
 
 1. Enable the `pareto` group on IAMLab Desirability and compute; wire its `pareto`
-   output to `front`, the factor names to `factorNames`, and a panel with the active
-   goal names to `objectiveNames`.
+   output to `front`, the factor names to `factorNames`, and its `objectives` output to
+   `objectiveNames`.
 2. Click a point on the strip under the component (two goals: a scatter; three or
    more: one line per recipe across one axis per goal; one goal: a strip). Press
    **Pick…** for a larger window; there the arrow keys walk the front and Enter
    confirms. Hovering shows the full recipe.
 3. Read `settings` for the print. **Reset** forgets the choice; both are undoable.
+4. Optional: wire a list of `weights` (one per goal) to see which recipe a given
+   importance would pick. Move the numbers and watch the green square walk along the
+   front. This is a probe for your preference, not a selection: click the recipe to
+   choose it.
 
 The axes are desirabilities from 0 to 1, not measured units: a value of 0.8 on the
 `width` axis means the recipe meets the width goal to 80 %.
+
+## Why the front is drawn over desirabilities
+
+A Pareto front and a desirability optimum are often described as two different
+methods, and they are - but they share one ingredient. The goal you type for each
+result (`min`, `max`, `target=7 in 6..8`) does two things: it turns a measured value
+into a score from 0 to 1 where bigger is always better, and, together with the weights,
+it folds all the scores into the single number `D`. Only the first step is needed to
+draw the front. Without it a target goal could not be put on a trade-off plot at all,
+because "close to 7 mm" has no direction in millimetres. So the front uses your goals
+and their bounds, but not your weights. The weights are a preference, and the front is
+there precisely so that you can see the trade-offs *before* committing to one. Pareto
+Select is where that preference is applied afterwards: by clicking, or by wiring
+`weights` to see where it would land.
+
+Two things follow. Recipes outside a goal's bounds all score 0 on that axis and are
+shown as one point, so the bounds you type decide what counts as acceptable. And factor
+priors (prefer a low layer height) are not on the axes, which is why Desirability's
+recommendation can sit off the front while still carrying the highest `D`.
 
 ## What happens when the front changes
 
