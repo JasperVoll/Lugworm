@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="1.0909 1.0909 21.8182 21.8182">
+  <title>Legend: one colour bar blending smoothly through the four IAMLab family hues, with ticks and labels</title>
+  <defs>
+    <linearGradient id="family" gradientUnits="userSpaceOnUse" x1="7.5" y1="3.5" x2="7.5" y2="21">
+      <stop offset="0" stop-color="#cde4ff"/>
+      <stop offset="0.16" stop-color="#639ed3"/>
+      <stop offset="0.3" stop-color="#28699f"/>
+      <stop offset="0.42" stop-color="#a92764"/>
+      <stop offset="0.54" stop-color="#de6a9d"/>
+      <stop offset="0.66" stop-color="#55b96b"/>
+      <stop offset="0.8" stop-color="#14773c"/>
+      <stop offset="0.9" stop-color="#9a7410"/>
+      <stop offset="1" stop-color="#ddbb39"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="3.5" width="7" height="17.5" fill="url(#family)" stroke="#12334f" stroke-width="1" stroke-linejoin="round"/>
+  <line x1="11" y1="5.5" x2="13" y2="5.5" stroke="#12334f" stroke-width="1" stroke-linecap="round"/>
+  <line x1="11" y1="9.5" x2="13" y2="9.5" stroke="#12334f" stroke-width="1" stroke-linecap="round"/>
+  <line x1="11" y1="13.5" x2="13" y2="13.5" stroke="#12334f" stroke-width="1" stroke-linecap="round"/>
+  <line x1="11" y1="17.5" x2="13" y2="17.5" stroke="#12334f" stroke-width="1" stroke-linecap="round"/>
+  <line x1="14.5" y1="5.5" x2="21" y2="5.5" stroke="#2a2a2a" stroke-width="1.6" stroke-linecap="round"/>
+  <line x1="14.5" y1="9.5" x2="19" y2="9.5" stroke="#2a2a2a" stroke-width="1.6" stroke-linecap="round"/>
+  <line x1="14.5" y1="13.5" x2="21" y2="13.5" stroke="#2a2a2a" stroke-width="1.6" stroke-linecap="round"/>
+  <line x1="14.5" y1="17.5" x2="18" y2="17.5" stroke="#2a2a2a" stroke-width="1.6" stroke-linecap="round"/>
+</svg>

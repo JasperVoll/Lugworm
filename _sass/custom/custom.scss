@@ -32,21 +32,6 @@ $iamlab-note:       #14773c !default;
 .screenshot-pending { color: $body-text-color; font-size: 0.8rem; border-left: 2px solid $border-color; padding-left: 0.75rem; }
 :focus-visible { outline: 2px solid $link-color; outline-offset: 3px; }
 
-// Component map: normal-sized text, native plugin icons, and no crossing wires.
-.component-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 1.25rem 0 2rem; }
-.main-content a.component-card { display: flex; align-items: flex-start; gap: 0.8rem; min-width: 0; padding: 1rem; border: 1px solid $border-color; border-radius: 8px; background: $sidebar-color; color: $body-text-color; text-decoration: none; }
-.main-content a.component-card:hover { border-color: $link-color; background: $body-background-color; }
-.component-card img { flex: 0 0 24px; width: 24px; height: 24px; margin-top: 0.25rem; }
-.component-card-body { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
-.component-panel { color: $body-text-color; font-size: 0.75rem; }
-.component-card strong { color: $link-color; font-size: 1rem; line-height: 1.4; }
-.component-description { font-size: 0.875rem; line-height: 1.6; }
-.component-route { margin: 1.5rem 0; padding: 1rem; border: 1px solid $border-color; border-left: 3px solid $link-color; border-radius: 8px; }
-.component-route .component-card { background: $body-background-color; }
-.component-wire { margin: 0.8rem 0; font-size: 0.875rem; line-height: 1.7; overflow-wrap: anywhere; }
-.component-wire:first-child { margin-top: 0; }
-.component-wire:last-child { margin-bottom: 0; }
-@media (max-width: 600px) {
-  .component-grid { grid-template-columns: minmax(0, 1fr); }
-  .component-route { padding: 0.75rem; }
-}
+// Component map: inline SVG from tools/component_map, scrolls sideways on narrow screens.
+.component-map { overflow-x: auto; margin: 1.5rem 0; }
+.component-map svg { display: block; width: 100%; min-width: 800px; height: auto; }
