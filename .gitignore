@@ -7,5 +7,7 @@ _site/
 vendor/
 *.log
 verification.json
+REPOSITORY-MIGRATION.md
+SETUP.md
 
 iamlab-slicer.wiki/

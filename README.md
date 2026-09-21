@@ -4,15 +4,13 @@ A Grasshopper plugin for slicing and controlling clay and cementitious-material 
 
 ## What it is and who it is for
 
-"I am a laboratory slicer." IAMLab Slicer grew out of a materials laboratory, where repeatable test specimens and controlled experiments matter more than production throughput. It is intended for researchers and practitioners working with clay, concrete, and other liquid-deposition materials.
+"I am a laboratory slicer." IAMLab Slicer grew out of a materials laboratory, where repeatable test specimens and controlled experiments matter more than production throughput. It is intended for researchers and practitioners working with clay, concrete, and other liquid-deposition (LDM) materials.
 
 The plugin brings the workflow into Grasshopper: plan experiments, create and slice specimens, vary parameters, generate G-code, review robot motion, and operate supported Duet machines. Planar, adaptive, and conical slicing cover both conventional and non-planar work.
 
 IAMLab Slicer is distributed as a packaged Grasshopper plugin. This repository
 is being prepared as the public home for reviewed source releases, release tags,
-documentation, and issues. Development takes place in a private university
-GitLab repository; substantial, release-ready improvements are exported here as
-curated commits. The first public source release will be `0.1.0-beta`.
+documentation, and issues. The first public source release will be `0.1.0-beta`.
 
 ## What's in it
 
@@ -38,7 +36,7 @@ The rewritten **Legend** component presents continuous ramps, thresholded classe
 
 ## Installation
 
-**Requirements: Rhino 8 on Windows. Nothing else to install.** The released `.yak` package includes the plugin and its dependencies.
+**Requirements: Rhino 8 on Windows.** The released `.yak` package includes the plugin and its dependencies.
 
 - [GitHub Releases](https://github.com/JasperVoll/iamlab-slicer/releases)
 - **Food4Rhino:** plugin page link to be added
@@ -60,9 +58,6 @@ The [IAMLab Slicer documentation site](https://jaspervoll.github.io/iamlab-slice
 - [Components](https://jaspervoll.github.io/iamlab-slicer/docs/components/)
 - [About](https://jaspervoll.github.io/iamlab-slicer/docs/about/)
 
-The proposed source-and-documentation monorepo layout and the GitLab-to-GitHub
-migration gates are recorded in [REPOSITORY-MIGRATION.md](REPOSITORY-MIGRATION.md).
-
 ## Issues and contact
 
 Use the [issue tracker](https://github.com/JasperVoll/iamlab-slicer/issues) for bugs, questions, and feature requests. For direct contact, email Jasper Vollmert at [jasper.vollmert@tuhh.de](mailto:jasper.vollmert@tuhh.de).
@@ -70,19 +65,15 @@ Use the [issue tracker](https://github.com/JasperVoll/iamlab-slicer/issues) for 
 ## Citing
 
 When IAMLab Slicer contributes to published work, please cite the software using
-the repository's `CITATION.cff` metadata. The software author is Jasper Vollmert
-([ORCID 0009-0001-6245-912X](https://orcid.org/0009-0001-6245-912X)); the
+the repository's `CITATION.cff` metadata. This plugin has been developed at the
 [Institute of Digital and Autonomous Construction (IDAC)](https://www.tuhh.de/idac/news),
-Hamburg University of Technology, is listed as the author's affiliation.
+Hamburg University of Technology by Jasper Vollmert ([ORCID 0009-0001-6245-912X](https://orcid.org/0009-0001-6245-912X)).
 
 ## License and third-party notices
 
-Source and documentation written by Jasper Vollmert are licensed under the MIT
-License; Jasper Vollmert is the sole copyright holder. IDAC/TUHH is acknowledged
-as the author's employer and affiliation. The copyright and permission notice
-is in [LICENSE](LICENSE). Vendored and packaged third-party components retain
-their own licenses. In particular, Clipper2 is
-distributed under the Boost Software License 1.0, not MIT. The distributed
+Source and documentation are licensed under the MIT License. The copyright and
+permission notice is in [LICENSE](LICENSE). Vendored and packaged third-party components retain
+their own licenses. Clipper2 is distributed under the Boost Software License 1.0. The distributed
 package also includes or depends on Math.NET Numerics, SkiaSharp, OpenTK, and
 the native Skia library under their respective terms. Rhino and Grasshopper
 require a licensed Rhino 8 installation.

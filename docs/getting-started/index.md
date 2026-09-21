@@ -9,15 +9,15 @@ has_toc: false
 
 # Getting started
 
-Start with a simple shape and preview its toolpath in Rhino. This exercise takes you through the core components before you connect a machine.
+Start with a simple shape and preview its toolpath in Rhino. This exercise takes you through the core components before you connect your Duet robot directly.
 
 ## Install and open the plugin
 
 Follow [Installation]({{ '/docs/getting-started/installation/' | relative_url }}), then open Grasshopper and find the **IAMLab** tab. Its numbered groups follow the work from slicing to printing. The [Component Map]({{ '/docs/getting-started/component-map/' | relative_url }}) shows where each component fits.
 
-## Make your first toolpath
+## 1. Make your first toolpath
 
-Use a Rhino document in millimetres for this exercise. Add the components below by searching for their full names, including **IAMLab**.
+Use a Rhino document in millimetres for this example. Add the components below by searching for their full names, including **IAMLab**.
 
 1. **Create a sample.** Add [IAMLab Test Geometry]({{ '/docs/components/iamlab-test-geometry/' | relative_url }}) and choose a cylinder. Connect its geometry output to `geo` on [IAMLab Slice]({{ '/docs/components/iamlab-slice/' | relative_url }}).
 2. **Slice it.** Set `mode` to `0` for planar layers and choose a `layerHeight`. Click Slice's compute button, then connect a Panel to `info` and read the report.
@@ -28,7 +28,7 @@ Use a Rhino document in millimetres for this exercise. Add the components below 
 
 You should now see a placed, layered cylinder and be able to step through its toolpath. These settings are a preview exercise; choose your machine profile and calibrate material settings before printing.
 
-## Working with the components
+## 2. Working with the components
 
 - **Compute buttons:** Slice and G-code Generator run when you click compute. Recompute after changing their inputs, and read their `info` outputs.
 - **Optional inputs:** right-click a component to enable the input groups you need. Each component reference lists those groups.

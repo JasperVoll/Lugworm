@@ -67,7 +67,7 @@ duplicate loading.
 
 ## Check the installation
 
-Add [IAMLab Version]({{ '/docs/components/iamlab-version/' | relative_url }}) to a new Grasshopper document to check the loaded plugin and runtime. Then follow [Make your first toolpath]({{ '/docs/getting-started/' | relative_url }}#make-your-first-toolpath).
+Add [IAMLab Version]({{ '/docs/components/iamlab-version/' | relative_url }}) to a new Grasshopper document to check the loaded plugin and runtime. Then follow [Make your first toolpath]({{ '/docs/getting-started/' | relative_url }}#1-make-your-first-toolpath).
 
 ## Before sharing a `.gh` definition
 

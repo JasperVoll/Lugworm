@@ -10,9 +10,3 @@ authors:
 license: MIT
 repository-code: "https://github.com/JasperVoll/iamlab-slicer"
 url: "https://jaspervoll.github.io/iamlab-slicer/"
-keywords:
-  - additive manufacturing
-  - concrete 3D printing
-  - clay 3D printing
-  - Grasshopper
-  - slicing

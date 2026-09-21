@@ -7,40 +7,40 @@ permalink: /docs/about/
 
 # About
 
-IAMLab Slicer is developed by Jasper Vollmert while working at the Institute of
+IAMLab Slicer was developed at the Institute of
 Digital and Autonomous Construction (IDAC), Hamburg University of Technology,
-for clay and cementitious materials in a laboratory setting. IDAC/TUHH is the
-author's affiliation; Jasper Vollmert is the software's sole copyright holder.
+for LDM in a laboratory setting.
 
 ## Team
 
-| Name | Role | Affiliation |
-|---|---|---|
-| Jasper Vollmert | Development, maintenance | IDAC, TUHH |
+| Name | Role |
+|---|---|
+| Jasper Vollmert | Developer |
+| Adel Alatassi | Tester |
+| Mayur Gajanan Kale | Tester |
 
-Additional contributors and testers will be credited here once they have
-confirmed how they want their names and affiliations published.
 
 ## Publications
 
-Use the repository's `CITATION.cff` metadata to cite IAMLab Slicer. Until a
-software DOI is available, cite the tagged GitHub release and include the
-version used.
+Please use the repository's `CITATION.cff` metadata to cite IAMLab Slicer, this helps a lot!
+
+For DoE components see
+Vollmert, J. & Große, B., 2026. Optimizing and predicting process parameters for clay additive manufacturing using design of experiments. In: Proceedings of the 37th Forum Bauinformatik. Rostock, Germany, 09/30/2026.
 
 ## Acknowledgements
 
 - **Open source.** IAMLab Slicer builds on Rhino and Grasshopper and on the
   work of the RepRap, Marlin, RepRapFirmware and Klipper communities. The
-  documentation site uses [Just the Docs](https://just-the-docs.com).
+  documentation site uses a [Just the Docs](https://just-the-docs.com) template.
 
 Funding and collaborating institutions will be added after their preferred
 credit text has been confirmed.
 
 ## Contact
 
-Write to [jasper.vollmert@tuhh.de](mailto:jasper.vollmert@tuhh.de) for access
-before the first release, to report a machine that does not work, or to
-collaborate on making a machine compatible.
+Please contact me directly at [jasper.vollmert@tuhh.de](mailto:jasper.vollmert@tuhh.de)
+to report a Duet machine that does not work, or to collaborate on making a
+machine compatible.
 
 Bugs and feature requests belong in the
 [issue tracker](https://github.com/JasperVoll/iamlab-slicer/issues).

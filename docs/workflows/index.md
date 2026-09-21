@@ -9,7 +9,7 @@ has_toc: false
 
 # Workflows
 
-These guides take you from a working toolpath to a specific task. If you are new to the plugin, begin with the [first toolpath exercise]({{ '/docs/getting-started/' | relative_url }}#make-your-first-toolpath).
+These guides take you from a working toolpath to a specific task. If you are new to the plugin, begin with the [first toolpath exercise]({{ '/docs/getting-started/' | relative_url }}#1-make-your-first-toolpath).
 
 | What you want to do | Guide | What you will work with |
 |---|---|---|
