@@ -32,6 +32,7 @@ $iamlab-note:       #14773c !default;
 .screenshot-pending { color: $body-text-color; font-size: 0.8rem; border-left: 2px solid $border-color; padding-left: 0.75rem; }
 :focus-visible { outline: 2px solid $link-color; outline-offset: 3px; }
 
-// Component map: inline SVG from tools/component_map, scrolls sideways on narrow screens.
+// Component map: inline SVG from tools/component_map. Fills the column up to 880px,
+// scales down to 600px on narrower columns, then scrolls sideways.
 .component-map { overflow-x: auto; margin: 1.5rem 0; }
-.component-map svg { display: block; width: 100%; min-width: 800px; height: auto; }
+.component-map svg { display: block; width: 100%; max-width: 880px; min-width: 600px; height: auto; margin: 0 auto; }

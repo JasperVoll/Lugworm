@@ -1,0 +1,16 @@
+// The theme imports this file after support/variables and before the colour
+// schemes and modules, so its !default values can be replaced here.
+//
+// Widen the content column. The theme caps it at 50rem, which leaves most of
+// a laptop screen empty and is too narrow for the component map. The md
+// breakpoint keeps the theme's 50rem so the sidebar still appears on tablets;
+// lg is rebuilt from the new width the same way the theme derives it.
+$content-width: 64rem;
+$search-results-width: $content-width - $nav-width;
+$media-queries: (
+  xs: 20rem,
+  sm: 31.25rem,
+  md: 50rem,
+  lg: $content-width + $nav-width,
+  xl: 87.5rem,
+);
