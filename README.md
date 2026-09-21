@@ -66,13 +66,11 @@ When IAMLab Slicer contributes to published work, please credit Jasper Vollmert 
 
 ## License and third-party notices
 
-IAMLab Slicer is licensed under the MIT License. The distributed package also includes or depends on third-party components under their respective licenses, including Clipper2, Math.NET Numerics, SkiaSharp, and OpenTK. Rhino and Grasshopper require a licensed Rhino 8 installation.
+IAMLab Slicer is licensed under the MIT License; the copyright and permission notice is in [LICENSE](LICENSE). The distributed package also includes or depends on third-party components under their respective licenses, including Clipper2, Math.NET Numerics, SkiaSharp, and OpenTK. Rhino and Grasshopper require a licensed Rhino 8 installation.
 
 ## No warranty
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-This is the warranty disclaimer of the MIT license under which IAMLab Slicer is released; it is repeated here because the software commands real machinery. Nothing is warranted, including that the software is useful or fit for your purpose, and no responsibility is accepted for the firmware connection or for any problem with a robot, printer, or material, including damage, injury, or lost work.
+IAMLab Slicer is provided without warranty of any kind; see [LICENSE](LICENSE) for the full disclaimer.
 
 Machine control has been tested only on our own machine. Treat every other machine as untested. Check every G-code file and robot program in Robot Simulation, keep the emergency stop within reach, and do not leave a running print unattended.
 

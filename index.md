@@ -58,21 +58,8 @@ The drawn robot models are approximate. Read the reach, joint-limit, and speed c
 
 ## No warranty
 
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-This is the warranty disclaimer of the MIT license under which IAMLab Slicer is
-released; it is reproduced here because the software commands real machinery.
-Nothing is warranted, including that the software is useful or fit for your
-purpose, and no responsibility is accepted for the firmware connection or for
-any problem with a robot, printer, or material, including damage, injury, or
-lost work.
+IAMLab Slicer is provided without warranty of any kind; see the
+[MIT License]({{ '/docs/license/' | relative_url }}) for the full disclaimer.
 
 Machine control has been tested only on our own machine. Other firmwares and
 other machines have not been tested extensively. Treat any machine other than
@@ -81,6 +68,6 @@ compatible, see [About]({{ '/docs/about/' | relative_url }}).
 
 ## License and contact
 
-IAMLab Slicer is released under the MIT License.
+IAMLab Slicer is released under the [MIT License]({{ '/docs/license/' | relative_url }}).
 
 Report problems in the [issue tracker](https://github.com/JasperVoll/iamlab-slicer-documentation/issues). See [About]({{ '/docs/about/' | relative_url }}) for contact details, the team, and publications.
