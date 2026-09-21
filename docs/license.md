@@ -7,15 +7,18 @@ permalink: /docs/license/
 
 # License
 
-IAMLab Slicer is released under the MIT License. The copyright notice and the
-permission notice below are included with every copy of the software; the same
-text is in the [LICENSE](https://github.com/JasperVoll/iamlab-slicer-documentation/blob/main/LICENSE)
-file of the repository and in the distributed package.
+Source code and documentation written by Jasper Vollmert are released under the
+MIT License. Jasper Vollmert is the sole copyright holder. IDAC/TUHH is the
+author's employer and affiliation; its acknowledgement does not indicate
+copyright ownership. The copyright and permission notice below are included
+with every copy of that work; the same text is in the repository's
+[LICENSE](https://github.com/JasperVoll/iamlab-slicer-documentation/blob/main/LICENSE)
+file and in the distributed package. Files that carry their own license notice
+remain under that notice.
 
 ## MIT License
 
-Copyright (c) 2026 Jasper Vollmert, Institute of Digital and Autonomous
-Construction (IDAC), Hamburg University of Technology (TUHH)
+Copyright (c) 2026 Jasper Vollmert
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -38,8 +41,14 @@ SOFTWARE.
 ## Third-party components
 
 The distributed package includes or depends on third-party components under
-their own licenses, including Clipper2, Math.NET Numerics, SkiaSharp, and
-OpenTK. Rhino and Grasshopper require a licensed Rhino 8 installation.
+their own licenses. Clipper2 is vendored under the Boost Software License 1.0;
+Math.NET Numerics, SkiaSharp, and OpenTK use permissive licenses; the native Skia
+library carries its own BSD terms. Their notices travel with the release
+package. The root MIT license does not replace any of those terms.
+
+Rhino and Grasshopper are proprietary dependencies and require a licensed Rhino
+8 installation. Their assemblies are used at build/runtime as provided by
+McNeel and are not licensed by this repository.
 
 ## No warranty
 

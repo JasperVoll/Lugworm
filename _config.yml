@@ -48,6 +48,7 @@ exclude:
   - .sass-cache/
   - tools/
   - SETUP.md
+  - REPOSITORY-MIGRATION.md
   - README.md
   - "*.log"
   - verification.json

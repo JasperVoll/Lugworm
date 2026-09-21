@@ -7,52 +7,34 @@ permalink: /docs/about/
 
 # About
 
-IAMLab Slicer is developed at the Institute of Digital and Autonomous
-Construction (IDAC), Hamburg University of Technology, for clay and
-cementitious materials in a laboratory setting.
+IAMLab Slicer is developed by Jasper Vollmert while working at the Institute of
+Digital and Autonomous Construction (IDAC), Hamburg University of Technology,
+for clay and cementitious materials in a laboratory setting. IDAC/TUHH is the
+author's affiliation; Jasper Vollmert is the software's sole copyright holder.
 
 ## Team
-
-{: .note }
-> Placeholder. Replace the rows below with the real names before the first
-> public release.
 
 | Name | Role | Affiliation |
 |---|---|---|
 | Jasper Vollmert | Development, maintenance | IDAC, TUHH |
-| *Name* | Testing | *Institution* |
-| *Name* | Testing | *Institution* |
-| *Name* | Testing | *Institution* |
 
-Testers ran the plugin on machines and materials other than the ones it was
-written for. Their reports shaped the machine profiles, the reach checks and
-the calibration workflow.
+Additional contributors and testers will be credited here once they have
+confirmed how they want their names and affiliations published.
 
 ## Publications
 
-{: .note }
-> Placeholder. Add the citation for each publication that uses or describes the
-> plugin, with a DOI where one exists.
-
-- *Author, A., Author, B.* (Year). *Title of the paper.* Journal, Volume(Issue),
-  pages. [DOI](https://doi.org/)
-- *Author, A.* (Year). *Title of the conference contribution.* Conference,
-  location. [DOI](https://doi.org/)
-
-If you use IAMLab Slicer in academic work, please cite it. A citation file will
-be published with the first release.
+Use the repository's `CITATION.cff` metadata to cite IAMLab Slicer. Until a
+software DOI is available, cite the tagged GitHub release and include the
+version used.
 
 ## Acknowledgements
 
-{: .note }
-> Placeholder. Name the funders, grant numbers, collaborating institutions and
-> open-source projects before the first public release.
-
-- **Funding.** *Programme, grant number.*
-- **Collaborators.** *Institution or group, and what they contributed.*
 - **Open source.** IAMLab Slicer builds on Rhino and Grasshopper and on the
   work of the RepRap, Marlin, RepRapFirmware and Klipper communities. The
   documentation site uses [Just the Docs](https://just-the-docs.com).
+
+Funding and collaborating institutions will be added after their preferred
+credit text has been confirmed.
 
 ## Contact
 

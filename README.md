@@ -8,7 +8,11 @@ A Grasshopper plugin for slicing and controlling clay and cementitious-material 
 
 The plugin brings the workflow into Grasshopper: plan experiments, create and slice specimens, vary parameters, generate G-code, review robot motion, and operate supported Duet machines. Planar, adaptive, and conical slicing cover both conventional and non-planar work.
 
-IAMLab Slicer is distributed as a packaged Grasshopper plugin. This repository provides the releases, the documentation site, and the issue tracker.
+IAMLab Slicer is distributed as a packaged Grasshopper plugin. This repository
+is being prepared as the public home for reviewed source releases, release tags,
+documentation, and issues. Development takes place in a private university
+GitLab repository; substantial, release-ready improvements are exported here as
+curated commits. The first public source release will be `0.1.0-beta`.
 
 ## What's in it
 
@@ -56,17 +60,32 @@ The [IAMLab Slicer documentation site](https://jaspervoll.github.io/iamlab-slice
 - [Components](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/components/)
 - [About](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/about/)
 
+The proposed source-and-documentation monorepo layout and the GitLab-to-GitHub
+migration gates are recorded in [REPOSITORY-MIGRATION.md](REPOSITORY-MIGRATION.md).
+
 ## Issues and contact
 
 Use the [issue tracker](https://github.com/JasperVoll/iamlab-slicer-documentation/issues) for bugs, questions, and feature requests. For direct contact, email Jasper Vollmert at [jasper.vollmert@tuhh.de](mailto:jasper.vollmert@tuhh.de).
 
 ## Citing
 
-When IAMLab Slicer contributes to published work, please credit Jasper Vollmert ([ORCID 0009-0001-6245-912X](https://orcid.org/0009-0001-6245-912X)), the [Institute of Digital and Autonomous Construction (IDAC)](https://www.tuhh.de/idac/news), Hamburg University of Technology.
+When IAMLab Slicer contributes to published work, please cite the software using
+the repository's `CITATION.cff` metadata. The software author is Jasper Vollmert
+([ORCID 0009-0001-6245-912X](https://orcid.org/0009-0001-6245-912X)); the
+[Institute of Digital and Autonomous Construction (IDAC)](https://www.tuhh.de/idac/news),
+Hamburg University of Technology, is listed as the author's affiliation.
 
 ## License and third-party notices
 
-IAMLab Slicer is licensed under the MIT License; the copyright and permission notice is in [LICENSE](LICENSE). The distributed package also includes or depends on third-party components under their respective licenses, including Clipper2, Math.NET Numerics, SkiaSharp, and OpenTK. Rhino and Grasshopper require a licensed Rhino 8 installation.
+Source and documentation written by Jasper Vollmert are licensed under the MIT
+License; Jasper Vollmert is the sole copyright holder. IDAC/TUHH is acknowledged
+as the author's employer and affiliation. The copyright and permission notice
+is in [LICENSE](LICENSE). Vendored and packaged third-party components retain
+their own licenses. In particular, Clipper2 is
+distributed under the Boost Software License 1.0, not MIT. The distributed
+package also includes or depends on Math.NET Numerics, SkiaSharp, OpenTK, and
+the native Skia library under their respective terms. Rhino and Grasshopper
+require a licensed Rhino 8 installation.
 
 ## No warranty
 

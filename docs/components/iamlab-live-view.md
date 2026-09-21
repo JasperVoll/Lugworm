@@ -64,9 +64,10 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `info` | Text | Connection, intended-path and live-display diagnostics |
 | `trail` | Geometry (tree) | Observed path in Rhino document units, one branch per continuous run as a polyline (a run of one observation is a point), with gaps preserved. A run ends where the continuity policy breaks the segment. Never smoothed, never joined across a break, never projected onto the intended path |
 
-## Sockets removed in 4.1.0
+## Compatibility with development files
 
-A document saved before 4.1.0 (2026-09-09) may still carry these. Opening it reports them once and drops them.
+A document saved with an earlier internal development build may still carry
+these sockets. Opening it reports them once and drops them.
 
 | Removed | Replaced by |
 |---|---|

@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use IAMLab Slicer in research, please cite the software using this metadata."
+title: "IAMLab Slicer"
+type: software
+authors:
+  - family-names: "Vollmert"
+    given-names: "Jasper"
+    orcid: "https://orcid.org/0009-0001-6245-912X"
+    affiliation: "Institute of Digital and Autonomous Construction (IDAC), Hamburg University of Technology (TUHH)"
+license: MIT
+repository-code: "https://github.com/JasperVoll/iamlab-slicer-documentation"
+url: "https://jaspervoll.github.io/iamlab-slicer-documentation/"
+keywords:
+  - additive manufacturing
+  - concrete 3D printing
+  - clay 3D printing
+  - Grasshopper
+  - slicing
