@@ -27,7 +27,7 @@ gh_edit_link_text: Edit this page on GitHub
 gh_edit_repository: https://github.com/JasperVoll/iamlab-slicer-documentation
 gh_edit_branch: main
 gh_edit_view_mode: edit
-footer_content: 'IAMLab Slicer is released under the MIT license. Copyright &copy; 2026 Jasper Vollmert, <a href="https://www.tuhh.de/idac/news">IDAC</a>, Hamburg University of Technology. <a href="https://github.com/JasperVoll/iamlab-slicer-documentation/issues">Report an issue</a>.'
+footer_content: 'MIT License. <a href="https://github.com/JasperVoll/iamlab-slicer-documentation/issues">Report an issue</a>.'
 plugins:
   - jekyll-remote-theme
   - jekyll-seo-tag

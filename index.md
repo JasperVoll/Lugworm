@@ -81,6 +81,6 @@ compatible, see [About]({{ '/docs/about/' | relative_url }}).
 
 ## License and contact
 
-IAMLab Slicer is released under the MIT license. Copyright 2026 Jasper Vollmert, [IDAC](https://www.tuhh.de/idac/news), Hamburg University of Technology.
+IAMLab Slicer is released under the MIT License.
 
 Report problems in the [issue tracker](https://github.com/JasperVoll/iamlab-slicer-documentation/issues). See [About]({{ '/docs/about/' | relative_url }}) for contact details, the team, and publications.
