@@ -22,7 +22,7 @@ The rewritten **Legend** component presents continuous ramps, thresholded classe
 
 ### Direct machine control
 
-**Machine Console** controls Duet 3 machines from inside Grasshopper over WiFi. It covers connection, homing, jogging, job checks and uploads, print control, commands, calibration positions, and logs. **Machine Files** manages files on the connected machine, and **Live View** shows the bed, arm, nozzle position, and deposited layer while a job runs.
+**Machine Console** controls Duet 3 machines from inside Grasshopper over WiFi. It covers connection, homing, jogging, job checks and uploads, print control, commands, calibration positions, and logs. **Machine Files** manages files on the connected machine, and **Live View** shows the bed, arm, nozzle position, and the observed nozzle path while a job runs.
 
 ### Slicing, placement, and G-code
 

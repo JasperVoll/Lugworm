@@ -9,10 +9,13 @@ permalink: /docs/components/iamlab-live-view/
 # IAMLab Live View
 
 IAMLab Live View shows the machine while it prints: the bed plate, the
-arm at the real nozzle position, and the printed layer growing as the
-job progresses. The component
-only reads from the machine and never sends commands. Optionally, the
-nozzle path is recorded with timestamps to a CSV file.
+arm at the real nozzle position, and the observed nozzle path drawn
+behind it. The component only reads from the machine and never sends
+commands.
+
+It does not record the print to a file. Every job is logged by
+[IAMLab Machine Console]({{ '/docs/components/iamlab-machine-console/' | relative_url }}),
+which records on its own whether or not this component is on the canvas.
 
 Panel: `7 Print`. Nickname: `Live`. Compute button: no (runs on every change).
 
@@ -22,48 +25,23 @@ Panel: `7 Print`. Nickname: `Live`. Compute button: no (runs on every change).
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `host` | Text | Host string from the Machine Console host output |
-| `enable` | Boolean | Refresh this component on every poll |
-| `gcode` | Text (list) | Fallback intended path, used only while the Machine Console has no job. The console's own job wins whenever it has one. G-code words are machine coordinates and the path is drawn in the Rhino frame |
-| `bedWidth` | Number | 1000 | Bed plate width along RHINO X, mm |
-| `bedDepth` | Number | 700 | Bed plate depth along RHINO Y, mm |
-| `bedCenter` | Point |  | Bed plate center point in RHINO coordinates - the plate, grid and printable area follow it |
-| `extWidth` | Number | Extrusion width, mm |
-| `layerHeight` | Number | Layer height = extrusion height, mm |
+| `host` | Text |  | Host output from Machine Console or Duet Connect, connected before live preview |
+| `enable` | Boolean | true | Read the connected session and animate its live position when true (automatic output updates are a separate menu option) |
+| `gcode` | Text (list) |  | Fallback G-code text or lines for the intended path, used only when the shared session has no job. G-code words are machine coordinates and the path is drawn in the Rhino frame |
+| `bed` | Text |  | Print Bed definition text for the plate preview (unwired = no plate) |
 
-### Optional group: Print Bed definition input
-
-Right-click the component to switch this group on. The inputs appear only while the group is enabled.
-
-| Name | Type | Description |
-|---|---|---|
-| `bed` | Text | Print Bed definition, the only source of plate size, shape and position. Not connected draws no plate |
-
-### Optional group: Arm geometry overrides (L1/L2, reach, elbow)
+### Optional group: Kinematics overrides (L1/L2, reach, elbow)
 
 Right-click the component to switch this group on. The inputs appear only while the group is enabled.
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `L1` | Number | 549.06 | First link length, mm |
-| `L2` | Number | 457.23 | Second link length, mm |
+| `L1` | Number | 549.06 | First SCARA link length in mm |
+| `L2` | Number | 457.23 | Second SCARA link length in mm |
 | `baseHeight` | Number | 0 | Base Z height, mm |
-| `reachMax` | Number | 0 | Maximum reach, mm (0 = L1 + L2) |
-| `reachMin` | Number | 235 | Minimum reach, the dead zone radius, mm (0 = L1 minus L2) |
-| `elbow` | Integer |  | Fallback arm mode, 0 up or 1 down, used to draw the arm only while the session has no tracked configuration |
-
-### Optional group: Print path log (timestamps, speed, layers)
-
-Right-click the component to switch this group on. The inputs appear only while the group is enabled.
-
-| Name | Type | Default | Description |
-|---|---|---|---|
-| `logEnable` | Boolean | Arm the timestamped print path recorder |
-| `logEveryN` | Integer | Interval samples per layer |
-| `logFolder` | Text | Folder for the streaming print log CSV |
-| `logPrefix` | Text | Print log filename prefix |
-| `logLayerHeight` | Number | Layer height hint for the Z step fallback |
-| `logExport` | Boolean | Export the in-memory print log to a new CSV |
+| `reachMax` | Number | 0 | Maximum SCARA reach in mm (0 = L1 + L2) |
+| `reachMin` | Number | 235 | Minimum SCARA reach in mm (0 = the absolute difference between L1 and L2) |
+| `elbow` | Integer |  | Fallback SCARA arm mode for drawing: 0 = up, 1 = down, used only without a tracked session configuration |
 
 ### Optional group: Robot definition (generic Duet machines)
 
@@ -71,23 +49,33 @@ Right-click the component to switch this group on. The inputs appear only while 
 
 | Name | Type | Description |
 |---|---|---|
-| `robot` | Text | Optional Robot Definition. Not connected means the Potterbot SCARA with a posed arm and mirrored frame. A generic Duet Cartesian definition shows position, trail and bed in the machine's own frame, without an arm |
+| `robot` | Text | Robot Definition text for the live preview (unwired = Potterbot SCARA, Cartesian profiles show the nozzle without an arm) |
 
 ## Outputs
 
 | Name | Type | Description |
 |---|---|---|
-| `pos` | Point | Live nozzle position in Rhino coordinates. The machine's own frame is mirrored about y = -x, so a Duet reading of X200 Y-500 appears here as X500 Y-200 |
-| `J1` | Number | Live first joint angle, deg. The machine's own value, unaffected by the frame map |
-| `J3` | Number | Live third joint angle, deg |
-| `J2` | Number | Live Z carriage height, mm |
+| `pos` | Point | Reported nozzle position in Rhino document units, mirrored for Potterbot and unchanged for Cartesian profiles. A Duet reading of X200 Y-500 appears here as X500 Y-200 |
+| `J1` | Number | First SCARA joint angle calculated from reported position, deg (unavailable for Cartesian profiles) |
+| `J3` | Number | SCARA elbow angle calculated from reported position, deg (unavailable for Cartesian profiles) |
+| `J2` | Number | SCARA Z carriage height calculated from reported position, mm (unavailable for Cartesian profiles) |
 | `status` | Text | Raw machine status |
 | `progress` | Number | Job progress, 0 to 1 |
-| `info` | Text | Diagnostics: session, intended path, stale state and the display's measured counters |
-| `trail` | Geometry (tree) | Observed toolpath in Rhino coordinates, one branch per continuous run as a polyline (a run of one observation is a point). A run ends where the continuity policy breaks the segment, and where a straight line would claim a movement the elapsed time cannot support. Never smoothed, never joined across a break, never projected onto the intended path |
-| `layers` | Text (list) | Detected print-layer spans, one readable line each (layer, start -> end, duration, mean speed, samples); the CSV keeps the full record |
-| `log` | Text (list) | Print-log CSV header and rows |
-| `path` | Point (list) | Recorded print-log positions, in RHINO coordinates (the streaming CSV keeps the machine's own numbers) |
-| `logInfo` | Text | Print-log diagnostics |
+| `info` | Text | Connection, intended-path and live-display diagnostics |
+| `trail` | Geometry (tree) | Observed path in Rhino document units, one branch per continuous run as a polyline (a run of one observation is a point), with gaps preserved. A run ends where the continuity policy breaks the segment. Never smoothed, never joined across a break, never projected onto the intended path |
+
+## Sockets removed in 4.1.0
+
+A document saved before 4.1.0 (2026-09-09) may still carry these. Opening it reports them once and drops them.
+
+| Removed | Replaced by |
+|---|---|
+| `bedWidth`, `bedDepth`, `bedCenter` | the `bed` input and [IAMLab Print Bed]({{ '/docs/components/iamlab-print-bed/' | relative_url }}). Saved values migrate into a real Print Bed component |
+| `extWidth`, `layerHeight` | the extrusion preview on [IAMLab G-code Generator]({{ '/docs/components/iamlab-g-code-generator/' | relative_url }}) and [IAMLab Robot Simulation]({{ '/docs/components/iamlab-robot-simulation/' | relative_url }}) |
+| `logEnable`, `logEveryN`, `logFolder`, `logPrefix`, `logLayerHeight`, `logExport` | the Machine Console's always-on job logging |
+| outputs `layers`, `log`, `path`, `logInfo` | the Machine Console's job logs and Recent prints |
+
+Grasshopper drops wires to removed outputs without asking, and `trail` now sits at output
+index 7, so an older document is asked to delete those four wires by hand.
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

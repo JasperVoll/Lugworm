@@ -61,9 +61,76 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `checkEnvelope` | Boolean | true | Check moves against the travel limits stored in the firmware (M208) |
 | `elbow` | Integer |  | Fallback arm mode, 0 up or 1 down, for planning before a verified home exists. A verified home's endstop mode takes precedence |
 
+### Optional group: Jog feedrate
+
+Right-click the component to switch this group on. The inputs appear only while the group is enabled.
+
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `feed` | Number | 20 | Jog feedrate, mm/s (capped at 50) |
+
 ## Outputs
+
+The outputs are grouped into six categories. A new component shows only the three pinned
+ones, `host`, `status` and `gcode`; right-click and use **Outputs shown** to switch a
+category on. Switching a category on or off moves the socket indices of the ones below it,
+so wire by name. A category that carries a wire is never hidden, by hand or on load, and an
+older document keeps every category that had a wire when it was saved.
+
+### Connection
 
 | Name | Type | Description |
 |---|---|---|
+| `host` | Text | Session host to wire into the other Print components. Shown by default |
+| `connected` | Boolean | True while connected, even if machine identity checks prevent control |
+
+### Job
+
+| Name | Type | Description |
+|---|---|---|
+| `status` | Text | Console status: the connection, then the pending action or last result. Shown by default |
+| `state` | Text | Machine status |
+| `progress` | Number | Job progress, 0 to 1 |
+| `jobFile` | Text | Printing file (empty when idle) |
+| `uploaded` | Text | Remote path of the last verified upload (empty when none) |
+| `gcode` | Text (list) | Running or prepared G-code lines, including Recent prints selections (empty for jobs started outside this session). Shown by default |
+
+### Motion
+
+| Name | Type | Description |
+|---|---|---|
+| `pos` | Point | Reported nozzle position in Rhino document units, mirrored for Potterbot and unchanged for Cartesian profiles |
+| `homed` | Boolean | True when all visible axes report homed |
+| `xHomed` | Boolean | X axis homed |
+| `yHomed` | Boolean | Y axis homed |
+| `zHomed` | Boolean | Z axis homed |
+| `bedOrigin` | Point | Captured plate origin in Rhino document units for Print Bed's center input, without changing firmware offsets |
+| `zZero` | Number | Legacy captured Z in Rhino document units from saved documents, with no new captures |
+
+### Validation
+
+| Name | Type | Description |
+|---|---|---|
+| `danger` | Boolean | True when validation refuses the job |
+| `problems` | Point (list) | Validation warning and error positions in Rhino document units |
+| `messages` | Text (list) | Validation messages |
+
+### Overrides
+
+| Name | Type | Description |
+|---|---|---|
+| `speedFactor` | Number | Speed override, percent (-1 = not reported) |
+| `flowFactor` | Number | Flow override, percent (-1 = not reported) |
+
+`-1` is not `0`: a machine that does not publish a factor and a factor genuinely set to
+zero must not read the same.
+
+### Log and diagnostics
+
+| Name | Type | Description |
+|---|---|---|
+| `log` | Text (list) | Session log, newest last |
+| `info` | Text | Connection, machine identity, validation and last-action details |
+| `reply` | Text | Last firmware reply |
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

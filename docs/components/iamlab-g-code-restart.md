@@ -34,6 +34,7 @@ Panel: `3 G-code`. Nickname: `Restart`. Compute button: yes (runs only when the 
 | `retractSpeed` | Number | 2 | Feedrate of the prime move, mm/s |
 | `clearance` | Number | 10 | Clearance above everything printed so far for the approach, mm |
 | `savePath` | Text |  | Optional .gcode file path to write on compute |
+| `robot` | Text |  | Optional Robot Definition, the coordinate frame the job's G-code was emitted in, exactly as the G-code Generator reads it. Unwired keeps the Potterbot SCARA frame (y = -x mirror) for the `point` input and the `resume`, `printed` and `remaining` outputs. A generic Cartesian definition uses the machine's own coordinates |
 
 ## Outputs
 

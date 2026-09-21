@@ -61,12 +61,12 @@ Every component on the IAMLab tab has a page of its own with a short explanation
 | [IAMLab DoE Design]({{ '/docs/components/iamlab-doe-design/' | relative_url }}) | IAMLab DoE Design plans a series of test prints. |
 | [IAMLab Pareto Select]({{ '/docs/components/iamlab-pareto-select/' | relative_url }}) | IAMLab Pareto Select shows the trade-off front from Desirability and lets you pick one recipe from it by clicking; the choice stays with the document and is flagged when the front changes. |
 | [IAMLab RSM Evaluate]({{ '/docs/components/iamlab-rsm-evaluate/' | relative_url }}) | IAMLab RSM Evaluate fits a formula to the measurements of a test series. Has a compute button. |
-| [IAMLab Test Geometry]({{ '/docs/components/iamlab-test-geometry/' | relative_url }}) | IAMLab Test Geometry creates simple sample shapes for calibration prints: cylinder, vase, twisted vase, frustum, wall, and box. |
+| [IAMLab Test Geometry]({{ '/docs/components/iamlab-test-geometry/' | relative_url }}) | IAMLab Test Geometry creates the specimen for a calibration print: six simple shapes, six standard bending and compression specimens (DIN EN and ASTM), and a zig-zag extrusion test path. |
 
 ## 7 Print
 
 | Component | Purpose |
 |---|---|
-| [IAMLab Live View]({{ '/docs/components/iamlab-live-view/' | relative_url }}) | IAMLab Live View shows the machine while it prints: the bed plate, the arm at the real nozzle position, and the printed layer growing as the job progresses. |
+| [IAMLab Live View]({{ '/docs/components/iamlab-live-view/' | relative_url }}) | IAMLab Live View shows the machine while it prints: the bed plate, the arm at the real nozzle position, and the observed nozzle path drawn behind it. |
 | [IAMLab Machine Console]({{ '/docs/components/iamlab-machine-console/' | relative_url }}) | IAMLab Machine Console is the one window for controlling a printer with a Duet board from Grasshopper. |
 | [IAMLab Machine Files]({{ '/docs/components/iamlab-machine-files/' | relative_url }}) | IAMLab Machine Files browses the file storage of the connected machine - the Duet's SD card. |

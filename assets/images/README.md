@@ -63,4 +63,4 @@ paths out of frame.
 | `workflows/reach-violation.png` | An out-of-reach placement caught before it reaches hardware | `docs/workflows/robots-and-machine-control.md` |
 | `workflows/robot-profile.png` | Selecting a robot profile | `docs/workflows/robots-and-machine-control.md` |
 
-37 slots in total.
+35 slots in total.
