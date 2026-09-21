@@ -54,9 +54,9 @@ Send Generator's `gcode` to Robot Simulation for review and to Save G-code when 
 Overhang reads the **contour tree**. Print Stats and Interlayer Time can read the **generated G-code**. Connect an analysis component's `legend` output to Legend's `legend` input to explain its colours.
 
 <div class="component-grid">
-{% include component-card.html slug="overhang" title="Overhang" icon="IamOverhang" panel="5 Analyze" description="Read contours from Slice or Place to inspect bead support." %}
+{% include component-card.html slug="overhang" title="Overhang" icon="IamOverhang" panel="5 Analyze" description="Read contours from Slice or Place to inspect layer support." %}
 {% include component-card.html slug="print-stats" title="Print Stats" icon="IamStats" panel="5 Analyze" description="Read gcode to estimate time, travel, and material use." %}
-{% include component-card.html slug="interlayer-time" title="Interlayer Time" icon="IamInterlayer" panel="5 Analyze" description="Use gcode or a retained print log to analyse time between beads." %}
+{% include component-card.html slug="interlayer-time" title="Interlayer Time" icon="IamInterlayer" panel="5 Analyze" description="Use gcode or a retained print log to analyse time between layers." %}
 {% include component-card.html slug="legend" title="Legend" icon="IamLegend" panel="5 Analyze" description="Display the legend specification from an analysis component." %}
 </div>
 
@@ -66,7 +66,7 @@ Connect reviewed G-code to Machine Console for checking and upload. Live View an
 
 <div class="component-grid">
 {% include component-card.html slug="machine-console" title="Machine Console" icon="IamDuetConnect" panel="7 Print" description="Check and upload gcode; connect, home, jog, and run a Duet job." %}
-{% include component-card.html slug="live-view" title="Live View" icon="IamDuetLive" panel="7 Print" description="Monitor the connected machine and deposited bead." %}
+{% include component-card.html slug="live-view" title="Live View" icon="IamDuetLive" panel="7 Print" description="Monitor the connected machine and deposited layer." %}
 {% include component-card.html slug="machine-files" title="Machine Files" icon="IamDuetFiles" panel="7 Print" description="Browse and manage files on the connected Duet machine." %}
 </div>
 

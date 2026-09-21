@@ -29,7 +29,7 @@ An unwired Generator `robot` input uses the laboratory SCARA's mirrored X/Y axes
 
 ## 2. Review the motion
 
-Connect the same Robot Definition and the generated G-code to [IAMLab Robot Simulation]({{ '/docs/components/iamlab-robot-simulation/' | relative_url }}). Move `sim` from `0` to `1` to inspect the print. Beads show extrusion; ochre lines show travel.
+Connect the same Robot Definition and the generated G-code to [IAMLab Robot Simulation]({{ '/docs/components/iamlab-robot-simulation/' | relative_url }}). Move `sim` from `0` to `1` to inspect the print. Layers show extrusion; ochre lines show travel.
 
 For a SCARA profile, the checks cover reach, joint angles and speeds, and firmware-compatible movement between points. Unreachable targets set `reachOK` to false, appear in `problems`, and produce a red error. Correct the placement, speed, or geometry as appropriate, then regenerate and review the job before running it.
 
@@ -40,7 +40,7 @@ For a SCARA profile, the checks cover reach, joint angles and speeds, and firmwa
 The **7 Print** group contains three components:
 
 - [Machine Console]({{ '/docs/components/iamlab-machine-console/' | relative_url }}) connects over WiFi and provides homing, press-and-hold jogging, origin capture, job checking and upload, print controls, commands, calibration positions, and logs.
-- [Live View]({{ '/docs/components/iamlab-live-view/' | relative_url }}) shows the machine, nozzle position, and deposited bead.
+- [Live View]({{ '/docs/components/iamlab-live-view/' | relative_url }}) shows the machine, nozzle position, and deposited layer.
 - [Machine Files]({{ '/docs/components/iamlab-machine-files/' | relative_url }}) manages files on the connected machine.
 
 Connect the Robot Definition before operating the console. Without one, control assumes the laboratory SCARA. For other Duet Cartesian printers, select `generic-duet-cartesian`; moves are checked against firmware travel limits. Calib Points and Scara Fit require the SCARA.

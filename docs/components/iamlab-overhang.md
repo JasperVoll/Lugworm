@@ -17,7 +17,7 @@ segment on a continuous magma ramp from 0° to the failure angle. The
 default angles of 25° and 45° are placeholders and should be measured
 for your material with a test print of a stepped cone. The `global`
 toggle chooses what the angle is measured from: off, the layer's own
-normal (local, the bead-on-bead stagger); on, world Z (global, the lean
+normal (local, the layer-on-layer stagger); on, world Z (global, the lean
 against gravity). The two agree on planar layers and differ on conical
 ones. The component has a compute button.
 
@@ -34,7 +34,7 @@ Panel: `5 Analyze`. Nickname: `Overhang`. Compute button: yes (runs only when th
 | `failDeg` | Number | 45 | Critical threshold, deg. Calibrate per material |
 | `tol` | Number | 0.5 | Curve linearization tolerance, mm |
 | `colorMode` | Integer | 0 | 0 = classes (safe, warning and critical in magma hues), 1 = continuous magma ramp from 0° to failDeg, saturating above |
-| `global` | Boolean | false | Overhang reference. Off = local, the angle from the layer's own normal, the bead on bead stagger within the stack, which limits printability on non-planar layers. On = global, the angle from world Z, the lean against gravity. Identical on planar layers. Both angles are always output, this picks which one the thresholds, colors and legend use |
+| `global` | Boolean | false | Overhang reference. Off = local, the angle from the layer's own normal, the layer on layer stagger within the stack, which limits printability on non-planar layers. On = global, the angle from world Z, the lean against gravity. Identical on planar layers. Both angles are always output, this picks which one the thresholds, colors and legend use |
 
 ### Optional group: CSV export input
 

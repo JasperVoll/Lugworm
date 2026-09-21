@@ -9,7 +9,7 @@ permalink: /docs/components/iamlab-live-view/
 # IAMLab Live View
 
 IAMLab Live View shows the machine while it prints: the bed plate, the
-arm at the real nozzle position, and the printed bead growing as the
+arm at the real nozzle position, and the printed layer growing as the
 job progresses. The component
 only reads from the machine and never sends commands. Optionally, the
 nozzle path is recorded with timestamps to a CSV file.

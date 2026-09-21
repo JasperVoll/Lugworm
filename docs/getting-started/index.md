@@ -23,7 +23,7 @@ Use a Rhino document in millimetres for this exercise. Add the components below 
 2. **Slice it.** Set `mode` to `0` for planar layers and choose a `layerHeight`. Click Slice's compute button, then connect a Panel to `info` and read the report.
 3. **Place the layers.** Connect Slice's `contours` to `contours` on [IAMLab Place]({{ '/docs/components/iamlab-place/' | relative_url }}). Set `printCenter` to the point where you want the part's bottom centre.
 4. **Choose a preview profile.** Add [IAMLab Robot Definition]({{ '/docs/components/iamlab-robot-definition/' | relative_url }}) and select `none`. Connect its profile to the `robot` inputs on G-code Generator and Robot Simulation. This gives you a toolpath preview without an arm model.
-5. **Generate G-code.** Connect Place's `moved` to `crvs` on [IAMLab G-code Generator]({{ '/docs/components/iamlab-g-code-generator/' | relative_url }}). Match its `layerHeight` to Slice and set the bead `width`. Leave `savePath` empty for this preview. Click compute and read `info`.
+5. **Generate G-code.** Connect Place's `moved` to `crvs` on [IAMLab G-code Generator]({{ '/docs/components/iamlab-g-code-generator/' | relative_url }}). Match its `layerHeight` to Slice and set the layer `width`. Leave `savePath` empty for this preview. Click compute and read `info`.
 6. **Review the result.** Connect Generator's `gcode` to [IAMLab Robot Simulation]({{ '/docs/components/iamlab-robot-simulation/' | relative_url }}). Move `sim` from `0` to `1` to inspect the extrusion and travel moves.
 
 You should now see a placed, layered cylinder and be able to step through its toolpath. These settings are a preview exercise; choose your machine profile and calibrate material settings before printing.

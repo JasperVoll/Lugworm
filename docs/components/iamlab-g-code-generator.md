@@ -27,7 +27,7 @@ Panel: `3 G-code`. Nickname: `G-code`. Compute button: yes (runs only when the b
 |---|---|---|---|
 | `crvs` | Curve (tree) |  | Curves or polylines in print order, any tree |
 | `layerHeight` | Number | 3 | Layer height, the E cross section height, mm |
-| `width` | Number | 10 | Bead width, mm |
+| `width` | Number | 10 | Layer width, mm |
 | `ramDiameter` | Number | 94 | Cartridge bore, mm (IAMLab ram extruder: 94) |
 | `pressureCoeff` | Number | 1.2 | Calibrated flow multiplier |
 | `printSpeed` | Number | 43 | Extruding feedrate, mm/s |

@@ -68,7 +68,7 @@ Right-click the component to switch this group on. The inputs appear only while 
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `specimenScale` | Number | Standard specimens: uniform scale on the nominal dimensions (1 = the standard size). Scale up when a bead is too wide for the nominal section. An ISO 178 bar is 4 mm thick |
+| `specimenScale` | Number | Standard specimens: uniform scale on the nominal dimensions (1 = the standard size). Scale up when a layer is too wide for the nominal section. An ISO 178 bar is 4 mm thick |
 
 ### Optional group: Extrusion test path inputs (zig-zag line)
 
@@ -77,11 +77,11 @@ Right-click the component to switch this group on. The inputs appear only while 
 | Name | Type | Default | Description |
 |---|---|---|---|
 | `zzLength` | Number | 150 | Zigzag: length of one straight pass, mm |
-| `zzPitch` | Number | 10 | Zigzag: distance between passes, mm. Set it to the bead spacing you are testing |
+| `zzPitch` | Number | 10 | Zigzag: distance between passes, mm. Set it to the layer spacing you are testing |
 | `zzPasses` | Integer | 8 | Zigzag: number of straight passes |
 | `zzLayers` | Integer | 1 | Zigzag: stacked layers |
 | `zzLayerHeight` | Number | 3 | Zigzag: layer height, mm, used when layers is above 1 |
-| `zzArcTurns` | Boolean | true | Zigzag: round the 180 degree turns to a half circle instead of a sharp corner. A sharp reversal is where an LDM bead tears first |
+| `zzArcTurns` | Boolean | true | Zigzag: round the 180 degree turns to a half circle instead of a sharp corner. A sharp reversal is where an LDM layer tears first |
 
 ## Outputs
 
@@ -122,7 +122,7 @@ to a testing lab in its own dimensions - not to claim conformity.
 
 `specimenScale` exists because the plastics bars are unprintable at nominal
 size: an ISO 178 bar is 4 mm thick and an ASTM D790 bar 3.2 mm, both thinner
-than a single LDM bead. The component says so with a remark, and says again
+than a single LDM layer. The component says so with a remark, and says again
 that a scaled body is no longer at the standard's dimensions, so its results
 are comparable within your own series but not to the standard.
 
@@ -135,11 +135,11 @@ empty on purpose and the line comes out of `path`. Wire that straight into
 section a curve.
 
 The reversals are the point of the test. A straight line only shows
-steady-state flow; the turns show whether the bead tears on the inside of
+steady-state flow; the turns show whether the layer tears on the inside of
 the corner and over-deposits on the outside. Rounded turns (`zzArcTurns`,
 a half circle of radius `zzPitch`/2) keep the tangent continuous and are
 the gentler case; sharp turns are the harsher one. Set `zzPitch` to the
-bead spacing you actually intend to print at, and the gaps or overlaps
+layer spacing you actually intend to print at, and the gaps or overlaps
 between passes tell you whether the flow matches the spacing.
 
 Stacked layers alternate their start side, so a stack does not put its

@@ -68,7 +68,7 @@ Every component on the IAMLab tab has a page of its own with a short explanation
 | Component | Purpose |
 |---|---|
 | [IAMLab Calib Points]({{ '/docs/components/iamlab-calib-points/' | relative_url }}) | IAMLab Calib Points generates a grid of marking positions for the SCARA arm of the lab and drives the machine to each of them, one by one, so that a mark can be made on the bed. |
-| [IAMLab Live View]({{ '/docs/components/iamlab-live-view/' | relative_url }}) | IAMLab Live View shows the machine while it prints: the bed plate, the arm at the real nozzle position, and the printed bead growing as the job progresses. |
+| [IAMLab Live View]({{ '/docs/components/iamlab-live-view/' | relative_url }}) | IAMLab Live View shows the machine while it prints: the bed plate, the arm at the real nozzle position, and the printed layer growing as the job progresses. |
 | [IAMLab Machine Console]({{ '/docs/components/iamlab-machine-console/' | relative_url }}) | IAMLab Machine Console is the one window for controlling a printer with a Duet board from Grasshopper. |
 | [IAMLab Machine Files]({{ '/docs/components/iamlab-machine-files/' | relative_url }}) | IAMLab Machine Files browses the file storage of the connected machine - the Duet's SD card. |
 | [IAMLab Scara Fit]({{ '/docs/components/iamlab-scara-fit/' | relative_url }}) | IAMLab Scara Fit calculates the real arm lengths of the SCARA from the difference between the commanded and the measured mark positions of a calibration run. Has a compute button. |
