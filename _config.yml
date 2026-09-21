@@ -1,8 +1,8 @@
 title: IAMLab Slicer
 description: Laboratory slicing, experiments, and machine control in Grasshopper.
 url: "https://jaspervoll.github.io"
-baseurl: "/iamlab-slicer-documentation"
-repository: JasperVoll/iamlab-slicer-documentation
+baseurl: "/iamlab-slicer"
+repository: JasperVoll/iamlab-slicer
 remote_theme: just-the-docs/just-the-docs@v0.10.1
 permalink: pretty
 color_scheme: iamlab
@@ -17,17 +17,17 @@ nav_sort: case_insensitive
 nav_error_report: true
 aux_links:
   "Download package":
-    - https://github.com/JasperVoll/iamlab-slicer-documentation/releases
+    - https://github.com/JasperVoll/iamlab-slicer/releases
   "Report an issue":
-    - https://github.com/JasperVoll/iamlab-slicer-documentation/issues
+    - https://github.com/JasperVoll/iamlab-slicer/issues
 back_to_top: true
 back_to_top_text: Back to top
 gh_edit_link: true
 gh_edit_link_text: Edit this page on GitHub
-gh_edit_repository: https://github.com/JasperVoll/iamlab-slicer-documentation
+gh_edit_repository: https://github.com/JasperVoll/iamlab-slicer
 gh_edit_branch: main
 gh_edit_view_mode: edit
-footer_content: 'IAMLab Slicer is released under the <a href="/iamlab-slicer-documentation/docs/license/">MIT License</a>. Copyright &copy; 2026 Jasper Vollmert, <a href="https://www.tuhh.de/idac/news">IDAC</a>, Hamburg University of Technology. <a href="https://github.com/JasperVoll/iamlab-slicer-documentation/issues">Report an issue</a>.'
+footer_content: 'IAMLab Slicer is released under the <a href="/iamlab-slicer/docs/license/">MIT License</a>. Copyright &copy; 2026 Jasper Vollmert. Developed at <a href="https://www.tuhh.de/idac/news">IDAC</a>, Hamburg University of Technology. <a href="https://github.com/JasperVoll/iamlab-slicer/issues">Report an issue</a>.'
 plugins:
   - jekyll-remote-theme
   - jekyll-seo-tag

@@ -1,10 +1,10 @@
 blank_issues_enabled: false
 contact_links:
   - name: Documentation
-    url: https://jaspervoll.github.io/iamlab-slicer-documentation/
+    url: https://jaspervoll.github.io/iamlab-slicer/
     about: Installation, component map, component reference, calibration, machine control.
   - name: Releases
-    url: https://github.com/JasperVoll/iamlab-slicer-documentation/releases
+    url: https://github.com/JasperVoll/iamlab-slicer/releases
     about: Download the packaged Grasshopper plugin.
   - name: IDAC @ TUHH
     url: https://www.tuhh.de/idac

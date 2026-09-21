@@ -40,7 +40,7 @@ The rewritten **Legend** component presents continuous ramps, thresholded classe
 
 **Requirements: Rhino 8 on Windows. Nothing else to install.** The released `.yak` package includes the plugin and its dependencies.
 
-- [GitHub Releases](https://github.com/JasperVoll/iamlab-slicer-documentation/releases)
+- [GitHub Releases](https://github.com/JasperVoll/iamlab-slicer/releases)
 - **Food4Rhino:** plugin page link to be added
 
 Save `iamlab-slicer-<version>-rh8_0-*.yak` in its own folder. Then run PowerShell, pointing `--source` to that folder:
@@ -53,19 +53,19 @@ Restart Rhino 8, run the `Grasshopper` command, and look for the **IAMLab** ribb
 
 ## Documentation
 
-The [IAMLab Slicer documentation site](https://jaspervoll.github.io/iamlab-slicer-documentation/) covers installation, a map of how the components connect, component references, calibration, and machine control.
+The [IAMLab Slicer documentation site](https://jaspervoll.github.io/iamlab-slicer/) covers installation, a map of how the components connect, component references, calibration, and machine control.
 
-- [Installation](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/getting-started/installation/)
-- [Component Map](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/getting-started/component-map/)
-- [Components](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/components/)
-- [About](https://jaspervoll.github.io/iamlab-slicer-documentation/docs/about/)
+- [Installation](https://jaspervoll.github.io/iamlab-slicer/docs/getting-started/installation/)
+- [Component Map](https://jaspervoll.github.io/iamlab-slicer/docs/getting-started/component-map/)
+- [Components](https://jaspervoll.github.io/iamlab-slicer/docs/components/)
+- [About](https://jaspervoll.github.io/iamlab-slicer/docs/about/)
 
 The proposed source-and-documentation monorepo layout and the GitLab-to-GitHub
 migration gates are recorded in [REPOSITORY-MIGRATION.md](REPOSITORY-MIGRATION.md).
 
 ## Issues and contact
 
-Use the [issue tracker](https://github.com/JasperVoll/iamlab-slicer-documentation/issues) for bugs, questions, and feature requests. For direct contact, email Jasper Vollmert at [jasper.vollmert@tuhh.de](mailto:jasper.vollmert@tuhh.de).
+Use the [issue tracker](https://github.com/JasperVoll/iamlab-slicer/issues) for bugs, questions, and feature requests. For direct contact, email Jasper Vollmert at [jasper.vollmert@tuhh.de](mailto:jasper.vollmert@tuhh.de).
 
 ## Citing
 

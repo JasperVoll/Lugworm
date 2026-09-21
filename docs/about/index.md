@@ -43,7 +43,7 @@ before the first release, to report a machine that does not work, or to
 collaborate on making a machine compatible.
 
 Bugs and feature requests belong in the
-[issue tracker](https://github.com/JasperVoll/iamlab-slicer-documentation/issues).
+[issue tracker](https://github.com/JasperVoll/iamlab-slicer/issues).
 Include the installed version from
 [IAMLab Version]({{ '/docs/components/iamlab-version/' | relative_url }}), the
 `info` output of the component that failed, and a minimal definition with

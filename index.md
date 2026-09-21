@@ -70,4 +70,4 @@ compatible, see [About]({{ '/docs/about/' | relative_url }}).
 
 IAMLab Slicer is released under the [MIT License]({{ '/docs/license/' | relative_url }}).
 
-Report problems in the [issue tracker](https://github.com/JasperVoll/iamlab-slicer-documentation/issues). See [About]({{ '/docs/about/' | relative_url }}) for contact details, the team, and publications.
+Report problems in the [issue tracker](https://github.com/JasperVoll/iamlab-slicer/issues). See [About]({{ '/docs/about/' | relative_url }}) for contact details, the team, and publications.

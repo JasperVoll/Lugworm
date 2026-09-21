@@ -11,7 +11,7 @@ permalink: /docs/getting-started/installation/
 IAMLab Slicer requires **Rhino 8 on Windows**. The packaged `.yak` file includes the plugin and its dependencies.
 
 {: .warning }
-> **The public package is being prepared.** For early access, contact [jasper.vollmert@tuhh.de](mailto:jasper.vollmert@tuhh.de). Once published, the package will be available from [Releases](https://github.com/JasperVoll/iamlab-slicer-documentation/releases). Use the instructions below when you have the package.
+> **The public package is being prepared.** For early access, contact [jasper.vollmert@tuhh.de](mailto:jasper.vollmert@tuhh.de). Once published, the package will be available from [Releases](https://github.com/JasperVoll/iamlab-slicer/releases). Use the instructions below when you have the package.
 
 ## Install with Yak (recommended)
 
@@ -63,7 +63,7 @@ duplicate loading.
 | No IAMLab tab appears | Usually blocked DLLs. Run the `Unblock-File` command above and restart Rhino. |
 | Yak reports "package not found" | The path after `--source` must be the folder, not the `.yak` file. |
 | The plugin does not load at all | This build targets Rhino 8. It does not load in Rhino 7. |
-| Still nothing | In Grasshopper open File > Special Folders > Component Folders, open the report of unloaded or failed assemblies, and attach it to a [bug report](https://github.com/JasperVoll/iamlab-slicer-documentation/issues). |
+| Still nothing | In Grasshopper open File > Special Folders > Component Folders, open the report of unloaded or failed assemblies, and attach it to a [bug report](https://github.com/JasperVoll/iamlab-slicer/issues). |
 
 ## Check the installation
 

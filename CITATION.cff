@@ -8,8 +8,8 @@ authors:
     orcid: "https://orcid.org/0009-0001-6245-912X"
     affiliation: "Institute of Digital and Autonomous Construction (IDAC), Hamburg University of Technology (TUHH)"
 license: MIT
-repository-code: "https://github.com/JasperVoll/iamlab-slicer-documentation"
-url: "https://jaspervoll.github.io/iamlab-slicer-documentation/"
+repository-code: "https://github.com/JasperVoll/iamlab-slicer"
+url: "https://jaspervoll.github.io/iamlab-slicer/"
 keywords:
   - additive manufacturing
   - concrete 3D printing

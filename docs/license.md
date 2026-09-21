@@ -12,7 +12,7 @@ MIT License. Jasper Vollmert is the sole copyright holder. IDAC/TUHH is the
 author's employer and affiliation; its acknowledgement does not indicate
 copyright ownership. The copyright and permission notice below are included
 with every copy of that work; the same text is in the repository's
-[LICENSE](https://github.com/JasperVoll/iamlab-slicer-documentation/blob/main/LICENSE)
+[LICENSE](https://github.com/JasperVoll/iamlab-slicer/blob/main/LICENSE)
 file and in the distributed package. Files that carry their own license notice
 remain under that notice.
 
