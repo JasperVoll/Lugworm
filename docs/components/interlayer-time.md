@@ -1,14 +1,16 @@
 ---
-title: "IAMLab Interlayer Time"
+title: "Interlayer Time"
 nav_order: 7
 parent: "Components"
-description: "IAMLab Interlayer Time: component inputs and outputs."
-permalink: /docs/components/iamlab-interlayer-time/
+description: "Interlayer Time: component inputs and outputs."
+permalink: /docs/components/interlayer-time/
+redirect_from:
+  - /docs/components/iamlab-interlayer-time/
 ---
 
-# IAMLab Interlayer Time
+# Interlayer Time
 
-IAMLab Interlayer Time shows, for every point of the print, how long
+Interlayer Time shows, for every point of the print, how long
 ago the material directly underneath it was laid down. This interlayer
 time governs adhesion and collapse in clay: too short, and the layer
 below has not stiffened enough to carry the next one; too long, and it
@@ -19,7 +21,7 @@ layers, are coloured on a Plasma scale between your two thresholds.
 
 Panel: `5 Analyze`. Nickname: `Interlayer`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-interlayer-time.png" alt="IAMLab Interlayer Time on the canvas" %}
+{% include figure.html src="components/iamlab-interlayer-time" alt="Interlayer Time: stepping through layers with the isolate toggle and the time legend in the viewport" %}
 
 ## Inputs
 
@@ -75,6 +77,6 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `colors` | Colour (tree) | Plasma color per path vertex, branches cut like the path output, for a custom preview. The unshaded scale color, whatever shade draws |
 | `layers` | Integer | Layer count of the whole print, not of the visible cut |
 | `info` | Text | Diagnostics |
-| `legend` | Text | Legend spec for IAMLab Legend: the Plasma scale, its maximum and the fast and slow thresholds this analysis used |
+| `legend` | Text | Legend spec for Legend: the Plasma scale, its maximum and the fast and slow thresholds this analysis used |
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

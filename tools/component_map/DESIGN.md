@@ -4,7 +4,7 @@ Date: 2026-09-21. Status: approved, awaiting implementation.
 
 ## Goal
 
-Replace the card-based Component Map page with one generated figure that shows every IAMLab component, how it hangs off the main slicing route, and nothing else. No explanations in the figure. One sentence on the page.
+Replace the card-based Component Map page with one generated figure that shows every Lugworm component, how it hangs off the main slicing route, and nothing else. No explanations in the figure. One sentence on the page.
 
 ## Decisions
 
@@ -35,7 +35,7 @@ Replace the card-based Component Map page with one generated figure that shows e
 title: "Component Map"
 nav_order: 2
 parent: "Getting started"
-description: "One map of all IAMLab components."
+description: "One map of all Lugworm components."
 permalink: /docs/getting-started/component-map/
 ---
 
@@ -75,13 +75,12 @@ Columns are 198 px apart starting at x = 8. Spine row at y = 190. Spine and Cons
 | live | Live View | IamDuetLive | live-view | 3 | 384 | satellite |
 | files | Machine Files | IamDuetFiles | machine-files | 3 | 454 | satellite |
 | ls | Load Settings | IamSettings | load-settings | 0 | 502 | satellite |
-| ver | Version | IamVersion | version | 0 | 572 | satellite |
 | doe | DoE Design | IamDoeDesign | doe-design | 0 | 680 | satellite |
 | rsm | RSM Evaluate | IamRsm | rsm-evaluate | 1 | 680 | satellite |
 | des | Desirability | IamDesirability | desirability | 2 | 680 | satellite |
 | par | Pareto Select | IamParetoSelect | pareto-select | 3 | 680 | satellite |
 
-Link target: `{{ '/docs/components/iamlab-<slug>/' | relative_url }}`. Liquid runs inside includes, so the baseurl is applied by Jekyll. Each linked node carries a `<title>` with its label.
+Link target: `{{ '/docs/components/<slug>/' | relative_url }}`. Liquid runs inside includes, so the baseurl is applied by Jekyll. Each linked node carries a `<title>` with its label.
 
 ### Edges
 
@@ -101,15 +100,14 @@ Rule: one arrow per satellite to its primary core node. Secondary connections th
 
 Sources copied into `assets/images/icons/svg/`:
 
-- 22 plugin icons from `IAMLabSlicer/Resources/icons-src/IAMLab/*.svg` (24 px viewBox), unchanged.
+- 22 plugin icons from `LugwormSlicer/Resources/icons-src/Lugworm/*.svg` (24 px viewBox), unchanged.
 - `GhGeometry.svg`: the Grasshopper Geometry parameter icon from the grasshopper-icons set, unchanged.
-- `IamVersion.svg`: redrawn as vector (blue circle, check mark), same look as the plugin's runtime-drawn icon. The plugin has no SVG source for it.
 
 The generator inlines each icon as a nested `<svg viewBox>` and prefixes every `id` (and its `url(#…)` / `href="#…"` references) with the icon name so gradients cannot collide.
 
 ### Accessibility and interaction
 
-- Root `<svg>` has `role="img"` and `aria-labelledby` pointing at a `<title>` "IAMLab Slicer component map".
+- Root `<svg>` has `role="img"` and `aria-labelledby` pointing at a `<title>` "Lugworm component map".
 - Hover and `:focus-visible` on a link: box stroke and name turn `#28699f`, stroke width 2.4.
 - Font: `font-family: inherit` so the theme font renders.
 
@@ -147,7 +145,7 @@ In `_sass/custom/custom.scss`:
 No Ruby in this environment, so no Jekyll build. Checks that run:
 
 1. Generated SVG rendered standalone with headless Edge, baseurl substituted for the Liquid filter; visual check of layout, labels, arrows.
-2. Every link slug matches an existing `docs/components/iamlab-<slug>.md`.
+2. Every link slug matches an existing `docs/components/<slug>.md`.
 3. All `id` attributes in the generated SVG are unique.
 4. No remaining references to `component-card`, `component-grid`, `_24.png`, `assets/diagrams` in the repo.
 5. `tools/check_site.py` after the next Jekyll build validates the links from the inline SVG like any other page links.

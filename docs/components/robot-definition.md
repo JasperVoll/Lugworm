@@ -1,14 +1,16 @@
 ---
-title: "IAMLab Robot Definition"
+title: "Robot Definition"
 nav_order: 18
 parent: "Components"
-description: "IAMLab Robot Definition: component inputs and outputs."
-permalink: /docs/components/iamlab-robot-definition/
+description: "Robot Definition: component inputs and outputs."
+permalink: /docs/components/robot-definition/
+redirect_from:
+  - /docs/components/iamlab-robot-definition/
 ---
 
-# IAMLab Robot Definition
+# Robot Definition
 
-IAMLab Robot Definition selects the machine. The `robot` output is
+Robot Definition selects the machine. The `robot` output is
 a short text that other components read from their `robot` input, so
 that the machine is chosen once for the whole definition. Available
 profiles: `none` (no machine, toolpath only), `generic-cartesian` (an
@@ -19,8 +21,6 @@ G-code dialect is Klipper or Marlin; neither is controlled over the
 network - generate the file and transfer it yourself).
 
 Panel: `4 Robot`. Nickname: `Robot Def`. Compute button: no (runs on every change).
-
-{% include figure.html src="components/iamlab-robot-definition.png" alt="IAMLab Robot Definition on the canvas" %}
 
 ## Inputs
 

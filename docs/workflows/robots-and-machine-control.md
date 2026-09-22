@@ -12,7 +12,7 @@ Choose a machine profile, review the generated motion, then transfer or run the 
 
 ## 1. Choose the machine profile
 
-Add [IAMLab Robot Definition]({{ '/docs/components/iamlab-robot-definition/' | relative_url }}) and connect its profile text to each component's `robot` input. Text panels containing `scara` or `none` also work.
+Add [Robot Definition]({{ '/docs/components/robot-definition/' | relative_url }}) and connect its profile text to each component's `robot` input. Text panels containing `scara` or `none` also work.
 
 | Profile | Use it for | G-code dialect | Direct control |
 |---|---|---|---|
@@ -25,23 +25,23 @@ Add [IAMLab Robot Definition]({{ '/docs/components/iamlab-robot-definition/' | r
 
 An unwired Generator `robot` input uses the laboratory SCARA's mirrored X/Y axes. For a Cartesian printer, connect the appropriate Cartesian profile; use `none` for a model-free preview. Read `frame:` in Generator's `info` output to confirm the coordinate convention.
 
-{% include figure.html src="workflows/robot-profile.png" alt="Selecting a robot profile" %}
+{% include figure.html src="workflows/robot-profile" alt="Selecting a robot profile" %}
 
 ## 2. Review the motion
 
-Connect the same Robot Definition and the generated G-code to [IAMLab Robot Simulation]({{ '/docs/components/iamlab-robot-simulation/' | relative_url }}). Move `sim` from `0` to `1` to inspect the print. Layers show extrusion; ochre lines show travel.
+Connect the same Robot Definition and the generated G-code to [Robot Simulation]({{ '/docs/components/robot-simulation/' | relative_url }}). Move `sim` from `0` to `1` to inspect the print. Layers show extrusion; ochre lines show travel.
 
 For a SCARA profile, the checks cover reach, joint angles and speeds, and firmware-compatible movement between points. Unreachable targets set `reachOK` to false, appear in `problems`, and produce a red error. Correct the placement, speed, or geometry as appropriate, then regenerate and review the job before running it.
 
-{% include figure.html src="workflows/reach-violation.png" alt="An out-of-reach placement detected in Robot Simulation" %}
+{% include figure.html src="workflows/reach-violation" alt="An out-of-reach placement detected in Robot Simulation" %}
 
 ## 3. Connect a Duet machine
 
 The **7 Print** group contains three components:
 
-- [Machine Console]({{ '/docs/components/iamlab-machine-console/' | relative_url }}) connects over WiFi and provides homing, press-and-hold jogging, origin capture, job checking and upload, print controls, commands, calibration positions, and logs.
-- [Live View]({{ '/docs/components/iamlab-live-view/' | relative_url }}) shows the machine, nozzle position, and deposited layer.
-- [Machine Files]({{ '/docs/components/iamlab-machine-files/' | relative_url }}) manages files on the connected machine.
+- [Machine Console]({{ '/docs/components/machine-console/' | relative_url }}) connects over WiFi and provides homing, press-and-hold jogging, origin capture, job checking and upload, print controls, commands, calibration positions, and logs.
+- [Live View]({{ '/docs/components/live-view/' | relative_url }}) shows the machine, nozzle position, and deposited layer.
+- [Machine Files]({{ '/docs/components/machine-files/' | relative_url }}) manages files on the connected machine.
 
 Connect the Robot Definition before operating the console. Without one, control assumes the laboratory SCARA. For other Duet Cartesian printers, select `generic-duet-cartesian`; moves are checked against firmware travel limits.
 
@@ -55,7 +55,7 @@ The first connection records the board identity. If a different board appears at
 
 Use Machine Console to check and upload the job. Jobs are checked against machine limits before upload, and uploads are checksum-verified. Review the reported result before starting the print; use the console to start, pause, or cancel it.
 
-{% include figure.html src="workflows/live-control.png" alt="Live control from the Grasshopper canvas" %}
+{% include figure.html src="workflows/live-control" alt="Live control from the Grasshopper canvas" %}
 
 ### Keep the print log
 
@@ -63,7 +63,7 @@ Jobs record nozzle positions, timestamps, layer changes, and speed in a local bu
 
 ## Transfer files to Klipper or Marlin
 
-The `generic-klipper` and `generic-marlin` profiles set the coordinate frame and default dialect in [G-code Generator]({{ '/docs/components/iamlab-g-code-generator/' | relative_url }}). Write the reviewed file with [Save G-code]({{ '/docs/components/iamlab-save-g-code/' | relative_url }}) and transfer it using your machine's usual workflow.
+The `generic-klipper` and `generic-marlin` profiles set the coordinate frame and default dialect in [G-code Generator]({{ '/docs/components/g-code-generator/' | relative_url }}). Write the reviewed file with [Save G-code]({{ '/docs/components/save-g-code/' | relative_url }}) and transfer it using your machine's usual workflow.
 
 There is no live connection for either firmware. Machine Console, Live View, and Machine Files refuse these profiles with the message *use a Duet profile*.
 

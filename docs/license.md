@@ -1,7 +1,7 @@
 ---
 title: "License"
 nav_order: 6
-description: "The MIT License for IAMLab Slicer, and the third-party components it depends on."
+description: "The MIT License for Lugworm, and the third-party components it depends on."
 permalink: /docs/license/
 ---
 
@@ -12,7 +12,7 @@ MIT License. Jasper Vollmert is the sole copyright holder. IDAC/TUHH is the
 author's employer and affiliation; its acknowledgement does not indicate
 copyright ownership. The copyright and permission notice below are included
 with every copy of that work; the same text is in the repository's
-[LICENSE](https://github.com/JasperVoll/iamlab-slicer/blob/main/LICENSE)
+[LICENSE](https://github.com/JasperVoll/lugworm/blob/main/LICENSE)
 file and in the distributed package. Files that carry their own license notice
 remain under that notice.
 

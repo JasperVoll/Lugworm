@@ -26,7 +26,7 @@ $iamlab-note:       #14773c !default;
 .iamlab-card h2 { font-size: 1.05rem; margin-top: 0; }
 .iamlab-card p { margin-bottom: 0; font-size: 0.9rem; }
 .iamlab-figure { margin: 1.5rem 0; }
-.iamlab-figure img { max-width: 100%; height: auto; display: block; border: 1px solid $border-color; border-radius: 6px; }
+.iamlab-figure img, .iamlab-figure video { max-width: 100%; height: auto; display: block; border: 1px solid $border-color; border-radius: 6px; }
 .iamlab-figure figcaption { font-size: 0.8rem; color: $body-text-color; margin-top: 0.5rem; }
 .screenshot-pending code { font-size: 0.75rem; }
 .screenshot-pending { color: $body-text-color; font-size: 0.8rem; border-left: 2px solid $border-color; padding-left: 0.75rem; }

@@ -1,14 +1,16 @@
 ---
-title: "IAMLab Desirability"
+title: "Desirability"
 nav_order: 2
 parent: "Components"
-description: "IAMLab Desirability: component inputs and outputs."
-permalink: /docs/components/iamlab-desirability/
+description: "Desirability: component inputs and outputs."
+permalink: /docs/components/desirability/
+redirect_from:
+  - /docs/components/iamlab-desirability/
 ---
 
-# IAMLab Desirability
+# Desirability
 
-IAMLab Desirability takes the fitted models and a goal for each
+Desirability takes the fitted models and a goal for each
 measured result, and finds the combination of settings that meets all
 goals best. The result is a recommended set of settings, a score `D`
 between 0 (no goal met) and 1 (all goals met), and a report. The
@@ -16,7 +18,7 @@ component has a compute button.
 
 Panel: `6 Calibrate`. Nickname: `Desire`. Compute button: yes (runs only when the button is clicked).
 
-{% include figure.html src="components/iamlab-desirability.png" alt="IAMLab Desirability on the canvas" %}
+{% include figure.html src="components/iamlab-desirability" alt="Desirability on the canvas" %}
 
 ## Inputs
 

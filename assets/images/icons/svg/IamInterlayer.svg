@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="1.0909 1.0909 21.8182 21.8182">
-  <title>Interlayer time: stacked beads with a clock</title>
+  <title>Interlayer time: stacked layers with a clock</title>
   <defs>
     <linearGradient id="layers" gradientUnits="userSpaceOnUse" x1="4" y1="8" x2="18" y2="21">
       <stop offset="0" stop-color="#cde4ff"/>

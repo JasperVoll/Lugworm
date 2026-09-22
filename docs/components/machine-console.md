@@ -1,14 +1,16 @@
 ---
-title: "IAMLab Machine Console"
+title: "Machine Console"
 nav_order: 11
 parent: "Components"
-description: "IAMLab Machine Console: component inputs and outputs."
-permalink: /docs/components/iamlab-machine-console/
+description: "Machine Console: component inputs and outputs."
+permalink: /docs/components/machine-console/
+redirect_from:
+  - /docs/components/iamlab-machine-console/
 ---
 
-# IAMLab Machine Console
+# Machine Console
 
-IAMLab Machine Console is the one window for controlling a printer with
+Machine Console is the one window for controlling a printer with
 a Duet board from Grasshopper. It handles connecting, homing, jogging,
 capturing the bed origin and the nozzle height, checking and uploading a
 job, starting, pausing and cancelling it, sending single commands,
@@ -17,8 +19,6 @@ driving to calibration points, and keeping the job logs. The connected
 refused with "use a Duet profile".
 
 Panel: `7 Print`. Nickname: `Console`. Compute button: no (runs on every change).
-
-{% include figure.html src="components/iamlab-machine-console.png" alt="IAMLab Machine Console on the canvas" %}
 
 ## Inputs
 

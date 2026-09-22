@@ -1,21 +1,23 @@
 ---
-title: "IAMLab Print Stats"
+title: "Print Stats"
 nav_order: 17
 parent: "Components"
-description: "IAMLab Print Stats: component inputs and outputs."
-permalink: /docs/components/iamlab-print-stats/
+description: "Print Stats: component inputs and outputs."
+permalink: /docs/components/print-stats/
+redirect_from:
+  - /docs/components/iamlab-print-stats/
 ---
 
-# IAMLab Print Stats
+# Print Stats
 
-IAMLab Print Stats reads a G-code file, or a toolpath, and reports the
+Print Stats reads a G-code file, or a toolpath, and reports the
 printed length, the travel length, the amount of material in cubic
 centimetres and grams, an estimated print time, and a table with one
 row per layer. The report is a quick check before a long print.
 
 Panel: `5 Analyze`. Nickname: `Stats`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-print-stats.png" alt="IAMLab Print Stats on the canvas" %}
+{% include figure.html src="components/iamlab-print-stats" alt="Print Stats on the canvas" %}
 
 ## Inputs
 

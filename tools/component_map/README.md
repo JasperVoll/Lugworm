@@ -12,7 +12,7 @@ Python 3, standard library only. `DESIGN.md` records the decisions behind the la
 
 One entry per box. `column` indexes into `columns`; `y` is the top edge in pixels. `kind` picks the size and style (`spine`, `hub`, `satellite`). `slug` links to `docs/components/iamlab-<slug>.md`; `null` means no link. Optional `x_offset`, `width`, `height` override the defaults.
 
-Icons come from `assets/images/icons/svg/<icon>.svg`. Those are the plugin's icon sources; `GhGeometry.svg` is the Grasshopper Geometry parameter icon and `IamVersion.svg` is a vector redraw of the runtime-drawn Version icon.
+Icons come from `assets/images/icons/svg/<icon>.svg`. Those are the plugin's icon sources; `GhGeometry.svg` is the Grasshopper Geometry parameter icon.
 
 ## Edges
 

@@ -1,22 +1,24 @@
 ---
-title: "IAMLab Print Bed"
+title: "Print Bed"
 nav_order: 16
 parent: "Components"
-description: "IAMLab Print Bed: component inputs and outputs."
-permalink: /docs/components/iamlab-print-bed/
+description: "Print Bed: component inputs and outputs."
+permalink: /docs/components/print-bed/
+redirect_from:
+  - /docs/components/iamlab-print-bed/
 ---
 
-# IAMLab Print Bed
+# Print Bed
 
-IAMLab Print Bed describes the print bed once: how large the plate is,
+Print Bed describes the print bed once: how large the plate is,
 where the plate is in the Rhino document, and where a part is placed by
-default. The `bed` output is connected to [IAMLab Place]({{ '/docs/components/iamlab-place/' | relative_url }}),
-[IAMLab Robot Simulation]({{ '/docs/components/iamlab-robot-simulation/' | relative_url }}), and [IAMLab Live View]({{ '/docs/components/iamlab-live-view/' | relative_url }}), so that all of
+default. The `bed` output is connected to [Place]({{ '/docs/components/place/' | relative_url }}),
+[Robot Simulation]({{ '/docs/components/robot-simulation/' | relative_url }}), and [Live View]({{ '/docs/components/live-view/' | relative_url }}), so that all of
 them use the same bed.
 
 Panel: `2 Place`. Nickname: `Bed`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-print-bed.png" alt="IAMLab Print Bed on the canvas" %}
+{% include figure.html src="components/iamlab-print-bed" alt="Print Bed: the bed outline in the viewport and the component on the canvas" %}
 
 ## Inputs
 

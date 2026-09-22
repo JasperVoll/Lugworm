@@ -1,17 +1,19 @@
 ---
-title: "IAMLab Legend"
+title: "Legend"
 nav_order: 8
 parent: "Components"
-description: "IAMLab Legend: component inputs and outputs."
-permalink: /docs/components/iamlab-legend/
+description: "Legend: component inputs and outputs."
+permalink: /docs/components/legend/
+redirect_from:
+  - /docs/components/iamlab-legend/
 ---
 
-# IAMLab Legend
+# Legend
 
-IAMLab Legend draws a legend for any data range: a continuous ramp,
+Legend draws a legend for any data range: a continuous ramp,
 thresholded classes, named groups, or a size scale. It exists because
 Grasshopper has no legend of its own. Wire the `legend` output of
-[IAMLab Overhang]({{ '/docs/components/iamlab-overhang/' | relative_url }}) or [IAMLab Interlayer Time]({{ '/docs/components/iamlab-interlayer-time/' | relative_url }}) and the legend always
+[Overhang]({{ '/docs/components/overhang/' | relative_url }}) or [Interlayer Time]({{ '/docs/components/interlayer-time/' | relative_url }}) and the legend always
 matches the colours those components painted; wire your own `values`,
 `min` and `max` instead to describe any other scale. Every explicit
 input on the component overrides the matching field of the wire, so
@@ -20,16 +22,16 @@ detaching it from the source.
 
 Panel: `5 Analyze`. Nickname: `Legend`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-legend.png" alt="IAMLab Legend on the canvas" %}
+{% include figure.html src="components/iamlab-legend" alt="Legend on the canvas" %}
 
 ## Inputs
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `legend` | Text |  | Legend spec wire, the legend output of IAMLab Overhang or Interlayer Time. Every explicit input below overrides its field |
+| `legend` | Text |  | Legend spec wire, the legend output of Overhang or Interlayer Time. Every explicit input below overrides its field |
 | `values` | Number (list) |  | Data to color. Also sets the domain when min and max are not connected. The colors output gives one color per value |
 | `min` | Number | 0 | Domain start. Not connected takes the wire's, else the values' minimum, else 0 |
-| `max` | Number | 1 | Domain end. Not connected takes the wire's, else the values' maximum, else 1 |
+| `max` | Number | 100 | Domain end. Not connected takes the wire's, else the values' maximum, else 1 |
 | `type` | Integer | 0 | 0 = continuous ramp, 1 = classes (threshold bands), 2 = groups (named categories), 3 = size (circle size scale) |
 | `scheme` | Text |  | Color scheme: any matplotlib colormap (viridis, plasma, magma, Blues, RdBu, tab10 …), R grDevices palette (Okabe-Ito, rainbow …) or ggsci palette (npg, nejm, d3-category10 …), traffic, or custom, which uses colors or gradient. The value list shows them all by family |
 | `title` | Text |  | Title above the legend |

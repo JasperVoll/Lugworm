@@ -1,14 +1,16 @@
 ---
-title: "IAMLab G-code Generator"
+title: "G-code Generator"
 nav_order: 4
 parent: "Components"
-description: "IAMLab G-code Generator: component inputs and outputs."
-permalink: /docs/components/iamlab-g-code-generator/
+description: "G-code Generator: component inputs and outputs."
+permalink: /docs/components/g-code-generator/
+redirect_from:
+  - /docs/components/iamlab-g-code-generator/
 ---
 
-# IAMLab G-code Generator
+# G-code Generator
 
-IAMLab G-code Generator turns the placed layers into the G-code file
+G-code Generator turns the placed layers into the G-code file
 that the printer runs. The component handles the parts that are
 specific to clay and paste: how much material is pushed out per
 millimetre of path, how the ram pulls back and pushes again at a seam,
@@ -19,7 +21,7 @@ component has a compute button.
 
 Panel: `3 G-code`. Nickname: `G-code`. Compute button: yes (runs only when the button is clicked).
 
-{% include figure.html src="components/iamlab-g-code-generator.png" alt="IAMLab G-code Generator on the canvas" %}
+{% include figure.html src="components/iamlab-g-code-generator" alt="G-code Generator: input groups on the canvas and the generated G-code in a panel" %}
 
 ## Inputs
 

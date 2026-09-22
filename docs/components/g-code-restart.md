@@ -1,14 +1,16 @@
 ---
-title: "IAMLab G-code Restart"
+title: "G-code Restart"
 nav_order: 5
 parent: "Components"
-description: "IAMLab G-code Restart: component inputs and outputs."
-permalink: /docs/components/iamlab-g-code-restart/
+description: "G-code Restart: component inputs and outputs."
+permalink: /docs/components/g-code-restart/
+redirect_from:
+  - /docs/components/iamlab-g-code-restart/
 ---
 
-# IAMLab G-code Restart
+# G-code Restart
 
-IAMLab G-code Restart rebuilds a G-code file so that a print can
+G-code Restart rebuilds a G-code file so that a print can
 continue after a failure. You tell the component where the print
 stopped, as a height, as the percentage shown on the Duet, or as the
 last position, and the component removes everything that was already
@@ -16,8 +18,6 @@ printed, adds a safe approach to the restart point, and keeps the rest
 of the job. The component has a compute button.
 
 Panel: `3 G-code`. Nickname: `Restart`. Compute button: yes (runs only when the button is clicked).
-
-{% include figure.html src="components/iamlab-g-code-restart.png" alt="IAMLab G-code Restart on the canvas" %}
 
 ## Inputs
 

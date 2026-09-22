@@ -1,21 +1,21 @@
 ---
-title: "IAMLab Machine Files"
+title: "Machine Files"
 nav_order: 12
 parent: "Components"
-description: "IAMLab Machine Files: component inputs and outputs."
-permalink: /docs/components/iamlab-machine-files/
+description: "Machine Files: component inputs and outputs."
+permalink: /docs/components/machine-files/
+redirect_from:
+  - /docs/components/iamlab-machine-files/
 ---
 
-# IAMLab Machine Files
+# Machine Files
 
-IAMLab Machine Files browses the file storage of the connected machine,
+Machine Files browses the file storage of the connected machine,
 the Duet's SD card. Buttons on the component read a folder,
 step through the entries, open a folder, download a file, rename or
 move a file, and delete a file.
 
 Panel: `7 Print`. Nickname: `Files`. Compute button: no (runs on every change).
-
-{% include figure.html src="components/iamlab-machine-files.png" alt="IAMLab Machine Files on the canvas" %}
 
 ## Inputs
 

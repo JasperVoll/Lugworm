@@ -12,8 +12,8 @@ body:
     id: version
     attributes:
       label: Plugin version
-      description: Place an IAMLab Version component on the canvas and copy the summary line.
-      placeholder: "IAMLab Slicer 0.1.0-beta (2026-09-18, net7 runtime)"
+      description: The version Rhino's Package Manager shows for Lugworm, or the file version in the .gha file's properties.
+      placeholder: "0.1.0-beta"
     validations:
       required: true
   - type: input

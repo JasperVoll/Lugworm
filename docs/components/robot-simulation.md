@@ -1,14 +1,16 @@
 ---
-title: "IAMLab Robot Simulation"
+title: "Robot Simulation"
 nav_order: 19
 parent: "Components"
-description: "IAMLab Robot Simulation: component inputs and outputs."
-permalink: /docs/components/iamlab-robot-simulation/
+description: "Robot Simulation: component inputs and outputs."
+permalink: /docs/components/robot-simulation/
+redirect_from:
+  - /docs/components/iamlab-robot-simulation/
 ---
 
-# IAMLab Robot Simulation
+# Robot Simulation
 
-IAMLab Robot Simulation shows a print before it runs. The component
+Robot Simulation shows a print before it runs. The component
 draws the toolpath and the printed material, and, when a Robot
 Definition with an arm is connected, poses the arm along the path and
 checks that every point can be reached within the joint limits and
@@ -18,7 +20,7 @@ the material only.
 
 Panel: `4 Robot`. Nickname: `Robot Sim`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-robot-simulation.png" alt="IAMLab Robot Simulation on the canvas" %}
+{% include figure.html src="components/iamlab-robot-simulation" alt="Robot Simulation: moving the sim slider steps the SCARA arm through the print" %}
 
 ## Inputs
 

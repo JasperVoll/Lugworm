@@ -1,14 +1,16 @@
 ---
-title: "IAMLab Overhang"
+title: "Overhang"
 nav_order: 13
 parent: "Components"
-description: "IAMLab Overhang: component inputs and outputs."
-permalink: /docs/components/iamlab-overhang/
+description: "Overhang: component inputs and outputs."
+permalink: /docs/components/overhang/
+redirect_from:
+  - /docs/components/iamlab-overhang/
 ---
 
-# IAMLab Overhang
+# Overhang
 
-IAMLab Overhang checks how far each part of a layer hangs out over the
+Overhang checks how far each part of a layer hangs out over the
 layer below. Colours come from the magma ramp: in the default class mode
 segments within the warning angle are deep purple, segments between the
 warning and the failure angle are red-orange, and segments beyond the
@@ -23,7 +25,7 @@ ones. The component has a compute button.
 
 Panel: `5 Analyze`. Nickname: `Overhang`. Compute button: yes (runs only when the button is clicked).
 
-{% include figure.html src="components/iamlab-overhang.png" alt="IAMLab Overhang on the canvas" %}
+{% include figure.html src="components/iamlab-overhang" alt="Overhang: layers classed as safe, warning and critical" %}
 
 ## Inputs
 
@@ -52,7 +54,7 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `anglesWorld` | Number (tree) | Global overhang angle per segment against world Z, deg. Always the global reading |
 | `summary` | Text (list) | Summary per layer as CSV lines: max overhang and the percentage above each threshold. The percentages follow global |
 | `info` | Text | Diagnostics |
-| `legend` | Text | Legend spec for IAMLab Legend: the three overhang classes, or the continuous magma ramp, at the thresholds and reference this analysis used |
+| `legend` | Text | Legend spec for Legend: the three overhang classes, or the continuous magma ramp, at the thresholds and reference this analysis used |
 | `colors` | Colour (tree) | Color per segment in the active color mode and reference, cut like angles, for a custom preview |
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

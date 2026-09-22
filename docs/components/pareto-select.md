@@ -1,14 +1,16 @@
 ---
-title: "IAMLab Pareto Select"
+title: "Pareto Select"
 nav_order: 14
 parent: "Components"
-description: "IAMLab Pareto Select: component inputs and outputs."
-permalink: /docs/components/iamlab-pareto-select/
+description: "Pareto Select: component inputs and outputs."
+permalink: /docs/components/pareto-select/
+redirect_from:
+  - /docs/components/iamlab-pareto-select/
 ---
 
-# IAMLab Pareto Select
+# Pareto Select
 
-IAMLab Pareto Select shows the trade-off front that IAMLab Desirability
+Pareto Select shows the trade-off front that Desirability
 found and lets you pick one recipe from it by clicking. The chosen
 recipe - its settings, its score per goal and its overall `D` - comes out
 of the component and stays with the document, even when the DoE components
@@ -16,13 +18,13 @@ upstream are switched off or their front changes.
 
 Panel: `6 Calibrate`. Nickname: `Pareto`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-pareto-select.png" alt="IAMLab Pareto Select on the canvas" %}
+{% include figure.html src="components/iamlab-pareto-select" alt="Pareto Select on the canvas" %}
 
 ## Inputs
 
 | Name | Type | Description |
 |---|---|---|
-| `front` | Number (tree) | The `pareto` output of IAMLab Desirability: one branch per recipe with the factor values, one desirability per active goal, and `D` |
+| `front` | Number (tree) | The `pareto` output of Desirability: one branch per recipe with the factor values, one desirability per active goal, and `D` |
 | `factorNames` | Text (list) | The factor names in model order (from RSM Evaluate or DoE Design) |
 | `objectiveNames` | Text (list) | The names of the **active** goals in model order: wire the `objectives` output of Desirability, which is exactly that list |
 | `selectionKey` | Text | Pick a recipe without the mouse: the `key` this component gave out earlier. A key from a different front is refused, not remapped. Wins over `selectionIndex` |
@@ -45,7 +47,7 @@ All inputs are optional. Without a front the component still emits a recipe it s
 
 ## How to use it
 
-1. Enable the `pareto` group on IAMLab Desirability and compute; wire its `pareto`
+1. Enable the `pareto` group on Desirability and compute; wire its `pareto`
    output to `front`, the factor names to `factorNames`, and its `objectives` output to
    `objectiveNames`.
 2. Click a point on the strip under the component (two goals: a scatter; three or

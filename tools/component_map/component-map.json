@@ -1,6 +1,6 @@
 {
   "canvas": { "width": 800, "height": 770 },
-  "title": "IAMLab Slicer component map",
+  "title": "Lugworm component map",
   "columns": [8, 206, 404, 602],
   "sizes": { "spine": [180, 48], "hub": [180, 48], "satellite": [168, 40] },
   "style": {
@@ -41,7 +41,6 @@
     { "id": "live",    "label": "Live View",        "icon": "IamDuetLive",        "slug": "live-view",        "column": 3, "y": 384, "kind": "satellite", "x_offset": 28, "width": 140 },
     { "id": "files",   "label": "Machine Files",    "icon": "IamDuetFiles",       "slug": "machine-files",    "column": 3, "y": 454, "kind": "satellite", "x_offset": 28, "width": 140 },
     { "id": "ls",      "label": "Load Settings",    "icon": "IamSettings",        "slug": "load-settings",    "column": 0, "y": 502, "kind": "satellite" },
-    { "id": "ver",     "label": "Version",          "icon": "IamVersion",         "slug": "version",          "column": 0, "y": 572, "kind": "satellite" },
     { "id": "doe",     "label": "DoE Design",       "icon": "IamDoeDesign",       "slug": "doe-design",       "column": 0, "y": 680, "kind": "satellite" },
     { "id": "rsm",     "label": "RSM Evaluate",     "icon": "IamRsm",             "slug": "rsm-evaluate",     "column": 1, "y": 680, "kind": "satellite" },
     { "id": "des",     "label": "Desirability",     "icon": "IamDesirability",    "slug": "desirability",     "column": 2, "y": 680, "kind": "satellite" },

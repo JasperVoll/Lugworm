@@ -1,7 +1,7 @@
 ---
 title: "Components"
 nav_order: 3
-description: "Reference for all IAMLab components, grouped by Grasshopper panel."
+description: "Reference for all Lugworm components, grouped by Grasshopper panel."
 permalink: /docs/components/
 has_children: true
 has_toc: false
@@ -9,64 +9,63 @@ has_toc: false
 
 # Components
 
-Every component on the IAMLab tab has a page of its own with a short explanation and a table of inputs and outputs. The pages are grouped by panel below. Components with a compute button run only when the button is clicked; all others run on every change. For how the components connect to each other, see the [Component Map]({{ '/docs/getting-started/component-map/' | relative_url }}).
+Every component on the Lugworm tab has a page of its own with a short explanation and a table of inputs and outputs. The pages are grouped by panel below. Components with a compute button run only when the button is clicked; all others run on every change. For how the components connect to each other, see the [Component Map]({{ '/docs/getting-started/component-map/' | relative_url }}).
 
-{% include figure.html src="components/iamlab-ribbon.png" alt="The IAMLab ribbon" %}
+{% include figure.html src="components/iamlab-ribbon" alt="The Lugworm ribbon" %}
 
 ## 1 Slice
 
 | Component | Purpose |
 |---|---|
-| [IAMLab Graph Mapper]({{ '/docs/components/iamlab-graph-mapper/' | relative_url }}) | IAMLab Graph Mapper changes a list of numbers by passing them through a curve that you draw on the component. |
-| [IAMLab Load Settings]({{ '/docs/components/iamlab-load-settings/' | relative_url }}) | IAMLab Load Settings points the document at a folder of saved settings files, one per component. |
-| [IAMLab Slice]({{ '/docs/components/iamlab-slice/' | relative_url }}) | IAMLab Slice cuts a shape into layers. Has a compute button. |
-| [IAMLab Version]({{ '/docs/components/iamlab-version/' | relative_url }}) | IAMLab Version shows which version of the plugin is installed, when the build was made, and which .NET runtime Rhino loaded. |
+| [Graph Mapper]({{ '/docs/components/graph-mapper/' | relative_url }}) | Graph Mapper changes a list of numbers by passing them through a curve that you draw on the component. |
+| [Load Settings]({{ '/docs/components/load-settings/' | relative_url }}) | Load Settings points the document at a folder of saved settings files, one per component. |
+| [Slice]({{ '/docs/components/slice/' | relative_url }}) | Slice cuts a shape into layers. Has a compute button. |
 
 ## 2 Place
 
 | Component | Purpose |
 |---|---|
-| [IAMLab Place]({{ '/docs/components/iamlab-place/' | relative_url }}) | IAMLab Place moves the sliced layers to the print position on the bed and decides where each layer starts and ends (the seam). |
-| [IAMLab Print Bed]({{ '/docs/components/iamlab-print-bed/' | relative_url }}) | IAMLab Print Bed describes the print bed once: how large the plate is, where the plate is in the Rhino document, and where a part is placed by default. |
+| [Place]({{ '/docs/components/place/' | relative_url }}) | Place moves the sliced layers to the print position on the bed and decides where each layer starts and ends (the seam). |
+| [Print Bed]({{ '/docs/components/print-bed/' | relative_url }}) | Print Bed describes the print bed once: how large the plate is, where the plate is in the Rhino document, and where a part is placed by default. |
 
 ## 3 G-code
 
 | Component | Purpose |
 |---|---|
-| [IAMLab G-code Generator]({{ '/docs/components/iamlab-g-code-generator/' | relative_url }}) | IAMLab G-code Generator turns the placed layers into the G-code file that the printer runs. Has a compute button. |
-| [IAMLab G-code Restart]({{ '/docs/components/iamlab-g-code-restart/' | relative_url }}) | IAMLab G-code Restart rebuilds a G-code file so that a print can continue after a failure. Has a compute button. |
-| [IAMLab Save G-code]({{ '/docs/components/iamlab-save-g-code/' | relative_url }}) | IAMLab Save G-code writes the G-code to a file whose name contains the date and time, so that no file is overwritten by accident. |
+| [G-code Generator]({{ '/docs/components/g-code-generator/' | relative_url }}) | G-code Generator turns the placed layers into the G-code file that the printer runs. Has a compute button. |
+| [G-code Restart]({{ '/docs/components/g-code-restart/' | relative_url }}) | G-code Restart rebuilds a G-code file so that a print can continue after a failure. Has a compute button. |
+| [Save G-code]({{ '/docs/components/save-g-code/' | relative_url }}) | Save G-code writes the G-code to a file whose name contains the date and time, so that no file is overwritten by accident. |
 
 ## 4 Robot
 
 | Component | Purpose |
 |---|---|
-| [IAMLab Robot Definition]({{ '/docs/components/iamlab-robot-definition/' | relative_url }}) | IAMLab Robot Definition selects the machine. |
-| [IAMLab Robot Simulation]({{ '/docs/components/iamlab-robot-simulation/' | relative_url }}) | IAMLab Robot Simulation shows a print before it runs. |
+| [Robot Definition]({{ '/docs/components/robot-definition/' | relative_url }}) | Robot Definition selects the machine. |
+| [Robot Simulation]({{ '/docs/components/robot-simulation/' | relative_url }}) | Robot Simulation shows a print before it runs. |
 
 ## 5 Analyze
 
 | Component | Purpose |
 |---|---|
-| [IAMLab Interlayer Time]({{ '/docs/components/iamlab-interlayer-time/' | relative_url }}) | IAMLab Interlayer Time shows, for every point of the print, how long ago the material directly underneath it was laid down. |
-| [IAMLab Legend]({{ '/docs/components/iamlab-legend/' | relative_url }}) | IAMLab Legend draws a legend for any data range: a continuous ramp, thresholded classes, named groups, or a size scale. |
-| [IAMLab Overhang]({{ '/docs/components/iamlab-overhang/' | relative_url }}) | IAMLab Overhang checks how far each part of a layer hangs out over the layer below. Has a compute button. |
-| [IAMLab Print Stats]({{ '/docs/components/iamlab-print-stats/' | relative_url }}) | IAMLab Print Stats reads a G-code file, or a toolpath, and reports the printed length, the travel length, the amount of material in cubic centimetres and grams, an estimated print time, and a table with one row per layer. |
+| [Interlayer Time]({{ '/docs/components/interlayer-time/' | relative_url }}) | Interlayer Time shows, for every point of the print, how long ago the material directly underneath it was laid down. |
+| [Legend]({{ '/docs/components/legend/' | relative_url }}) | Legend draws a legend for any data range: a continuous ramp, thresholded classes, named groups, or a size scale. |
+| [Overhang]({{ '/docs/components/overhang/' | relative_url }}) | Overhang checks how far each part of a layer hangs out over the layer below. Has a compute button. |
+| [Print Stats]({{ '/docs/components/print-stats/' | relative_url }}) | Print Stats reads a G-code file, or a toolpath, and reports the printed length, the travel length, the amount of material in cubic centimetres and grams, an estimated print time, and a table with one row per layer. |
 
 ## 6 Calibrate
 
 | Component | Purpose |
 |---|---|
-| [IAMLab Desirability]({{ '/docs/components/iamlab-desirability/' | relative_url }}) | IAMLab Desirability takes the fitted models and a goal for each measured result, and finds the combination of settings that meets all goals best. Has a compute button. |
-| [IAMLab DoE Design]({{ '/docs/components/iamlab-doe-design/' | relative_url }}) | IAMLab DoE Design plans a series of test prints. |
-| [IAMLab Pareto Select]({{ '/docs/components/iamlab-pareto-select/' | relative_url }}) | IAMLab Pareto Select shows the trade-off front from Desirability and lets you pick one recipe from it by clicking; the choice stays with the document and is flagged when the front changes. |
-| [IAMLab RSM Evaluate]({{ '/docs/components/iamlab-rsm-evaluate/' | relative_url }}) | IAMLab RSM Evaluate fits a formula to the measurements of a test series. Has a compute button. |
-| [IAMLab Test Geometry]({{ '/docs/components/iamlab-test-geometry/' | relative_url }}) | IAMLab Test Geometry creates the specimen for a calibration print: six simple shapes, six standard bending and compression specimens (DIN EN and ASTM), and a zig-zag extrusion test path. |
+| [Desirability]({{ '/docs/components/desirability/' | relative_url }}) | Desirability takes the fitted models and a goal for each measured result, and finds the combination of settings that meets all goals best. Has a compute button. |
+| [DoE Design]({{ '/docs/components/doe-design/' | relative_url }}) | DoE Design plans a series of test prints. |
+| [Pareto Select]({{ '/docs/components/pareto-select/' | relative_url }}) | Pareto Select shows the trade-off front from Desirability and lets you pick one recipe from it by clicking; the choice stays with the document and is flagged when the front changes. |
+| [RSM Evaluate]({{ '/docs/components/rsm-evaluate/' | relative_url }}) | RSM Evaluate fits a formula to the measurements of a test series. Has a compute button. |
+| [Test Geometry]({{ '/docs/components/test-geometry/' | relative_url }}) | Test Geometry creates the specimen for a calibration print: six simple shapes, six standard bending and compression specimens (DIN EN and ASTM), and a zig-zag extrusion test path. |
 
 ## 7 Print
 
 | Component | Purpose |
 |---|---|
-| [IAMLab Live View]({{ '/docs/components/iamlab-live-view/' | relative_url }}) | IAMLab Live View shows the machine while it prints: the bed plate, the arm at the real nozzle position, and the observed nozzle path drawn behind it. |
-| [IAMLab Machine Console]({{ '/docs/components/iamlab-machine-console/' | relative_url }}) | IAMLab Machine Console is the one window for controlling a printer with a Duet board from Grasshopper. |
-| [IAMLab Machine Files]({{ '/docs/components/iamlab-machine-files/' | relative_url }}) | IAMLab Machine Files browses the file storage of the connected machine - the Duet's SD card. |
+| [Live View]({{ '/docs/components/live-view/' | relative_url }}) | Live View shows the machine while it prints: the bed plate, the arm at the real nozzle position, and the observed nozzle path drawn behind it. |
+| [Machine Console]({{ '/docs/components/machine-console/' | relative_url }}) | Machine Console is the one window for controlling a printer with a Duet board from Grasshopper. |
+| [Machine Files]({{ '/docs/components/machine-files/' | relative_url }}) | Machine Files browses the file storage of the connected machine - the Duet's SD card. |

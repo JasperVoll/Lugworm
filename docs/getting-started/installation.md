@@ -8,25 +8,25 @@ permalink: /docs/getting-started/installation/
 
 # Installation
 
-IAMLab Slicer requires **Rhino 8 on Windows**. The packaged `.yak` file includes the plugin and its dependencies.
+Lugworm requires **Rhino 8 on Windows**. The packaged `.yak` file includes the plugin and its dependencies.
 
 {: .warning }
-> **The public package is being prepared.** For early access, contact [jasper.vollmert@tuhh.de](mailto:jasper.vollmert@tuhh.de). Once published, the package will be available from [Releases](https://github.com/JasperVoll/iamlab-slicer/releases). Use the instructions below when you have the package.
+> **The public package is being prepared.** For early access, contact [jasper.vollmert@tuhh.de](mailto:jasper.vollmert@tuhh.de). Once published, the package will be available from [Releases](https://github.com/JasperVoll/lugworm/releases). Use the instructions below when you have the package.
 
 ## Install with Yak (recommended)
 
-1. Close Rhino and save `iamlab-slicer-<version>-rh8_0-*.yak` in its own folder, such as
-   `C:\Temp\iamlab`.
+1. Close Rhino and save `lugworm-<version>-rh8_0-*.yak` in its own folder, such as
+   `C:\Temp\lugworm`.
 2. Run PowerShell (`--source` points to that folder):
 
    ```powershell
-   & "C:\Program Files\Rhino 8\System\Yak.exe" install --source "C:\Temp\iamlab" iamlab-slicer
+   & "C:\Program Files\Rhino 8\System\Yak.exe" install --source "C:\Temp\lugworm" lugworm
    ```
 
-3. Restart Rhino 8, run `Grasshopper`, and look for the **IAMLab** ribbon tab:
+3. Restart Rhino 8, run `Grasshopper`, and look for the **Lugworm** ribbon tab:
    `1 Slice`, `2 Place`, `3 G-code`, `4 Robot`, `5 Analyze`, `6 Calibrate`, `7 Print`.
 
-{% include figure.html src="getting-started/iamlab-tab.png" alt="The IAMLab tab after installation" %}
+{% include figure.html src="getting-started/iamlab-tab" alt="The Lugworm tab after installation" %}
 
 ## Manual installation
 
@@ -49,8 +49,8 @@ Get-ChildItem "$env:APPDATA\Grasshopper\Libraries" -Recurse | Unblock-File
 Close Rhino, then run:
 
 ```powershell
-& "C:\Program Files\Rhino 8\System\Yak.exe" uninstall iamlab-slicer
-& "C:\Program Files\Rhino 8\System\Yak.exe" install --source "C:\Temp\iamlab" iamlab-slicer
+& "C:\Program Files\Rhino 8\System\Yak.exe" uninstall lugworm
+& "C:\Program Files\Rhino 8\System\Yak.exe" install --source "C:\Temp\lugworm" lugworm
 ```
 
 Remove any manually installed copies from `Grasshopper\Libraries` to prevent
@@ -60,15 +60,23 @@ duplicate loading.
 
 | Symptom | Fix |
 |---|---|
-| No IAMLab tab appears | Usually blocked DLLs. Run the `Unblock-File` command above and restart Rhino. |
+| No Lugworm tab appears | Usually blocked DLLs. Run the `Unblock-File` command above and restart Rhino. |
 | Yak reports "package not found" | The path after `--source` must be the folder, not the `.yak` file. |
 | The plugin does not load at all | This build targets Rhino 8. It does not load in Rhino 7. |
-| Still nothing | In Grasshopper open File > Special Folders > Component Folders, open the report of unloaded or failed assemblies, and attach it to a [bug report](https://github.com/JasperVoll/iamlab-slicer/issues). |
+| Still nothing | In Grasshopper open File > Special Folders > Component Folders, open the report of unloaded or failed assemblies, and attach it to a [bug report](https://github.com/JasperVoll/lugworm/issues). |
 
 ## Check the installation
 
-Add [IAMLab Version]({{ '/docs/components/iamlab-version/' | relative_url }}) to a new Grasshopper document to check the loaded plugin and runtime. Then follow [Make your first toolpath]({{ '/docs/getting-started/' | relative_url }}#1-make-your-first-toolpath).
+Open Grasshopper and look for the Lugworm tab. Rhino's Package Manager lists the installed Lugworm version. Then follow [Make your first toolpath]({{ '/docs/getting-started/' | relative_url }}#1-make-your-first-toolpath).
 
 ## Before sharing a `.gh` definition
 
 Machine Console's `password` input can be saved in the `.gh` document and read by anyone who receives it. Clear the stored password before sharing the definition.
+
+## Coming from IAMLab Slicer
+
+Lugworm was called IAMLab Slicer until version 4.4.0. Uninstall that package before
+installing Lugworm (Rhino's Package Manager, or `yak uninstall iamlab-slicer`): Yak sees a new
+package, and two plugins with the same assembly GUID cannot load side by side. Saved `.gh`
+files open unchanged, because components are found by GUID and none moved. Settings files now
+save as `*.lwset.json`; older `*.iamset.json` files still load.

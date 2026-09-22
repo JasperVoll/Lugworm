@@ -199,10 +199,10 @@ class Builder:
         ]
         inner = "\n  ".join(parts)
         if n.slug:
-            page = COMPONENT_DIR / f"iamlab-{n.slug}.md"
+            page = COMPONENT_DIR / f"{n.slug}.md"
             if not page.is_file():
                 sys.exit(f"Node {n.id}: no component page {page.relative_to(ROOT)}")
-            href = "{{ '/docs/components/iamlab-" + n.slug + "/' | relative_url }}"
+            href = "{{ '/docs/components/" + n.slug + "/' | relative_url }}"
             return f'<a href="{href}">\n  <title>{label}</title>\n  {inner}\n</a>'
         return f'<g>\n  <title>{label}</title>\n  {inner}\n</g>'
 

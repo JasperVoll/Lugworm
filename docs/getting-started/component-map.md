@@ -2,7 +2,7 @@
 title: "Component Map"
 nav_order: 2
 parent: "Getting started"
-description: "One map of all IAMLab components."
+description: "One map of all Lugworm components."
 permalink: /docs/getting-started/component-map/
 ---
 

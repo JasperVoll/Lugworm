@@ -1,26 +1,26 @@
 ---
-title: "IAMLab Load Settings"
+title: "Load Settings"
 nav_order: 10
 parent: "Components"
-description: "IAMLab Load Settings: component inputs and outputs."
-permalink: /docs/components/iamlab-load-settings/
+description: "Load Settings: component inputs and outputs."
+permalink: /docs/components/load-settings/
+redirect_from:
+  - /docs/components/iamlab-load-settings/
 ---
 
-# IAMLab Load Settings
+# Load Settings
 
-IAMLab Load Settings points the document at a folder of saved settings
-files, one per component. Every IAMLab component can save its current
+Load Settings points the document at a folder of saved settings
+files, one per component. Every Lugworm component can save its current
 inputs with "Save settings…" on its right-click menu, which writes a
 small JSON file next to the ones this component reads. From then on,
-the "⇤ inputs" button on any IAMLab component builds its sliders,
+the "⇤ inputs" button on any Lugworm component builds its sliders,
 toggles, panels and value lists from the matching file instead of the
 built-in defaults, and falls back to the defaults where the folder has
 nothing to say. This makes it easy to keep one settings folder per
 material or per machine and switch between them.
 
 Panel: `1 Slice`. Nickname: `Settings`. Compute button: no (runs on every change).
-
-{% include figure.html src="components/iamlab-load-settings.png" alt="IAMLab Load Settings on the canvas" %}
 
 ## Inputs
 

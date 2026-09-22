@@ -1,14 +1,16 @@
 ---
-title: "IAMLab Place"
+title: "Place"
 nav_order: 15
 parent: "Components"
-description: "IAMLab Place: component inputs and outputs."
-permalink: /docs/components/iamlab-place/
+description: "Place: component inputs and outputs."
+permalink: /docs/components/place/
+redirect_from:
+  - /docs/components/iamlab-place/
 ---
 
-# IAMLab Place
+# Place
 
-IAMLab Place moves the sliced layers to the print position on the bed
+Place moves the sliced layers to the print position on the bed
 and decides where each layer starts and ends (the seam). The bottom
 centre of the part lands on `printCenter`. The seam can be kept as it
 is, aligned in one direction, rotated a little on every layer, placed
@@ -17,7 +19,7 @@ layer below.
 
 Panel: `2 Place`. Nickname: `Place`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-place.png" alt="IAMLab Place on the canvas" %}
+{% include figure.html src="components/iamlab-place" alt="Place: choosing a seam mode and turning the seam angle, with the seams drawn in the viewport" %}
 
 ## Inputs
 

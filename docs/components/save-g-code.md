@@ -1,21 +1,23 @@
 ---
-title: "IAMLab Save G-code"
+title: "Save G-code"
 nav_order: 21
 parent: "Components"
-description: "IAMLab Save G-code: component inputs and outputs."
-permalink: /docs/components/iamlab-save-g-code/
+description: "Save G-code: component inputs and outputs."
+permalink: /docs/components/save-g-code/
+redirect_from:
+  - /docs/components/iamlab-save-g-code/
 ---
 
-# IAMLab Save G-code
+# Save G-code
 
-IAMLab Save G-code writes the G-code to a file whose name contains the
+Save G-code writes the G-code to a file whose name contains the
 date and time, so that no file is overwritten by accident. The file is
 written only when `write` becomes true. Connect a Button component,
 not a Toggle, so that every click writes exactly one file.
 
 Panel: `3 G-code`. Nickname: `Save`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-save-g-code.png" alt="IAMLab Save G-code on the canvas" %}
+{% include figure.html src="components/iamlab-save-g-code" alt="Save G-code on the canvas" %}
 
 ## Inputs
 

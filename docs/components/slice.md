@@ -1,14 +1,16 @@
 ---
-title: "IAMLab Slice"
+title: "Slice"
 nav_order: 23
 parent: "Components"
-description: "IAMLab Slice: component inputs and outputs."
-permalink: /docs/components/iamlab-slice/
+description: "Slice: component inputs and outputs."
+permalink: /docs/components/slice/
+redirect_from:
+  - /docs/components/iamlab-slice/
 ---
 
-# IAMLab Slice
+# Slice
 
-IAMLab Slice cuts a shape into layers. The input can be a mesh, a Brep,
+Slice cuts a shape into layers. The input can be a mesh, a Brep,
 or a surface, or a list of them. The result is a tree of closed curves
 with one branch per layer; each branch holds the wall curves first and
 the infill after them. Two slicing modes are available: flat layers
@@ -17,7 +19,7 @@ compute button and runs only when the button is clicked.
 
 Panel: `1 Slice`. Nickname: `Slice`. Compute button: yes (runs only when the button is clicked).
 
-{% include figure.html src="components/iamlab-slice.png" alt="IAMLab Slice on the canvas" %}
+{% include figure.html src="components/iamlab-slice" alt="Slice with its standard inputs and the wave infill group" %}
 
 ## Inputs
 
@@ -67,7 +69,7 @@ Right-click the component to switch this group on. The inputs appear only while 
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `profile` | Text |  | Serialized curve from the map output of IAMLab Graph Mapper, the shape one wave period follows. Required by infill 6. Not connected falls back to a sine |
+| `profile` | Text |  | Serialized curve from the map output of Graph Mapper, the shape one wave period follows. Required by infill 6. Not connected falls back to a sine |
 | `waveLen` | Number | 20 | Wave period along a row, mm |
 | `waveTangent` | Boolean |  | Mirrored peaks meet exactly, with the amplitude at half of infillDistance. Off leaves a gap of waveClearance |
 | `waveClearance` | Number | 0 | Gap left between mirrored peaks when waveTangent is off, mm (0 = 0.2 x infillDistance) |

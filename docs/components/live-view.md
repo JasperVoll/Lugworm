@@ -1,25 +1,27 @@
 ---
-title: "IAMLab Live View"
+title: "Live View"
 nav_order: 9
 parent: "Components"
-description: "IAMLab Live View: component inputs and outputs."
-permalink: /docs/components/iamlab-live-view/
+description: "Live View: component inputs and outputs."
+permalink: /docs/components/live-view/
+redirect_from:
+  - /docs/components/iamlab-live-view/
 ---
 
-# IAMLab Live View
+# Live View
 
-IAMLab Live View shows the machine while it prints: the bed plate, the
+Live View shows the machine while it prints: the bed plate, the
 arm at the real nozzle position, and the observed nozzle path drawn
 behind it. The component only reads from the machine and never sends
 commands.
 
 It does not record the print to a file. Every job is logged by
-[IAMLab Machine Console]({{ '/docs/components/iamlab-machine-console/' | relative_url }}),
+[Machine Console]({{ '/docs/components/machine-console/' | relative_url }}),
 which records on its own whether or not this component is on the canvas.
 
 Panel: `7 Print`. Nickname: `Live`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-live-view.png" alt="IAMLab Live View on the canvas" %}
+{% include figure.html src="components/iamlab-live-view" alt="Live View on the canvas" %}
 
 ## Inputs
 
@@ -71,8 +73,8 @@ these sockets. Opening it reports them once and drops them.
 
 | Removed | Replaced by |
 |---|---|
-| `bedWidth`, `bedDepth`, `bedCenter` | the `bed` input and [IAMLab Print Bed]({{ '/docs/components/iamlab-print-bed/' | relative_url }}). Saved values migrate into a real Print Bed component |
-| `extWidth`, `layerHeight` | the extrusion preview on [IAMLab G-code Generator]({{ '/docs/components/iamlab-g-code-generator/' | relative_url }}) and [IAMLab Robot Simulation]({{ '/docs/components/iamlab-robot-simulation/' | relative_url }}) |
+| `bedWidth`, `bedDepth`, `bedCenter` | the `bed` input and [Print Bed]({{ '/docs/components/print-bed/' | relative_url }}). Saved values migrate into a real Print Bed component |
+| `extWidth`, `layerHeight` | the extrusion preview on [G-code Generator]({{ '/docs/components/g-code-generator/' | relative_url }}) and [Robot Simulation]({{ '/docs/components/robot-simulation/' | relative_url }}) |
 | `logEnable`, `logEveryN`, `logFolder`, `logPrefix`, `logLayerHeight`, `logExport` | the Machine Console's always-on job logging |
 | outputs `layers`, `log`, `path`, `logInfo` | the Machine Console's job logs and Recent prints |
 

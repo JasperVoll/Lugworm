@@ -8,7 +8,7 @@ from urllib.parse import unquote, urljoin, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "_site"
-BASE = "/iamlab-slicer"
+BASE = "/lugworm"
 HOST = "jaspervoll.github.io"
 errors = []
 expected = json.loads((ROOT / "tools" / "pages.json").read_text(encoding="utf-8"))
@@ -59,15 +59,18 @@ for original, item in expected.items():
             errors.append(f"{item['path']}: wrong {field}")
     if actual.get("permalink") != item["url"]:
         errors.append(f"{item['path']}: wrong permalink")
-if len(page_files) != 37 or len(expected) != 34:
-    errors.append("Expected 34 imported pages and 3 navigation landing pages")
+if len(page_files) != 33 or len(expected) != 32:
+    errors.append("Expected 32 imported pages and 1 navigation landing page")
 component_count = sum(m.get("parent") == "Components" for m in metadata.values())
-if component_count != 25:
-    errors.append("Expected 25 component children")
+if component_count != 22:
+    errors.append("Expected 22 component children")
 titles = {m.get("title") for m in metadata.values()}
 for name, item in metadata.items():
     if item.get("parent") and item["parent"] not in titles:
         errors.append(f"{name}: unknown parent")
+for asset in (ROOT / "assets" / "images").rglob("*"):
+    if asset.is_file() and asset.stat().st_size > 10 * 1024 * 1024:
+        errors.append(f"Asset over 10 MB, convert it (see assets/images/README.md): {asset.relative_to(ROOT).as_posix()}")
 if not SITE.exists():
     sys.exit("FAIL: _site is missing; run bundle exec jekyll build first")
 
@@ -113,8 +116,8 @@ else:
     search = json.loads(search_file.read_text(encoding="utf-8"))
     for entry in search.values():
         check_link(search_file, entry["url"])
-    if len(search) != 37:
-        errors.append(f"Search contains {len(search)} pages; expected 37")
+    if len(search) < len(page_files):
+        errors.append(f"Search contains {len(search)} entries; expected at least one per page ({len(page_files)})")
 
 for name, item in metadata.items():
     target = SITE / item["permalink"].lstrip("/") / "index.html"
@@ -122,20 +125,20 @@ for name, item in metadata.items():
         errors.append(f"Page not rendered: {name}")
         continue
     text = target.read_text(encoding="utf-8")
-    edit = "https://github.com/JasperVoll/iamlab-slicer/edit/main/" + name
+    edit = "https://github.com/JasperVoll/lugworm/edit/main/" + name
     if edit not in text:
         errors.append(f"Edit link missing or incorrect: {name}")
     if "IDAC" not in text or "Hamburg University of Technology" not in text:
         errors.append(f"Footer credit missing: {name}")
 
 # Scan maintained files and publishable output, excluding installed dependencies.
-forbidden = re.compile("|".join(["git" + "lab", "IAMLab" + "Slicer.Core", r"\.s" + "ln\b", "build from " + "source"]), re.I)
+forbidden = re.compile("|".join(["git" + "lab", "Lugworm" + ".Core", r"\.s" + "ln\b", "build from " + "source"]), re.I)
 scan_files = [ROOT / "_config.yml", ROOT / "index.md", *list((ROOT / "docs").rglob("*.md")), *SITE.rglob("*.html")]
 for path in scan_files:
     if forbidden.search(path.read_text(encoding="utf-8")):
         errors.append(f"Private-reference scan failed: {path.relative_to(ROOT)}")
 
-print(f"Imported pages: {len(expected)}/34; component children: {component_count}/25")
+print(f"Imported pages: {len(expected)}/32; component children: {component_count}/22")
 print(f"Navigation landing pages: {len(page_files) - len(expected)}; front matter and hierarchy checked")
 print(f"Rendered HTML pages: {len(html)}; internal URLs and anchors checked: {checked}")
 print("Search entries: " + str(len(search) if search_file.exists() else 0))

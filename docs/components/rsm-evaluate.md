@@ -1,24 +1,26 @@
 ---
-title: "IAMLab RSM Evaluate"
+title: "RSM Evaluate"
 nav_order: 20
 parent: "Components"
-description: "IAMLab RSM Evaluate: component inputs and outputs."
-permalink: /docs/components/iamlab-rsm-evaluate/
+description: "RSM Evaluate: component inputs and outputs."
+permalink: /docs/components/rsm-evaluate/
+redirect_from:
+  - /docs/components/iamlab-rsm-evaluate/
 ---
 
-# IAMLab RSM Evaluate
+# RSM Evaluate
 
-IAMLab RSM Evaluate fits a formula to the measurements of a test
+RSM Evaluate fits a formula to the measurements of a test
 series. For each measured result, the formula describes how the result
 depends on the settings. The component reports how strongly each
 setting matters, how well the formula fits the data, and diagnostics
 that show whether single runs or overlapping settings distort the fit.
-The fitted models are passed on to [IAMLab Desirability]({{ '/docs/components/iamlab-desirability/' | relative_url }}). The
+The fitted models are passed on to [Desirability]({{ '/docs/components/desirability/' | relative_url }}). The
 component has a compute button.
 
 Panel: `6 Calibrate`. Nickname: `RSM`. Compute button: yes (runs only when the button is clicked).
 
-{% include figure.html src="components/iamlab-rsm-evaluate.png" alt="IAMLab RSM Evaluate on the canvas" %}
+{% include figure.html src="components/iamlab-rsm-evaluate" alt="RSM Evaluate on the canvas" %}
 
 ## Inputs
 

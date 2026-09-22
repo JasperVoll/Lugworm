@@ -1,14 +1,16 @@
 ---
-title: "IAMLab Test Geometry"
+title: "Test Geometry"
 nav_order: 24
 parent: "Components"
-description: "IAMLab Test Geometry: component inputs and outputs."
-permalink: /docs/components/iamlab-test-geometry/
+description: "Test Geometry: component inputs and outputs."
+permalink: /docs/components/test-geometry/
+redirect_from:
+  - /docs/components/iamlab-test-geometry/
 ---
 
-# IAMLab Test Geometry
+# Test Geometry
 
-IAMLab Test Geometry creates sample bodies and paths for calibration
+Test Geometry creates sample bodies and paths for calibration
 prints. The shape is chosen from the dropdown on the component. Using the
 same shape for every run of a test series makes the measurements
 comparable.
@@ -24,7 +26,7 @@ Three families:
 
 Panel: `6 Calibrate`. Nickname: `TestGeo`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-test-geometry.png" alt="IAMLab Test Geometry on the canvas" %}
+{% include figure.html src="components/iamlab-test-geometry" alt="Test Geometry with the specimen menu open" %}
 
 ## Inputs
 
@@ -131,7 +133,7 @@ are comparable within your own series but not to the standard.
 A boustrophedon line: straight passes joined alternately at each end,
 optionally stacked. It is a **toolpath, not a solid**, so `geometry` is
 empty on purpose and the line comes out of `path`. Wire that straight into
-[IAMLab G-code Generator]({{ '/docs/components/iamlab-g-code-generator/' | relative_url }}); sending it through the slicer would try to
+[G-code Generator]({{ '/docs/components/g-code-generator/' | relative_url }}); sending it through the slicer would try to
 section a curve.
 
 The reversals are the point of the test. A straight line only shows

@@ -1,23 +1,25 @@
 ---
-title: "IAMLab DoE Design"
+title: "DoE Design"
 nav_order: 3
 parent: "Components"
-description: "IAMLab DoE Design: component inputs and outputs."
-permalink: /docs/components/iamlab-doe-design/
+description: "DoE Design: component inputs and outputs."
+permalink: /docs/components/doe-design/
+redirect_from:
+  - /docs/components/iamlab-doe-design/
 ---
 
-# IAMLab DoE Design
+# DoE Design
 
-IAMLab DoE Design plans a series of test prints. You name the settings
+DoE Design plans a series of test prints. You name the settings
 that should be tuned, give the lowest and highest value for each, and
 choose a plan type. The component produces a run table with one row
 per test print and one column per setting, plus empty columns for the
 measurements. The table can be exported to Excel or CSV and later read
-by [IAMLab RSM Evaluate]({{ '/docs/components/iamlab-rsm-evaluate/' | relative_url }}).
+by [RSM Evaluate]({{ '/docs/components/rsm-evaluate/' | relative_url }}).
 
 Panel: `6 Calibrate`. Nickname: `DoE`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-doe-design.png" alt="IAMLab DoE Design on the canvas" %}
+{% include figure.html src="components/iamlab-doe-design" alt="DoE Design on the canvas" %}
 
 ## Inputs
 

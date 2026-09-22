@@ -31,142 +31,136 @@
     "path": "index.md",
     "url": "/"
   },
-  "IAMLab-Desirability": {
-    "title": "IAMLab Desirability",
-    "path": "docs/components/iamlab-desirability.md",
-    "url": "/docs/components/iamlab-desirability/",
+  "Desirability": {
+    "title": "Desirability",
+    "path": "docs/components/desirability.md",
+    "url": "/docs/components/desirability/",
     "parent": "Components"
   },
-  "IAMLab-DoE-Design": {
-    "title": "IAMLab DoE Design",
-    "path": "docs/components/iamlab-doe-design.md",
-    "url": "/docs/components/iamlab-doe-design/",
+  "DoE-Design": {
+    "title": "DoE Design",
+    "path": "docs/components/doe-design.md",
+    "url": "/docs/components/doe-design/",
     "parent": "Components"
   },
-  "IAMLab-G-code-Generator": {
-    "title": "IAMLab G-code Generator",
-    "path": "docs/components/iamlab-g-code-generator.md",
-    "url": "/docs/components/iamlab-g-code-generator/",
+  "G-code-Generator": {
+    "title": "G-code Generator",
+    "path": "docs/components/g-code-generator.md",
+    "url": "/docs/components/g-code-generator/",
     "parent": "Components"
   },
-  "IAMLab-G-code-Restart": {
-    "title": "IAMLab G-code Restart",
-    "path": "docs/components/iamlab-g-code-restart.md",
-    "url": "/docs/components/iamlab-g-code-restart/",
+  "G-code-Restart": {
+    "title": "G-code Restart",
+    "path": "docs/components/g-code-restart.md",
+    "url": "/docs/components/g-code-restart/",
     "parent": "Components"
   },
-  "IAMLab-Graph-Mapper": {
-    "title": "IAMLab Graph Mapper",
-    "path": "docs/components/iamlab-graph-mapper.md",
-    "url": "/docs/components/iamlab-graph-mapper/",
+  "Graph-Mapper": {
+    "title": "Graph Mapper",
+    "path": "docs/components/graph-mapper.md",
+    "url": "/docs/components/graph-mapper/",
     "parent": "Components"
   },
-  "IAMLab-Interlayer-Time": {
-    "title": "IAMLab Interlayer Time",
-    "path": "docs/components/iamlab-interlayer-time.md",
-    "url": "/docs/components/iamlab-interlayer-time/",
+  "Interlayer-Time": {
+    "title": "Interlayer Time",
+    "path": "docs/components/interlayer-time.md",
+    "url": "/docs/components/interlayer-time/",
     "parent": "Components"
   },
-  "IAMLab-Legend": {
-    "title": "IAMLab Legend",
-    "path": "docs/components/iamlab-legend.md",
-    "url": "/docs/components/iamlab-legend/",
+  "Legend": {
+    "title": "Legend",
+    "path": "docs/components/legend.md",
+    "url": "/docs/components/legend/",
     "parent": "Components"
   },
-  "IAMLab-Live-View": {
-    "title": "IAMLab Live View",
-    "path": "docs/components/iamlab-live-view.md",
-    "url": "/docs/components/iamlab-live-view/",
+  "Live-View": {
+    "title": "Live View",
+    "path": "docs/components/live-view.md",
+    "url": "/docs/components/live-view/",
     "parent": "Components"
   },
-  "IAMLab-Load-Settings": {
-    "title": "IAMLab Load Settings",
-    "path": "docs/components/iamlab-load-settings.md",
-    "url": "/docs/components/iamlab-load-settings/",
+  "Load-Settings": {
+    "title": "Load Settings",
+    "path": "docs/components/load-settings.md",
+    "url": "/docs/components/load-settings/",
     "parent": "Components"
   },
-  "IAMLab-Machine-Console": {
-    "title": "IAMLab Machine Console",
-    "path": "docs/components/iamlab-machine-console.md",
-    "url": "/docs/components/iamlab-machine-console/",
+  "Machine-Console": {
+    "title": "Machine Console",
+    "path": "docs/components/machine-console.md",
+    "url": "/docs/components/machine-console/",
     "parent": "Components"
   },
-  "IAMLab-Machine-Files": {
-    "title": "IAMLab Machine Files",
-    "path": "docs/components/iamlab-machine-files.md",
-    "url": "/docs/components/iamlab-machine-files/",
+  "Machine-Files": {
+    "title": "Machine Files",
+    "path": "docs/components/machine-files.md",
+    "url": "/docs/components/machine-files/",
     "parent": "Components"
   },
-  "IAMLab-Overhang": {
-    "title": "IAMLab Overhang",
-    "path": "docs/components/iamlab-overhang.md",
-    "url": "/docs/components/iamlab-overhang/",
+  "Overhang": {
+    "title": "Overhang",
+    "path": "docs/components/overhang.md",
+    "url": "/docs/components/overhang/",
     "parent": "Components"
   },
-  "IAMLab-Pareto-Select": {
-    "title": "IAMLab Pareto Select",
-    "path": "docs/components/iamlab-pareto-select.md",
-    "url": "/docs/components/iamlab-pareto-select/",
+  "Pareto-Select": {
+    "title": "Pareto Select",
+    "path": "docs/components/pareto-select.md",
+    "url": "/docs/components/pareto-select/",
     "parent": "Components"
   },
-  "IAMLab-Place": {
-    "title": "IAMLab Place",
-    "path": "docs/components/iamlab-place.md",
-    "url": "/docs/components/iamlab-place/",
+  "Place": {
+    "title": "Place",
+    "path": "docs/components/place.md",
+    "url": "/docs/components/place/",
     "parent": "Components"
   },
-  "IAMLab-Print-Bed": {
-    "title": "IAMLab Print Bed",
-    "path": "docs/components/iamlab-print-bed.md",
-    "url": "/docs/components/iamlab-print-bed/",
+  "Print-Bed": {
+    "title": "Print Bed",
+    "path": "docs/components/print-bed.md",
+    "url": "/docs/components/print-bed/",
     "parent": "Components"
   },
-  "IAMLab-Print-Stats": {
-    "title": "IAMLab Print Stats",
-    "path": "docs/components/iamlab-print-stats.md",
-    "url": "/docs/components/iamlab-print-stats/",
+  "Print-Stats": {
+    "title": "Print Stats",
+    "path": "docs/components/print-stats.md",
+    "url": "/docs/components/print-stats/",
     "parent": "Components"
   },
-  "IAMLab-RSM-Evaluate": {
-    "title": "IAMLab RSM Evaluate",
-    "path": "docs/components/iamlab-rsm-evaluate.md",
-    "url": "/docs/components/iamlab-rsm-evaluate/",
+  "RSM-Evaluate": {
+    "title": "RSM Evaluate",
+    "path": "docs/components/rsm-evaluate.md",
+    "url": "/docs/components/rsm-evaluate/",
     "parent": "Components"
   },
-  "IAMLab-Robot-Definition": {
-    "title": "IAMLab Robot Definition",
-    "path": "docs/components/iamlab-robot-definition.md",
-    "url": "/docs/components/iamlab-robot-definition/",
+  "Robot-Definition": {
+    "title": "Robot Definition",
+    "path": "docs/components/robot-definition.md",
+    "url": "/docs/components/robot-definition/",
     "parent": "Components"
   },
-  "IAMLab-Robot-Simulation": {
-    "title": "IAMLab Robot Simulation",
-    "path": "docs/components/iamlab-robot-simulation.md",
-    "url": "/docs/components/iamlab-robot-simulation/",
+  "Robot-Simulation": {
+    "title": "Robot Simulation",
+    "path": "docs/components/robot-simulation.md",
+    "url": "/docs/components/robot-simulation/",
     "parent": "Components"
   },
-  "IAMLab-Save-G-code": {
-    "title": "IAMLab Save G-code",
-    "path": "docs/components/iamlab-save-g-code.md",
-    "url": "/docs/components/iamlab-save-g-code/",
+  "Save-G-code": {
+    "title": "Save G-code",
+    "path": "docs/components/save-g-code.md",
+    "url": "/docs/components/save-g-code/",
     "parent": "Components"
   },
-  "IAMLab-Slice": {
-    "title": "IAMLab Slice",
-    "path": "docs/components/iamlab-slice.md",
-    "url": "/docs/components/iamlab-slice/",
+  "Slice": {
+    "title": "Slice",
+    "path": "docs/components/slice.md",
+    "url": "/docs/components/slice/",
     "parent": "Components"
   },
-  "IAMLab-Test-Geometry": {
-    "title": "IAMLab Test Geometry",
-    "path": "docs/components/iamlab-test-geometry.md",
-    "url": "/docs/components/iamlab-test-geometry/",
-    "parent": "Components"
-  },
-  "IAMLab-Version": {
-    "title": "IAMLab Version",
-    "path": "docs/components/iamlab-version.md",
-    "url": "/docs/components/iamlab-version/",
+  "Test-Geometry": {
+    "title": "Test Geometry",
+    "path": "docs/components/test-geometry.md",
+    "url": "/docs/components/test-geometry/",
     "parent": "Components"
   },
   "Installation": {

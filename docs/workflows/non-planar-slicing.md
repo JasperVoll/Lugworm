@@ -8,7 +8,7 @@ permalink: /docs/workflows/non-planar-slicing/
 
 # Non-Planar Slicing
 
-Use conical layers to change how layers stack, or adaptive planar layers to vary their vertical spacing. Both workflows begin with [IAMLab Slice]({{ '/docs/components/iamlab-slice/' | relative_url }}) and continue through Place and G-code Generator.
+Use conical layers to change how layers stack, or adaptive planar layers to vary their vertical spacing. Both workflows begin with [Slice]({{ '/docs/components/slice/' | relative_url }}) and continue through Place and G-code Generator.
 
 | Layer type | Slice setting | What changes |
 |---|---|---|
@@ -27,7 +27,7 @@ Use conical layers to change how layers stack, or adaptive planar layers to vary
 
 Conical layers can improve layer alignment, but they do not establish that a part is supported or that the nozzle will clear it.
 
-{% include figure.html src="workflows/planar-vs-conical.png" alt="Planar and conical slicing of the same part" %}
+{% include figure.html src="workflows/planar-vs-conical" alt="Planar and conical slicing of the same part" %}
 
 ## Set up adaptive planar layers
 
@@ -51,8 +51,8 @@ Recompute Generator after changing these settings and inspect the resulting tool
 
 ## Review support and clearance
 
-Connect the contour tree from Slice or Place to [IAMLab Overhang]({{ '/docs/components/iamlab-overhang/' | relative_url }}). It shows layer overhang per segment using a continuous magma scale or safe/warning/critical classes. Calibrate the placeholder thresholds with a stepped-cone print in your material.
+Connect the contour tree from Slice or Place to [Overhang]({{ '/docs/components/overhang/' | relative_url }}). It shows layer overhang per segment using a continuous magma scale or safe/warning/critical classes. Calibrate the placeholder thresholds with a stepped-cone print in your material.
 
 Inspect near-horizontal surfaces, bridges, and nozzle clearance, then run a controlled test print. Flow scaling and overhang colours help you assess a path; they cannot guarantee support, bridge stability, or a successful print.
 
-{% include figure.html src="workflows/overhang-nonplanar.png" alt="Overhang analysis on a non-planar part" %}
+{% include figure.html src="workflows/overhang-nonplanar" alt="Overhang analysis on a non-planar part" %}

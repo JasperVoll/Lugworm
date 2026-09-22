@@ -1,18 +1,39 @@
 {%- comment -%}
-Screenshot slot. Renders the image once the file exists in assets/images/,
-otherwise renders a pending note that names the expected file.
-Usage: {% include figure.html src="components/iamlab-slice.png" alt="..." %}
+Screenshot or animation slot. Give src without an extension: the include looks
+in assets/images/ for .mp4, .webm, .gif and .png in that order and renders the
+first file that exists (a video element for mp4/webm, an image otherwise).
+A src that carries an extension is used as-is. Until a file exists, the page
+renders a pending note naming the expected path.
+Usage: {% include figure.html src="components/iamlab-slice" alt="..." %}
 {%- endcomment -%}
-{%- capture target -%}/assets/images/{{ include.src }}{%- endcapture -%}
-{%- assign found = false -%}
-{%- for f in site.static_files -%}
-  {%- if f.path == target -%}{%- assign found = true -%}{%- endif -%}
+{%- assign base = "/assets/images/" | append: include.src -%}
+{%- assign candidates = "" | split: "," -%}
+{%- if include.src contains "." -%}
+  {%- assign candidates = candidates | push: base -%}
+{%- else -%}
+  {%- assign exts = ".mp4,.webm,.gif,.png" | split: "," -%}
+  {%- for ext in exts -%}
+    {%- assign candidate = base | append: ext -%}
+    {%- assign candidates = candidates | push: candidate -%}
+  {%- endfor -%}
+{%- endif -%}
+{%- assign target = "" -%}
+{%- for candidate in candidates -%}
+  {%- if target == "" -%}
+    {%- for f in site.static_files -%}
+      {%- if f.path == candidate -%}{%- assign target = candidate -%}{%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
 {%- endfor -%}
-{%- if found -%}
+{%- if target != "" -%}
 <figure class="iamlab-figure">
+{%- if target contains ".mp4" or target contains ".webm" %}
+  <video src="{{ target | relative_url }}" autoplay loop muted playsinline preload="metadata" aria-label="{{ include.alt }}"></video>
+{%- else %}
   <img src="{{ target | relative_url }}" alt="{{ include.alt }}" loading="lazy">
+{%- endif %}
   <figcaption>{{ include.alt }}</figcaption>
 </figure>
 {%- else -%}
-<p class="screenshot-pending">Screenshot pending: {{ include.alt }} <code>{{ include.src }}</code></p>
+<p class="screenshot-pending">Screenshot pending: {{ include.alt }} <code>{{ include.src }}{% unless include.src contains "." %}.png{% endunless %}</code></p>
 {%- endif -%}

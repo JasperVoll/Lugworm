@@ -1,6 +1,6 @@
 cff-version: 1.2.0
-message: "If you use IAMLab Slicer in research, please cite the software using this metadata."
-title: "IAMLab Slicer"
+message: "If you use Lugworm in research, please cite the software using this metadata."
+title: "Lugworm"
 type: software
 authors:
   - family-names: "Vollmert"
@@ -8,5 +8,5 @@ authors:
     orcid: "https://orcid.org/0009-0001-6245-912X"
     affiliation: "Institute of Digital and Autonomous Construction (IDAC), Hamburg University of Technology (TUHH)"
 license: MIT
-repository-code: "https://github.com/JasperVoll/iamlab-slicer"
-url: "https://jaspervoll.github.io/iamlab-slicer/"
+repository-code: "https://github.com/JasperVoll/lugworm"
+url: "https://jaspervoll.github.io/lugworm/"

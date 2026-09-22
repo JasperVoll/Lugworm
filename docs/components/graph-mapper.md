@@ -1,14 +1,16 @@
 ---
-title: "IAMLab Graph Mapper"
+title: "Graph Mapper"
 nav_order: 6
 parent: "Components"
-description: "IAMLab Graph Mapper: component inputs and outputs."
-permalink: /docs/components/iamlab-graph-mapper/
+description: "Graph Mapper: component inputs and outputs."
+permalink: /docs/components/graph-mapper/
+redirect_from:
+  - /docs/components/iamlab-graph-mapper/
 ---
 
-# IAMLab Graph Mapper
+# Graph Mapper
 
-IAMLab Graph Mapper changes a list of numbers by passing them through a
+Graph Mapper changes a list of numbers by passing them through a
 curve that you draw on the component. A typical use is a flow or speed
 value that should change gradually from the bottom to the top of a
 print: feed the layer numbers in, draw the curve, and read the remapped
@@ -17,7 +19,7 @@ ships with Grasshopper, with more curve types and editable points.
 
 Panel: `1 Slice`. Nickname: `Graph Map`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-graph-mapper.png" alt="IAMLab Graph Mapper on the canvas" %}
+{% include figure.html src="components/iamlab-graph-mapper" alt="Graph Mapper: switching the profile from sine to spline, with the wave infill following in the viewport" %}
 
 ## Inputs
 
@@ -44,6 +46,6 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `y` | Number (list) | Remapped values, one per input |
 | `equation` | Text | The curve as a formula over normalized t |
 | `info` | Text | Graph type, domains, value count |
-| `map` | Text | The curve itself, for components that evaluate it. Connect it into the profile input of IAMLab Slice to drive a graph wave infill |
+| `map` | Text | The curve itself, for components that evaluate it. Connect it into the profile input of Slice to drive a graph wave infill |
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).
