@@ -1,10 +1,10 @@
 blank_issues_enabled: false
 contact_links:
   - name: Documentation
-    url: https://jaspervoll.github.io/lugworm/
+    url: https://jaspervoll.github.io/Lugworm/
     about: Installation, component map, component reference, calibration, machine control.
   - name: Releases
-    url: https://github.com/JasperVoll/lugworm/releases
+    url: https://github.com/JasperVoll/Lugworm/releases
     about: Download the packaged Grasshopper plugin.
   - name: IDAC @ TUHH
     url: https://www.tuhh.de/idac

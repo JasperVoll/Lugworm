@@ -43,7 +43,7 @@ to report a Duet machine that does not work, or to collaborate on making a
 machine compatible.
 
 Bugs and feature requests belong in the
-[issue tracker](https://github.com/JasperVoll/lugworm/issues).
+[issue tracker](https://github.com/JasperVoll/Lugworm/issues).
 Include the installed version (Rhino's Package Manager lists it under
 Lugworm; the Details tab of the `.gha` file's properties shows it too), the
 `info` output of the component that failed, and a minimal definition with

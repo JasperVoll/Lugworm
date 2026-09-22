@@ -6,8 +6,8 @@ body:
   - type: markdown
     attributes:
       value: |
-        Please check the documentation first: [Component Map](https://jaspervoll.github.io/lugworm/docs/getting-started/component-map/),
-        [Components](https://jaspervoll.github.io/lugworm/docs/components/), and [About](https://jaspervoll.github.io/lugworm/docs/about/).
+        Please check the documentation first: [Component Map](https://jaspervoll.github.io/Lugworm/docs/getting-started/component-map/),
+        [Components](https://jaspervoll.github.io/Lugworm/docs/components/), and [About](https://jaspervoll.github.io/Lugworm/docs/about/).
   - type: textarea
     id: question
     attributes:

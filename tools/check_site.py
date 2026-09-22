@@ -8,7 +8,7 @@ from urllib.parse import unquote, urljoin, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 SITE = ROOT / "_site"
-BASE = "/lugworm"
+BASE = "/Lugworm"
 HOST = "jaspervoll.github.io"
 errors = []
 expected = json.loads((ROOT / "tools" / "pages.json").read_text(encoding="utf-8"))
@@ -125,7 +125,7 @@ for name, item in metadata.items():
         errors.append(f"Page not rendered: {name}")
         continue
     text = target.read_text(encoding="utf-8")
-    edit = "https://github.com/JasperVoll/lugworm/edit/main/" + name
+    edit = "https://github.com/JasperVoll/Lugworm/edit/main/" + name
     if edit not in text:
         errors.append(f"Edit link missing or incorrect: {name}")
     if "IDAC" not in text or "Hamburg University of Technology" not in text:

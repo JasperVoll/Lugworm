@@ -6,7 +6,7 @@ Lugworm is named after *Arenicola marina*, the lugworm of the Wadden Sea. It liv
 
 The plugin grew out of a materials laboratory, where repeatable test specimens and controlled experiments matter more than throughput. It is for researchers and practitioners working with clay, concrete and other liquid-deposition (LDM) materials. In Grasshopper you plan experiments, create and slice specimens, vary parameters, generate G-code, review robot motion and operate supported Duet machines. Planar, adaptive and conical slicing cover conventional and non-planar work.
 
-The components sit on one ribbon tab, **Lugworm**, in seven groups that follow the work from left to right: Slice, Place, G-code, Robot, Analyze, Calibrate, Print. Planned experiments (DoE Design, Test Geometry, RSM Evaluate, Desirability, Pareto Select), toolpath analysis (Overhang, Interlayer Time, Print Stats, Legend), direct machine control (Machine Console, Machine Files, Live View) and the slicing chain (Slice, Place, Print Bed, G-code Generator, G-code Restart, Save G-code) each have a page on the [documentation site](https://jaspervoll.github.io/lugworm/).
+The components sit on one ribbon tab, **Lugworm**, in seven groups that follow the work from left to right: Slice, Place, G-code, Robot, Analyze, Calibrate, Print. Planned experiments (DoE Design, Test Geometry, RSM Evaluate, Desirability, Pareto Select), toolpath analysis (Overhang, Interlayer Time, Print Stats, Legend), direct machine control (Machine Console, Machine Files, Live View) and the slicing chain (Slice, Place, Print Bed, G-code Generator, G-code Restart, Save G-code) each have a page on the [documentation site](https://jaspervoll.github.io/Lugworm/).
 
 This repository is the public home for reviewed source releases, release tags, documentation and issues. Lugworm is distributed as a packaged Grasshopper plugin.
 
@@ -14,7 +14,7 @@ This repository is the public home for reviewed source releases, release tags, d
 
 Requirements: Rhino 8 on Windows. The `.yak` package bundles the plugin and its dependencies.
 
-- [GitHub Releases](https://github.com/JasperVoll/lugworm/releases)
+- [GitHub Releases](https://github.com/JasperVoll/Lugworm/releases)
 - Food4Rhino: plugin page link to be added
 
 Save `lugworm-<version>-rh8_0-*.yak` in a folder of its own, then run PowerShell with `--source` pointing at that folder:
@@ -29,11 +29,11 @@ Coming from IAMLab Slicer? Uninstall that package first (Rhino's Package Manager
 
 ## Documentation
 
-The [documentation site](https://jaspervoll.github.io/lugworm/) covers [installation](https://jaspervoll.github.io/lugworm/docs/getting-started/installation/), a [map of how the components connect](https://jaspervoll.github.io/lugworm/docs/getting-started/component-map/), the [component reference](https://jaspervoll.github.io/lugworm/docs/components/), calibration and machine control.
+The [documentation site](https://jaspervoll.github.io/Lugworm/) covers [installation](https://jaspervoll.github.io/Lugworm/docs/getting-started/installation/), a [map of how the components connect](https://jaspervoll.github.io/Lugworm/docs/getting-started/component-map/), the [component reference](https://jaspervoll.github.io/Lugworm/docs/components/), calibration and machine control.
 
 ## Issues and contact
 
-Use the [issue tracker](https://github.com/JasperVoll/lugworm/issues) for bugs, questions and feature requests, or email Jasper Vollmert at [jasper.vollmert@tuhh.de](mailto:jasper.vollmert@tuhh.de). Machine control has been tested only on our own machine; if you would like to work on compatibility for yours, get in touch.
+Use the [issue tracker](https://github.com/JasperVoll/Lugworm/issues) for bugs, questions and feature requests, or email Jasper Vollmert at [jasper.vollmert@tuhh.de](mailto:jasper.vollmert@tuhh.de). Machine control has been tested only on our own machine; if you would like to work on compatibility for yours, get in touch.
 
 ## Citing
 

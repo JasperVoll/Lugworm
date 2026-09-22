@@ -1,8 +1,8 @@
 title: Lugworm
 description: Slicing, material experiments, and machine control in Grasshopper.
 url: "https://jaspervoll.github.io"
-baseurl: "/lugworm"
-repository: JasperVoll/lugworm
+baseurl: "/Lugworm"
+repository: JasperVoll/Lugworm
 remote_theme: just-the-docs/just-the-docs@v0.10.1
 permalink: pretty
 color_scheme: lugworm
@@ -17,17 +17,17 @@ nav_sort: case_insensitive
 nav_error_report: true
 aux_links:
   "Download package":
-    - https://github.com/JasperVoll/lugworm/releases
+    - https://github.com/JasperVoll/Lugworm/releases
   "Report an issue":
-    - https://github.com/JasperVoll/lugworm/issues
+    - https://github.com/JasperVoll/Lugworm/issues
 back_to_top: true
 back_to_top_text: Back to top
 gh_edit_link: true
 gh_edit_link_text: Edit this page on GitHub
-gh_edit_repository: https://github.com/JasperVoll/lugworm
+gh_edit_repository: https://github.com/JasperVoll/Lugworm
 gh_edit_branch: main
 gh_edit_view_mode: edit
-footer_content: 'Lugworm is released under the <a href="/lugworm/docs/license/">MIT License</a>. Copyright &copy; 2026 Jasper Vollmert. Developed at <a href="https://www.tuhh.de/idac/news">IDAC</a>, Hamburg University of Technology. <a href="https://github.com/JasperVoll/lugworm/issues">Report an issue</a>.'
+footer_content: 'Lugworm is released under the <a href="/Lugworm/docs/license/">MIT License</a>. Copyright &copy; 2026 Jasper Vollmert. Developed at <a href="https://www.tuhh.de/idac/news">IDAC</a>, Hamburg University of Technology. <a href="https://github.com/JasperVoll/Lugworm/issues">Report an issue</a>.'
 plugins:
   - jekyll-remote-theme
   - jekyll-seo-tag
