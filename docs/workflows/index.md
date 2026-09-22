@@ -11,6 +11,8 @@ has_toc: false
 
 These guides take you from a working toolpath to a specific task. If you are new to the plugin, begin with the [first toolpath exercise]({{ '/docs/getting-started/' | relative_url }}#1-make-your-first-toolpath).
 
+{% include figure.html src="workflows/slicing-workflow" alt="The slicing chain on the canvas, from Load Settings and Slice through Place, Print Bed and G-code Generator to Print Stats, Robot Simulation, Machine Console and Live View" %}
+
 | What you want to do | Guide | What you will work with |
 |---|---|---|
 | Find settings for a material | [Calibration and DoE]({{ '/docs/workflows/calibration-and-doe/' | relative_url }}) | Plan test prints, record measurements, fit models, and choose a recipe. |

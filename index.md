@@ -9,9 +9,9 @@ permalink: /
 
 <p class="iamlab-intro">Slicing, material experiments, and machine control in Grasshopper.</p>
 
-Named after the lugworm, which extrudes its casts one coil at a time.
+Named after the lugworm (German: Wattwurm), which casts coiled strings of sand that look like extruded layers.
 
-Lugworm (formerly IAMLab Slicer) is a Rhino 8 plugin for clay and cementitious-material 3D printing. It was
+Lugworm is a Rhino 8 plugin for clay and cementitious-material 3D printing. It was
 developed at the Institute of Digital and Autonomous Construction (IDAC), Hamburg University
 of Technology, for liquid deposition modelling (LDM) in a laboratory setting.
 

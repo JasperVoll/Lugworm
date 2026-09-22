@@ -20,6 +20,8 @@ refused with "use a Duet profile".
 
 Panel: `7 Print`. Nickname: `Console`. Compute button: no (runs on every change).
 
+{% include figure.html src="components/iamlab-machine-console" alt="Machine Console: opening the console window from the canvas and switching between its Control and Logs pages" %}
+
 ## Inputs
 
 | Name | Type | Default | Description |

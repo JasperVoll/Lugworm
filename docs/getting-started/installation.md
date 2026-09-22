@@ -72,11 +72,3 @@ Open Grasshopper and look for the Lugworm tab. Rhino's Package Manager lists the
 ## Before sharing a `.gh` definition
 
 Machine Console's `password` input can be saved in the `.gh` document and read by anyone who receives it. Clear the stored password before sharing the definition.
-
-## Coming from IAMLab Slicer
-
-Lugworm was called IAMLab Slicer until version 4.4.0. Uninstall that package before
-installing Lugworm (Rhino's Package Manager, or `yak uninstall iamlab-slicer`): Yak sees a new
-package, and two plugins with the same assembly GUID cannot load side by side. Saved `.gh`
-files open unchanged, because components are found by GUID and none moved. Settings files now
-save as `*.lwset.json`; older `*.iamset.json` files still load.

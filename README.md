@@ -1,8 +1,8 @@
 # Lugworm
 
-A Grasshopper plugin for slicing and controlling clay and cementitious-material 3D printing in Rhino 8. Until version 4.4.0 it was called IAMLab Slicer.
+A Grasshopper plugin for slicing and controlling clay and cementitious-material 3D printing in Rhino 8.
 
-Lugworm is named after *Arenicola marina*, the lugworm of the Wadden Sea. It lives in a U-shaped burrow, swallows sand at one end and extrudes it at the other, one coil on top of the last, until a small cast stands on the beach. That is the whole plugin in one animal: material goes in, a toolpath comes out, and the object grows layer by layer.
+Lugworm is named after *Arenicola marina*, the lugworm (German: Wattwurm) of the Wadden Sea. It lives in a U-shaped burrow, swallows sand at one end and extrudes it at the other, one coil on top of the last, until a small cast stands on the beach. That is the whole plugin in one animal: material goes in, a toolpath comes out, and the object grows layer by layer.
 
 The plugin grew out of a materials laboratory, where repeatable test specimens and controlled experiments matter more than throughput. It is for researchers and practitioners working with clay, concrete and other liquid-deposition (LDM) materials. In Grasshopper you plan experiments, create and slice specimens, vary parameters, generate G-code, review robot motion and operate supported Duet machines. Planar, adaptive and conical slicing cover conventional and non-planar work.
 
@@ -25,8 +25,6 @@ Save `lugworm-<version>-rh8_0-*.yak` in a folder of its own, then run PowerShell
 
 Restart Rhino 8, run the `Grasshopper` command and look for the **Lugworm** tab.
 
-Coming from IAMLab Slicer? Uninstall that package first (Rhino's Package Manager, or `yak uninstall iamlab-slicer`): two plugins with the same assembly GUID cannot load side by side. Saved `.gh` files open unchanged, because components are found by GUID and none moved.
-
 ## Documentation
 
 The [documentation site](https://jaspervoll.github.io/Lugworm/) covers [installation](https://jaspervoll.github.io/Lugworm/docs/getting-started/installation/), a [map of how the components connect](https://jaspervoll.github.io/Lugworm/docs/getting-started/component-map/), the [component reference](https://jaspervoll.github.io/Lugworm/docs/components/), calibration and machine control.
@@ -37,7 +35,7 @@ Use the [issue tracker](https://github.com/JasperVoll/Lugworm/issues) for bugs, 
 
 ## Citing
 
-When Lugworm contributes to published work, cite the software using the repository's `CITATION.cff`. Work published during the first release cycle after the rename should add "(formerly IAMLab Slicer)". The plugin is developed at the [Institute of Digital and Autonomous Construction (IDAC)](https://www.tuhh.de/idac/news), Hamburg University of Technology, by Jasper Vollmert ([ORCID 0009-0001-6245-912X](https://orcid.org/0009-0001-6245-912X)).
+When Lugworm contributes to published work, cite the software using the repository's `CITATION.cff`. The plugin is developed at the [Institute of Digital and Autonomous Construction (IDAC)](https://www.tuhh.de/idac/news), Hamburg University of Technology, by Jasper Vollmert ([ORCID 0009-0001-6245-912X](https://orcid.org/0009-0001-6245-912X)).
 
 ## License, safety, no warranty
 

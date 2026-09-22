@@ -22,6 +22,8 @@ material or per machine and switch between them.
 
 Panel: `1 Slice`. Nickname: `Settings`. Compute button: no (runs on every change).
 
+{% include figure.html src="components/iamlab-load-settings" alt="Load Settings: applying a settings folder to the canvas, with Slice's sliders taking the stored values and the slice recomputing" %}
+
 ## Inputs
 
 | Name | Type | Description |

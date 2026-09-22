@@ -27,40 +27,42 @@ ffmpeg -i recording.gif -movflags faststart -pix_fmt yuv420p -vf "scale=trunc(iw
 
 | File | Caption | Page |
 |---|---|---|
-| `home/overview_home` | IAMLab Slicer in Rhino 8: the SCARA simulation in the viewport and the slicing-to-print pipeline on the Grasshopper canvas | `index.md` |
+| `home/overview_home` | Lugworm in Rhino 8: the SCARA simulation in the viewport and the slicing-to-print pipeline on the Grasshopper canvas | `index.md` |
 
 ## Getting started (1)
 
 | File | Caption | Page |
 |---|---|---|
-| `getting-started/iamlab-tab` | The IAMLab tab after installation | `docs/getting-started/installation.md` |
+| `getting-started/iamlab-tab` | The Lugworm tab after installation | `docs/getting-started/installation.md` |
 
-## Components (18)
+## Components (20)
 
 Components not listed here have no screenshot slot on their page.
 
 | File | Caption | Page |
 |---|---|---|
-| `components/iamlab-desirability` | IAMLab Desirability on the canvas | `docs/components/iamlab-desirability.md` |
-| `components/iamlab-doe-design` | IAMLab DoE Design on the canvas | `docs/components/iamlab-doe-design.md` |
-| `components/iamlab-g-code-generator` | IAMLab G-code Generator: input groups on the canvas and the generated G-code in a panel | `docs/components/iamlab-g-code-generator.md` |
-| `components/iamlab-graph-mapper` | IAMLab Graph Mapper: switching the profile from sine to spline, with the wave infill following in the viewport | `docs/components/iamlab-graph-mapper.md` |
-| `components/iamlab-interlayer-time` | IAMLab Interlayer Time: stepping through layers with the isolate toggle and the time legend in the viewport | `docs/components/iamlab-interlayer-time.md` |
-| `components/iamlab-legend` | IAMLab Legend on the canvas | `docs/components/iamlab-legend.md` |
-| `components/iamlab-live-view` | IAMLab Live View on the canvas | `docs/components/iamlab-live-view.md` |
-| `components/iamlab-overhang` | IAMLab Overhang: layers classed as safe, warning and critical | `docs/components/iamlab-overhang.md` |
-| `components/iamlab-pareto-select` | IAMLab Pareto Select on the canvas | `docs/components/iamlab-pareto-select.md` |
-| `components/iamlab-place` | IAMLab Place: choosing a seam mode and turning the seam angle, with the seams drawn in the viewport | `docs/components/iamlab-place.md` |
-| `components/iamlab-print-bed` | IAMLab Print Bed: the bed outline in the viewport and the component on the canvas | `docs/components/iamlab-print-bed.md` |
-| `components/iamlab-print-stats` | IAMLab Print Stats on the canvas | `docs/components/iamlab-print-stats.md` |
-| `components/iamlab-ribbon` | The IAMLab ribbon | `docs/components/index.md` |
-| `components/iamlab-robot-simulation` | IAMLab Robot Simulation: moving the sim slider steps the SCARA arm through the print | `docs/components/iamlab-robot-simulation.md` |
-| `components/iamlab-rsm-evaluate` | IAMLab RSM Evaluate on the canvas | `docs/components/iamlab-rsm-evaluate.md` |
-| `components/iamlab-save-g-code` | IAMLab Save G-code on the canvas | `docs/components/iamlab-save-g-code.md` |
-| `components/iamlab-slice` | IAMLab Slice with its standard inputs and the wave infill group | `docs/components/iamlab-slice.md` |
-| `components/iamlab-test-geometry` | IAMLab Test Geometry with the specimen menu open | `docs/components/iamlab-test-geometry.md` |
+| `components/iamlab-desirability` | Desirability on the canvas | `docs/components/desirability.md` |
+| `components/iamlab-doe-design` | DoE Design on the canvas | `docs/components/doe-design.md` |
+| `components/iamlab-g-code-generator` | G-code Generator: input groups on the canvas and the generated G-code in a panel | `docs/components/g-code-generator.md` |
+| `components/iamlab-graph-mapper` | Graph Mapper: switching the profile from sine to spline, with the wave infill following in the viewport | `docs/components/graph-mapper.md` |
+| `components/iamlab-interlayer-time` | Interlayer Time: stepping through layers with the isolate toggle and the time legend in the viewport | `docs/components/interlayer-time.md` |
+| `components/iamlab-legend` | Legend on the canvas | `docs/components/legend.md` |
+| `components/iamlab-live-view` | Live View on the canvas | `docs/components/live-view.md` |
+| `components/iamlab-load-settings` | Load Settings: applying a settings folder to the canvas, with Slice's sliders taking the stored values and the slice recomputing | `docs/components/load-settings.md` |
+| `components/iamlab-machine-console` | Machine Console: opening the console window from the canvas and switching between its Control and Logs pages | `docs/components/machine-console.md` |
+| `components/iamlab-overhang` | Overhang: layers classed as safe, warning and critical | `docs/components/overhang.md` |
+| `components/iamlab-pareto-select` | Pareto Select on the canvas | `docs/components/pareto-select.md` |
+| `components/iamlab-place` | Place: choosing a seam mode and turning the seam angle, with the seams drawn in the viewport | `docs/components/place.md` |
+| `components/iamlab-print-bed` | Print Bed: the bed outline in the viewport and the component on the canvas | `docs/components/print-bed.md` |
+| `components/iamlab-print-stats` | Print Stats on the canvas | `docs/components/print-stats.md` |
+| `components/iamlab-ribbon` | The Lugworm ribbon | `docs/components/index.md` |
+| `components/iamlab-robot-simulation` | Robot Simulation: moving the sim slider steps the SCARA arm through the print | `docs/components/robot-simulation.md` |
+| `components/iamlab-rsm-evaluate` | RSM Evaluate on the canvas | `docs/components/rsm-evaluate.md` |
+| `components/iamlab-save-g-code` | Save G-code on the canvas | `docs/components/save-g-code.md` |
+| `components/iamlab-slice` | Slice with its standard inputs and the wave infill group | `docs/components/slice.md` |
+| `components/iamlab-test-geometry` | Test Geometry with the specimen menu open | `docs/components/test-geometry.md` |
 
-## Workflows (9)
+## Workflows (10)
 
 | File | Caption | Page |
 |---|---|---|
@@ -73,5 +75,6 @@ Components not listed here have no screenshot slot on their page.
 | `workflows/planar-vs-conical` | Planar and conical slicing of the same part | `docs/workflows/non-planar-slicing.md` |
 | `workflows/reach-violation` | An out-of-reach placement detected in Robot Simulation | `docs/workflows/robots-and-machine-control.md` |
 | `workflows/robot-profile` | Selecting a robot profile | `docs/workflows/robots-and-machine-control.md` |
+| `workflows/slicing-workflow` | The slicing chain on the canvas, from Load Settings and Slice through Place, Print Bed and G-code Generator to Print Stats, Robot Simulation, Machine Console and Live View | `docs/workflows/index.md` |
 
-29 slots in total.
+31 slots in total.
