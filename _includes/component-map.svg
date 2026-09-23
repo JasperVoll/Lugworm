@@ -106,7 +106,7 @@
 <a href="{{ '/docs/components/legend/' | relative_url }}">
   <title>Legend</title>
   <rect class="box" x="206" y="362" width="168" height="40" rx="4" fill="#ffffff" stroke="#ced4da" stroke-width="1.2"/>
-  <svg x="216" y="372" width="20" height="20" viewBox="1.0909 1.0909 21.8182 21.8182" aria-hidden="true"><title>Legend: one colour bar blending smoothly through the four IAMLab family hues, with ticks and labels</title>
+  <svg x="216" y="372" width="20" height="20" viewBox="1.0909 1.0909 21.8182 21.8182" aria-hidden="true"><title>Legend: one colour bar blending smoothly through the four Lugworm family hues, with ticks and labels</title>
   <defs>
     <linearGradient id="ic-iamlegend-family" gradientUnits="userSpaceOnUse" x1="7.5" y1="3.5" x2="7.5" y2="21">
       <stop offset="0" stop-color="#cde4ff"/>

@@ -58,7 +58,9 @@ body:
       label: Minimal reproduction
       description: |
         Attach a minimal `.gh` file that shows the problem (zip the file first; GitHub rejects bare `.gh` files).
-        Clear the Duet password input before attaching. Screenshots of the canvas are helpful.
+        Before attaching, strip private data from the file: clear the Duet `password` input, replace the `host`
+        address with a placeholder, remove file-path panels and internalised data that point at your machine,
+        and delete components unrelated to the problem. Screenshots of the canvas are helpful.
   - type: checkboxes
     id: safety
     attributes:
