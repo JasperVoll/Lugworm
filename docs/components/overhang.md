@@ -25,7 +25,7 @@ ones. The component has a compute button.
 
 Panel: `5 Analyze`. Nickname: `Overhang`. Compute button: yes (runs only when the button is clicked).
 
-{% include figure.html src="components/iamlab-overhang" alt="Overhang: layers classed as safe, warning and critical" %}
+{% include figure.html src="components/iamlab-overhang" %}
 
 ## Inputs
 
@@ -33,10 +33,10 @@ Panel: `5 Analyze`. Nickname: `Overhang`. Compute button: yes (runs only when th
 |---|---|---|---|
 | `contours` | Curve (tree) |  | Sliced contour tree from Slice or Place, one branch per layer, or per object and layer |
 | `warnDeg` | Number | 25 | Warning threshold, deg from the build direction. The global input picks the local layer normal or world Z. Calibrate per material |
-| `failDeg` | Number | 45 | Critical threshold, deg. Calibrate per material |
+| `failDeg` | Number | 45 | Critical overhang angle in deg from the selected reference direction, calibrated for the material |
 | `tol` | Number | 0.5 | Curve linearization tolerance, mm |
 | `colorMode` | Integer | 0 | 0 = classes (safe, warning and critical in magma hues), 1 = continuous magma ramp from 0° to failDeg, saturating above |
-| `global` | Boolean | false | Overhang reference. Off = local, the angle from the layer's own normal, the layer on layer stagger within the stack, which limits printability on non-planar layers. On = global, the angle from world Z, the lean against gravity. Identical on planar layers. Both angles are always output, this picks which one the thresholds, colors and legend use |
+| `global` | Boolean | false | Use world Z for thresholds and colors when true, or the local layer normal when false |
 
 ### Optional group: CSV export input
 
@@ -54,7 +54,7 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `anglesWorld` | Number (tree) | Global overhang angle per segment against world Z, deg. Always the global reading |
 | `summary` | Text (list) | Summary per layer as CSV lines: max overhang and the percentage above each threshold. The percentages follow global |
 | `info` | Text | Diagnostics |
-| `legend` | Text | Legend spec for Legend: the three overhang classes, or the continuous magma ramp, at the thresholds and reference this analysis used |
+| `legend` | Text | Legend definition text for Legend, matching the selected angle reference, thresholds and colors |
 | `colors` | Colour (tree) | Color per segment in the active color mode and reference, cut like angles, for a custom preview |
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

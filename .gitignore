@@ -11,4 +11,9 @@ REPOSITORY-MIGRATION.md
 SETUP.md
 
 iamlab-slicer.wiki/
-FOOD4RHINO.md
+_food4rhino/
+_media-work/
+_withheld/
+assets/images/README.md
+tools/
+.github/labels.json

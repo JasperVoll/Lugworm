@@ -1,6 +1,6 @@
 ---
 title: "Load Settings"
-nav_order: 10
+nav_order: 11
 parent: "Components"
 description: "Load Settings: component inputs and outputs."
 permalink: /docs/components/load-settings/
@@ -22,14 +22,14 @@ material or per machine and switch between them.
 
 Panel: `1 Slice`. Nickname: `Settings`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-load-settings" alt="Load Settings: applying a settings folder to the canvas, with Slice's sliders taking the stored values and the slice recomputing" %}
+{% include figure.html src="components/iamlab-load-settings" %}
 
 ## Inputs
 
-| Name | Type | Description |
-|---|---|---|
-| `folder` | Text | Folder with *.iamset.json files, one per component type |
-| `watch` | Boolean | Read the folder again whenever its file names, sizes or timestamps change. False scans once per folder path. Turning it off while editing files by hand is not needed, it only avoids the directory listing on every solve |
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `folder` | Text |  | Folder with *.lwset.json or older *.iamset.json files, one per component type |
+| `watch` | Boolean | true | Rescan changed settings files on each solve when true, or scan once per folder path when false |
 
 ## Outputs
 

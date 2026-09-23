@@ -37,4 +37,4 @@ You should now see a placed, layered cylinder and be able to step through its to
 
 ## Continue from here
 
-Use [Save G-code]({{ '/docs/components/save-g-code/' | relative_url }}) to write a reviewed file. Then choose a [workflow]({{ '/docs/workflows/' | relative_url }}) for material calibration, non-planar slicing, or machine control. For individual inputs and outputs, open the [component reference]({{ '/docs/components/' | relative_url }}).
+Use [Save G-code]({{ '/docs/components/save-g-code/' | relative_url }}) to write a reviewed file. The [Workflows]({{ '/docs/workflows/' | relative_url }}) page shows the slicing and DoE workflows on the canvas. For individual inputs and outputs, open the [component reference]({{ '/docs/components/' | relative_url }}).

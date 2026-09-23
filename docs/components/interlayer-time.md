@@ -1,6 +1,6 @@
 ---
 title: "Interlayer Time"
-nav_order: 7
+nav_order: 8
 parent: "Components"
 description: "Interlayer Time: component inputs and outputs."
 permalink: /docs/components/interlayer-time/
@@ -21,20 +21,20 @@ layers, are coloured on a Plasma scale between your two thresholds.
 
 Panel: `5 Analyze`. Nickname: `Interlayer`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-interlayer-time" alt="Interlayer Time: stepping through layers with the isolate toggle and the time legend in the viewport" %}
+{% include figure.html src="components/iamlab-interlayer-time" %}
 
 ## Inputs
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `gcode` | Text (list) |  | G-code as one string or a list of lines. Optional when a print log is connected, since the log's own samples become the path |
+| `gcode` | Text (list) |  | G-code as one string or a list of lines. Optional when a print log is wired, since the log's own samples become the path |
 | `gcodePath` | Text |  | Optional G-code file path, read in the background. With a print log its exact bytes anchor the log's file positions to the moves |
-| `log` | Text (list) |  | Print log CSV lines from a retained job log. When connected, the log's clock replaces the estimate |
+| `log` | Text (list) |  | Print log CSV lines from a retained job log. When wired, the log's clock replaces the estimate |
 | `logPath` | Text |  | Optional print log CSV file path, printlog_*.csv or a retained job log |
-| `layer` | Integer | 0 | Top visible layer, counted from 1 (0 or not connected = all). Wire a slider to scroll through the print. It scrolls the preview and cuts the emitted trees to the visible layers |
+| `layer` | Integer | 0 | Highest visible layer, counted from 1 (0 = all), limiting both preview and output trees |
 | `isolate` | Boolean | false | Show only the top visible layer instead of everything up to it |
-| `minTime` | Number | 0 | Too fast threshold, s. An interlayer time below it is flagged because the layer below has not stiffened (0 = off) |
-| `maxTime` | Number | 120 | Too slow threshold, s. An interlayer time above it is flagged because the layer below has skinned over (0 = off) |
+| `minTime` | Number | 0 | Minimum acceptable interlayer time in s, calibrated for the material (0 = no lower warning) |
+| `maxTime` | Number | 120 | Maximum acceptable interlayer time in s, calibrated for the material (0 = no upper warning) |
 | `legendMax` | Number | 0 | Color scale maximum, s (0 = auto: 1.5 x maxTime, else the 95th percentile). Fixed per analysis so a color keeps its meaning |
 
 ### Optional group: Layer geometry inputs (width, height, radius)
@@ -77,6 +77,6 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `colors` | Colour (tree) | Plasma color per path vertex, branches cut like the path output, for a custom preview. The unshaded scale color, whatever shade draws |
 | `layers` | Integer | Layer count of the whole print, not of the visible cut |
 | `info` | Text | Diagnostics |
-| `legend` | Text | Legend spec for Legend: the Plasma scale, its maximum and the fast and slow thresholds this analysis used |
+| `legend` | Text | Legend definition text for Legend, matching this analysis's time scale and warning thresholds |
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

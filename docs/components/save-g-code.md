@@ -17,16 +17,16 @@ not a Toggle, so that every click writes exactly one file.
 
 Panel: `3 G-code`. Nickname: `Save`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-save-g-code" alt="Save G-code on the canvas" %}
+{% include figure.html src="components/iamlab-save-g-code" %}
 
 ## Inputs
 
-| Name | Type | Description |
-|---|---|---|
-| `gcode` | Text (list) | G-code as one string or a list of lines |
-| `folder` | Text | Target folder path |
-| `prefix` | Text | Filename prefix (default 'print') |
-| `write` | Boolean | Write the file when true. Connect a Button |
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `gcode` | Text (list) |  | G-code as one string or a list of lines |
+| `folder` | Text |  | Local folder required with nonempty gcode before triggering write |
+| `prefix` | Text | print | Filename prefix (default 'print') |
+| `write` | Boolean |  | Save once when false changes to true, with gcode and folder set (wire a Button) |
 
 ### Optional group: Custom date/time + format inputs
 
@@ -35,14 +35,14 @@ Right-click the component to switch this group on. The inputs appear only while 
 | Name | Type | Description |
 |---|---|---|
 | `dateTime` | Date/time | Override the date and time (default now) |
-| `format` | Text | DateTime format (default yyyy-MM-dd_HH-mm) |
+| `format` | Text | Timestamp format text (default yyyy-MM-dd_HH-mm), for example yyyyMMdd_HHmmss |
 
 ## Outputs
 
 | Name | Type | Description |
 |---|---|---|
-| `path` | Text | Full target file path |
+| `path` | Text | Full target path, retaining the last successful save after write returns to false |
 | `written` | Boolean | True if the file was written this solve |
-| `info` | Text | Diagnostics |
+| `info` | Text | Save result or the reason writing was refused |
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

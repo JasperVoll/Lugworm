@@ -26,13 +26,13 @@ Three families:
 
 Panel: `6 Calibrate`. Nickname: `TestGeo`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-test-geometry" alt="Test Geometry with the specimen menu open" %}
+{% include figure.html src="components/iamlab-test-geometry" %}
 
 ## Inputs
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `height` | Number | 100 | Height, mm |
+| `height` | Number | 100 | Overall sample height in mm |
 | `radius` | Number | 40 | Base radius, mm, for cylinder, vase and frustum |
 
 ### Optional group: Base-plane input
@@ -52,7 +52,7 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `waveAmp` | Number | 0.15 | Vase: radial wave amplitude as fraction of radius (0 = straight) |
 | `waveCount` | Number | 3 | Vase: number of radial waves over the height |
 | `twistDeg` | Number | 90 | Twisted vase: total twist over the height, deg |
-| `sides` | Integer | 0 | Cross section sides (0 = smooth circle, 3 to 12 = polygon) |
+| `sides` | Integer | 0 | Vase or frustum section sides (0 to 2 = circle, 3 or more = polygon, twisted vase defaults to 6) |
 | `topRatio` | Number | 0.6 | Frustum: top radius divided by base radius |
 
 ### Optional group: Wall / box dimension inputs
@@ -61,8 +61,8 @@ Right-click the component to switch this group on. The inputs appear only while 
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `length` | Number | 150 | Wall or box length, mm |
-| `width` | Number | 8 | Wall thickness or box depth, mm |
+| `length` | Number | 150 | Wall length or square box side length in mm |
+| `width` | Number | 8 | Wall thickness in mm (the box uses length for both sides) |
 
 ### Optional group: Standard specimen scale (DIN EN / ASTM shapes)
 
@@ -70,7 +70,7 @@ Right-click the component to switch this group on. The inputs appear only while 
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `specimenScale` | Number | Standard specimens: uniform scale on the nominal dimensions (1 = the standard size). Scale up when a layer is too wide for the nominal section. An ISO 178 bar is 4 mm thick |
+| `specimenScale` | Number | 1 | Uniform multiplier for standard specimen dimensions (1 = nominal size) |
 
 ### Optional group: Extrusion test path inputs (zig-zag line)
 
@@ -80,10 +80,10 @@ Right-click the component to switch this group on. The inputs appear only while 
 |---|---|---|---|
 | `zzLength` | Number | 150 | Zigzag: length of one straight pass, mm |
 | `zzPitch` | Number | 10 | Zigzag: distance between passes, mm. Set it to the layer spacing you are testing |
-| `zzPasses` | Integer | 8 | Zigzag: number of straight passes |
-| `zzLayers` | Integer | 1 | Zigzag: stacked layers |
-| `zzLayerHeight` | Number | 3 | Zigzag: layer height, mm, used when layers is above 1 |
-| `zzArcTurns` | Boolean | true | Zigzag: round the 180 degree turns to a half circle instead of a sharp corner. A sharp reversal is where an LDM layer tears first |
+| `zzPasses` | Integer | 8 | Number of straight zigzag passes, at least 2 |
+| `zzLayers` | Integer | 1 | Number of stacked zigzag layers, at least 1 |
+| `zzLayerHeight` | Number | 3 | Vertical spacing between zigzag layers in mm, used when zzLayers exceeds 1 |
+| `zzArcTurns` | Boolean | true | Use semicircular zigzag turns when true, or sharp reversals when false |
 
 ## Outputs
 
@@ -92,7 +92,7 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `geometry` | Brep | Test geometry as a Brep. Wire into the slicer |
 | `sections` | Curve (list) | Cross section curves used for the loft. Empty for box and wall |
 | `info` | Text | Shape summary |
-| `path` | Curve (list) | Toolpath for the shapes that are a path rather than a solid, such as the zigzag extrusion test. Connect it straight into the G-code generator, not the slicer. Empty for every solid shape |
+| `path` | Curve (list) | Zigzag toolpath in Rhino document units for G-code Generator (empty for solid shapes) |
 
 ## Standard specimens
 

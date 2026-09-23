@@ -11,7 +11,7 @@ has_toc: false
 
 Every component on the Lugworm tab has a page of its own with a short explanation and a table of inputs and outputs. The pages are grouped by panel below. Components with a compute button run only when the button is clicked; all others run on every change. For how the components connect to each other, see the [Component Map]({{ '/docs/getting-started/component-map/' | relative_url }}).
 
-{% include figure.html src="components/iamlab-ribbon" alt="The Lugworm ribbon" %}
+{% include figure.html src="components/iamlab-ribbon" %}
 
 ## 1 Slice
 
@@ -67,5 +67,5 @@ Every component on the Lugworm tab has a page of its own with a short explanatio
 | Component | Purpose |
 |---|---|
 | [Live View]({{ '/docs/components/live-view/' | relative_url }}) | Live View shows the machine while it prints: the bed plate, the arm at the real nozzle position, and the observed nozzle path drawn behind it. |
-| [Machine Console]({{ '/docs/components/machine-console/' | relative_url }}) | Machine Console is the one window for controlling a printer with a Duet board from Grasshopper. |
+| [Duet Console]({{ '/docs/components/duet-console/' | relative_url }}) | Duet Console is the one window for controlling a printer with a Duet board from Grasshopper. |
 | [Machine Files]({{ '/docs/components/machine-files/' | relative_url }}) | Machine Files browses the file storage of the connected machine - the Duet's SD card. |

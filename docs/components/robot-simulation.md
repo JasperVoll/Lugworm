@@ -20,7 +20,7 @@ the material only.
 
 Panel: `4 Robot`. Nickname: `Robot Sim`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-robot-simulation" alt="Robot Simulation: moving the sim slider steps the SCARA arm through the print" %}
+{% include figure.html src="components/iamlab-robot-simulation" %}
 
 ## Inputs
 
@@ -28,24 +28,24 @@ Panel: `4 Robot`. Nickname: `Robot Sim`. Compute button: no (runs on every chang
 |---|---|---|---|
 | `robot` | Text |  | Robot Definition. Empty or none shows the toolpath and extrusion without a robot model |
 | `gcode` | Text (list) |  | G-code as one string or a list of lines |
-| `toolpath` | Curve (tree) |  | Toolpath curves used when G-code is empty |
+| `toolpath` | Curve (tree) |  | Toolpath curve tree in Rhino document units, used only when gcode is empty |
 | `sim` | Number | 1 | Scrub from 0 to 1 through the accumulated print |
 | `showRobot` | Boolean | true | Show the selected robot model when available |
 | `showExtrusion` | Boolean | true | Show deposited material as a continuous extrusion mesh |
-| `width` | Number | 10 | Extrusion width, mm |
+| `width` | Number | 10 | Layer width in mm for the extrusion preview |
 | `height` | Number | 0 | Extrusion or layer height, mm (0 = infer from the layer metadata) |
-| `bed` | Text |  | Print Bed definition, the only source of plate size, shape and position. Not connected draws no plate |
+| `bed` | Text |  | Print Bed definition text for the plate preview (unwired = no plate) |
 
 ## Outputs
 
 | Name | Type | Description |
 |---|---|---|
-| `joints` | Number (tree) | Joint samples, one branch per joint. Empty without robot kinematics |
-| `arm` | Curve | Schematic arm at the scrub position |
-| `tcp` | Curve | Displayed tool center path |
-| `outline` | Curve | Bed outline |
+| `joints` | Number (tree) | Joint values, one branch per joint in profile order, with rotary axes in deg and linear axes in mm |
+| `arm` | Curve | Robot arm curve at the selected simulation position, in Rhino document units |
+| `tcp` | Curve | Displayed nozzle path in Rhino document units |
+| `outline` | Curve | Print Bed outline in Rhino document units |
 | `reachOK` | Boolean | True when all targets pass the selected robot's reach checks, or when no kinematics are selected |
-| `problems` | Point (list) | Flagged target positions |
+| `problems` | Point (list) | Flagged target positions in Rhino document units |
 | `messages` | Text (list) | Validation messages |
 | `info` | Text | Profile and preview diagnostics |
 

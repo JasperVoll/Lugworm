@@ -1,22 +1,18 @@
 ---
 title: "Workflows"
 nav_order: 4
-description: "Plan experiments, slice non-planar geometry, and control machines."
+description: "The slicing workflow and the DoE workflow on the Grasshopper canvas."
 permalink: /docs/workflows/
-has_children: true
-has_toc: false
 ---
 
 # Workflows
 
-These guides take you from a working toolpath to a specific task. If you are new to the plugin, begin with the [first toolpath exercise]({{ '/docs/getting-started/' | relative_url }}#1-make-your-first-toolpath).
+## Slicing workflow
 
-{% include figure.html src="workflows/slicing-workflow" alt="The slicing chain on the canvas, from Load Settings and Slice through Place, Print Bed and G-code Generator to Print Stats, Robot Simulation, Machine Console and Live View" %}
+{% include figure.html src="workflows/slicing-workflow" %}
 
-| What you want to do | Guide | What you will work with |
-|---|---|---|
-| Find settings for a material | [Calibration and DoE]({{ '/docs/workflows/calibration-and-doe/' | relative_url }}) | Plan test prints, record measurements, fit models, and choose a recipe. |
-| Vary layer shape or spacing | [Non-Planar Slicing]({{ '/docs/workflows/non-planar-slicing/' | relative_url }}) | Set up conical or adaptive layers, adjust flow, and inspect overhangs. |
-| Prepare a machine and run a job | [Robots and Machine Control]({{ '/docs/workflows/robots-and-machine-control/' | relative_url }}) | Select a profile, review motion, and operate a supported Duet machine. |
+## DoE workflow
+
+{% include figure.html src="workflows/calibration-loop" %}
 
 Keep the [Component Map]({{ '/docs/getting-started/component-map/' | relative_url }}) alongside your Grasshopper definition to check connections. The [component reference]({{ '/docs/components/' | relative_url }}) explains each input, output, and optional group.

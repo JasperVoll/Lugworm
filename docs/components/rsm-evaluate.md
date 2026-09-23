@@ -20,16 +20,18 @@ component has a compute button.
 
 Panel: `6 Calibrate`. Nickname: `RSM`. Compute button: yes (runs only when the button is clicked).
 
-{% include figure.html src="components/iamlab-rsm-evaluate" alt="RSM Evaluate on the canvas" %}
+{% include figure.html src="components/iamlab-rsm-evaluate" %}
 
 ## Inputs
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `tablePath` | Text |  | Filled measurement table, .xlsx or .csv. The header row names the factor and response columns. Extra columns such as Run and x_* are ignored |
-| `factorNames` | Text (list) | layer_height; print_speed; pressure | Factor column names. Wire from the factorNames output of the DoE component |
+| `tablePath` | Text |  | Measured .xlsx or .csv table path with named factor and response columns, used unless direct X data is supplied |
+| `factorNames` | Text (list) | layer_height; print_speed; pressure | Factor column names in model order, from DoE Design's factorNames output |
 | `responseNames` | Text (list) |  | Response column names to fit (empty = all other numeric columns) |
-| `model` | Text | Quadratic | Model type: Linear, 2FI (main effects and interactions) or Quadratic. Aliased terms are dropped automatically, for example quadratics on a DSD |
+| `model` | Text | Quadratic | Fit type: Linear, 2FI (with interactions) or Quadratic, dropping terms the data cannot distinguish |
+| `transform` | Text (list) | none | Scale each response is fitted on. Use log1p or sqrt for counts, boxcox picks the exponent |
+| `computed` | Text (list) | no | Use yes for a calculated response with no measurement error, otherwise no |
 
 ### Optional group: Coding-range overrides (lows/highs/centres)
 
@@ -37,8 +39,8 @@ Right-click the component to switch this group on. The inputs appear only while 
 
 | Name | Type | Description |
 |---|---|---|
-| `lows` | Number (list) | Coding low per factor (default: data minimum) |
-| `highs` | Number (list) | Coding high per factor (default: data maximum) |
+| `lows` | Number (list) | Factor low levels in actual units and factorNames order (unwired = data minima) |
+| `highs` | Number (list) | Factor high levels in actual units and factorNames order (unwired = data maxima) |
 | `centres` | Number (list) | Center per factor away from the midpoint (default: midpoint) |
 
 ### Optional group: Direct data inputs (X/Y trees instead of a file)
@@ -47,8 +49,8 @@ Right-click the component to switch this group on. The inputs appear only while 
 
 | Name | Type | Description |
 |---|---|---|
-| `X` | Number (tree) | Direct factor data, one branch per run. An alternative to tablePath |
-| `Y` | Number (tree) | Direct response data, one branch per run, values in responseNames order |
+| `X` | Number (tree) | Factor values in actual units, one branch per run in factorNames order, overriding tablePath |
+| `Y` | Number (tree) | Measured responses in response units, one branch per run matching X and responseNames order |
 
 ### Optional group: Excel report export input
 
@@ -56,7 +58,7 @@ Right-click the component to switch this group on. The inputs appear only while 
 
 | Name | Type | Description |
 |---|---|---|
-| `xlsxReport` | Text | Write the full analysis report (data, coefficients, ANOVA) as .xlsx |
+| `xlsxReport` | Text | Local .xlsx file or folder to export on Compute with Export enabled, overwriting the target |
 
 ## Outputs
 

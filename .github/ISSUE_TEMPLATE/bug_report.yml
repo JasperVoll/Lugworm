@@ -34,7 +34,7 @@ body:
         - Robot Definition, Robot Simulation
         - Analyze (Overhang, Print Stats)
         - Calibration (DoE, RSM, Desirability)
-        - Duet machine control (Machine Console, Machine Files, Live View)
+        - Duet machine control (Duet Console, Machine Files, Live View)
         - Installation, loading
         - Other
     validations:

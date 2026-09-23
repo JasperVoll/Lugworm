@@ -26,7 +26,7 @@ Lugworm requires **Rhino 8 on Windows**. The packaged `.yak` file includes the p
 3. Restart Rhino 8, run `Grasshopper`, and look for the **Lugworm** ribbon tab:
    `1 Slice`, `2 Place`, `3 G-code`, `4 Robot`, `5 Analyze`, `6 Calibrate`, `7 Print`.
 
-{% include figure.html src="getting-started/iamlab-tab" alt="The Lugworm tab after installation" %}
+{% include figure.html src="getting-started/iamlab-tab" %}
 
 ## Manual installation
 
@@ -71,4 +71,4 @@ Open Grasshopper and look for the Lugworm tab. Rhino's Package Manager lists the
 
 ## Before sharing a `.gh` definition
 
-Machine Console's `password` input can be saved in the `.gh` document and read by anyone who receives it. Clear the stored password before sharing the definition.
+Duet Console's `password` input can be saved in the `.gh` document and read by anyone who receives it. Clear the stored password before sharing the definition.

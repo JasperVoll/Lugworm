@@ -19,20 +19,20 @@ compute button and runs only when the button is clicked.
 
 Panel: `1 Slice`. Nickname: `Slice`. Compute button: yes (runs only when the button is clicked).
 
-{% include figure.html src="components/iamlab-slice" alt="Slice with its standard inputs and the wave infill group" %}
+{% include figure.html src="components/iamlab-slice" %}
 
 ## Inputs
 
 | Name | Type | Default | Description |
 |---|---|---|---|
 | `geo` | Geometry (list) |  | Meshes, Breps or surfaces to slice, one item or a list. Each object is sliced and printed in turn |
-| `layerHeight` | Number | 3 | Layer spacing, mm |
+| `layerHeight` | Number | 3 | Layer spacing in mm, greater than 0 |
 | `firstLayer` | Number | 3 | Height of the first section, mm (0 = half the layer spacing) |
 | `wallCount` | Integer | 1 | Number of perimeters, at least 1 |
-| `spacing` | Number | 10 | Curve spacing, mm. Fallback for wallDistance and infillDistance when they are unset |
+| `spacing` | Number | 10 | Legacy curve spacing, mm. Fallback for wallDistance and infillDistance when they are unset |
 | `wallDistance` | Number | 10 | Distance between walls and from the last wall to infill, mm (defaults to spacing) |
 | `infillDistance` | Number | 10 | Distance between infill passes, mm (defaults to spacing) |
-| `mode` | Integer |  | 0 = planar, 1 = conical |
+| `mode` | Integer |  | Slicing mode: 0 = planar, 1 = conical (enable Conical inputs to adjust the angle) |
 | `infill` | Integer |  | 0 = none, 1 = zigzag, 2 = concentric, 3 = spiral, 4 = fermat, 5 = sine wave, 6 = graph wave |
 | `cornerRadius` | Number | 0 | Round sharp contour corners to this radius to correct overfill, mm (0 = off) |
 | `tol` | Number | 0.001 | Slicing and linearization tolerance, mm |
@@ -52,48 +52,48 @@ Right-click the component to switch this group on. The inputs appear only while 
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `coneAngle` | Number | 20 | Conical half angle for mode 1, deg. On a surface of revolution the outer rings stay horizontal by construction. The cone shows in the layer spacing, the inner walls and the infill |
-| `nozzleClear` | Number | 25 | Maximum printable surface angle, deg. Collision guard |
+| `coneAngle` | Number | 20 | Cone half-angle in deg for mode 1, affecting layer spacing, inner walls and infill |
+| `nozzleClear` | Number | 25 | Maximum conical surface angle in deg before slicing reports a nozzle-clearance warning |
 
 ### Optional group: Zigzag angle input
 
 Right-click the component to switch this group on. The inputs appear only while the group is enabled.
 
-| Name | Type | Description |
-|---|---|---|
-| `angle` | Number | Zigzag direction, deg |
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `angle` | Number | 0 | Zigzag direction, deg |
 
-### Optional group: Wave infill inputs (infill 5 / 6)
+### Optional group: Wave infill inputs (infill 5 / 6): period, amplitude, graph curve
 
 Right-click the component to switch this group on. The inputs appear only while the group is enabled.
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `profile` | Text |  | Serialized curve from the map output of Graph Mapper, the shape one wave period follows. Required by infill 6. Not connected falls back to a sine |
+| `profile` | Text |  | Graph Mapper map output for infill 6, used with Wave inputs enabled (empty = sine wave) |
 | `waveLen` | Number | 20 | Wave period along a row, mm |
-| `waveTangent` | Boolean |  | Mirrored peaks meet exactly, with the amplitude at half of infillDistance. Off leaves a gap of waveClearance |
+| `waveTangent` | Boolean |  | Make mirrored wave peaks touch when true, or separate them by waveClearance when false |
 | `waveClearance` | Number | 0 | Gap left between mirrored peaks when waveTangent is off, mm (0 = 0.2 x infillDistance) |
 | `waveRes` | Number | 0.5 | Sampling step along a wave row, mm |
-| `waveRepeat` | Boolean |  | Play the graph profile forward every period. Off (the default) mirrors every other period, so any curve tiles continuously even when its ends differ |
+| `waveRepeat` | Boolean |  | Repeat the graph forward when true, or alternate forward and backward for continuous joins when false |
 
-### Optional group: Bricklayer
+### Optional group: Bricklayer: interlock adjacent wall loops by half a layer height
 
 Right-click the component to switch this group on. The inputs appear only while the group is enabled.
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `brickShift` | Number | 0.5 | Wall Z shift as a fraction of the local layer gap: the nominal height, or the actual gap to the layer above when adaptive is on (0.5 = running bond) |
-| `brickOverlap` | Number | 0.5 | Fraction of the shorter loop that must run alongside its neighbour before the two interlock |
+| `brickShift` | Number | 0.5 | Wall Z shift as a fraction from 0 to 1 of the local layer gap (0.5 = half a layer) |
+| `brickOverlap` | Number | 0.5 | Minimum shared fraction of the shorter adjacent wall loop for interlocking, from 0 to 0.95 |
 | `brickOuter` | Boolean |  | Shift the outermost wall instead of leaving it flat. This changes the visible surface |
 | `brickRamp` | Integer | 1 | Layers left flat at the bottom and the top |
 
-### Optional group: Non-planar infill
+### Optional group: Non-planar infill and walls: wave-modulate path Z
 
 Right-click the component to switch this group on. The inputs appear only while the group is enabled.
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `npAmp` | Number | 0.4 | Infill Z wave amplitude, mm (0 = off). Refused above 0.4 x the layer gap. With adaptive on that is the actual gap to each neighbor, so the limit can be tighter than 0.4 x layerHeight |
+| `npAmp` | Number | 0.4 | Infill Z wave amplitude in mm (0 = off), limited to 0.4 times each adjacent layer gap |
 | `npWave` | Number | 20 | Infill Z wave period, mm |
 | `npDir` | Number | 0 | Direction the Z wave travels, deg (default = the zigzag angle) |
 | `npRes` | Number | 1 | Infill resampling step before modulation, mm |

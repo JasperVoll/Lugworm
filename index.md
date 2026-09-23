@@ -23,7 +23,7 @@ of Technology, for liquid deposition modelling (LDM) in a laboratory setting.
 <a class="btn" href="{{ '/docs/getting-started/component-map/' | relative_url }}">Explore the component map</a>
 </div>
 
-{% include figure.html src="home/overview_home" alt="Lugworm in Rhino 8: the SCARA simulation in the viewport and the slicing-to-print pipeline on the Grasshopper canvas" %}
+{% include figure.html src="home/overview_home" %}
 
 ## Find the right guide
 
@@ -33,12 +33,12 @@ of Technology, for liquid deposition modelling (LDM) in a laboratory setting.
 | Create and preview a first toolpath | [Getting started]({{ '/docs/getting-started/' | relative_url }}) |
 | Understand how the components connect | [Component Map]({{ '/docs/getting-started/component-map/' | relative_url }}) |
 | Look up inputs, outputs, or optional groups | [Component reference]({{ '/docs/components/' | relative_url }}) |
-| Follow a task from start to finish | [Workflows]({{ '/docs/workflows/' | relative_url }}) |
+| See the slicing and DoE workflows on the canvas | [Workflows]({{ '/docs/workflows/' | relative_url }}) |
 | Report a problem or get in touch | [About]({{ '/docs/about/' | relative_url }}) |
 
 ## Safety
 
-Lugworm generates toolpaths and can command real machinery. Review every G-code file and
+Lugworm generates toolpaths and can connect to Duet machines. Review every G-code file and
 robot program in [Robot Simulation]({{ '/docs/components/robot-simulation/' | relative_url }})
 before running it. Keep the emergency stop within reach and stay with a running print.
 

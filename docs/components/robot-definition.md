@@ -24,20 +24,20 @@ Panel: `4 Robot`. Nickname: `Robot Def`. Compute button: no (runs on every chang
 
 ## Inputs
 
-| Name | Type | Description |
-|---|---|---|
-| `preset` | Text | Robot or machine preset. None keeps the toolpath and G-code workflows free of a model |
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `preset` | Text | none | Robot or machine preset. None keeps the toolpath and G-code workflows free of a model |
 
 ## Outputs
 
 | Name | Type | Description |
 |---|---|---|
-| `robot` | Text | Robot definition. Connect it into the robot input of G-code Generator, Robot Simulation, Print Stats, Machine Console and Live View |
-| `mechanism` | Text | Machine type |
-| `program` | Text | Recommended program family |
-| `control` | Text | Available direct control transport |
+| `robot` | Text | Robot definition. Wire it into the robot input of G-code Generator, Robot Simulation, Print Stats, Duet Console and Live View |
+| `mechanism` | Text | Machine mechanism name, such as SCARA, Cartesian or None |
+| `program` | Text | Program format supported by the selected profile |
+| `control` | Text | Direct printer connection type supported by the profile (None = no direct control) |
 | `info` | Text | Selected profile summary |
-| `process` | Text | Deposition process |
-| `flavor` | Text | G-code dialect the generator uses while its firmware input is not connected |
+| `process` | Text | Material process used by the profile: paste extrusion (LDM) |
+| `flavor` | Text | G-code dialect the generator uses while its firmware input is unwired |
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

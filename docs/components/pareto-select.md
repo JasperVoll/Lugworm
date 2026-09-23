@@ -18,32 +18,41 @@ upstream are switched off or their front changes.
 
 Panel: `6 Calibrate`. Nickname: `Pareto`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-pareto-select" alt="Pareto Select on the canvas" %}
+{% include figure.html src="components/iamlab-pareto-select" %}
 
 ## Inputs
 
-| Name | Type | Description |
-|---|---|---|
-| `front` | Number (tree) | The `pareto` output of Desirability: one branch per recipe with the factor values, one desirability per active goal, and `D` |
-| `factorNames` | Text (list) | The factor names in model order (from RSM Evaluate or DoE Design) |
-| `objectiveNames` | Text (list) | The names of the **active** goals in model order: wire the `objectives` output of Desirability, which is exactly that list |
-| `selectionKey` | Text | Pick a recipe without the mouse: the `key` this component gave out earlier. A key from a different front is refused, not remapped. Wins over `selectionIndex` |
-| `selectionIndex` | Integer | Pick a recipe without the mouse: the branch number (from 0) of the front that is wired right now. A one-time request - when the front changes, the same number is not applied again |
-| `optimumSettings` | Number (list) | Optional: wire Desirability's `settings` to mark its recommendation on the plot. Without it, the recipe with the largest `D` on the front is marked as *best D in supplied front* |
-| `weights` | Number (list) | Optional: one importance per active goal, in `objectiveNames` order, 0 or more each. Marks the recipe that scores best for that weighting (green square) without recomputing anything upstream. A weight of 0 leaves that goal out. A wrong count, a negative value or all zeros is refused with a warning |
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `front` | Number (tree) |  | The pareto output of Desirability, one branch per recipe: factor values, one desirability per active goal, D. Optional once a selection is stored |
+| `factorNames` | Text (list) |  | Factor names from DoE Design in model order, exactly one per factor value |
+| `objectiveNames` | Text (list) |  | Names of the active goals in model order, the objectives output of Desirability. The axes are desirabilities from 0 to 1, not response units |
+| `selectionKey` | Text |  | Recipe key from this component's key output for selection without the picker, valid only for its original front |
+| `selectionIndex` | Integer | -1 | Select a recipe by current branch index from 0 (-1 = none), reapplied only when this input changes |
+| `optimumSettings` | Number (list) |  | Desirability settings output to mark the recommended recipe on the plot (unwired = highest D) |
+| `weights` | Number (list) |  | Importance per active objective in objectiveNames order, 0 or more each. Marks the recipe with the highest weighted geometric mean of the front's own desirabilities, response goals only, without re-running Desirability |
 
 All inputs are optional. Without a front the component still emits a recipe it stored earlier.
+
+### Optional group: Confirm selected recipe
+
+Right-click the component to switch this group on. The inputs appear only while the group is enabled.
+
+| Name | Type | Description |
+|---|---|---|
+| `confirmValues` | Number (list) | Measured values for the selected recipe in objectiveNames order |
 
 ## Outputs
 
 | Name | Type | Description |
 |---|---|---|
-| `settings` | Number (list) | The chosen factor values, in the order of `factorNames` |
-| `di` | Number (list) | The chosen recipe's desirability per active goal (0 to 1) |
-| `D` | Number | The chosen recipe's overall desirability, as it was on the front |
-| `key` | Text | A token that names this recipe on this front - wire it into `selectionKey` to reselect it later |
-| `status` | Text | `current`, `front changed`, `restored`, `ambiguous`, or why a request was refused |
-| `current` | Boolean | True only when the stored recipe is verified on the front wired right now |
+| `settings` | Number (list) | Selected factor values in actual units, factorNames order. Empty without a selection |
+| `di` | Number (list) | Selected recipe's desirability per active objective, 0 to 1 |
+| `D` | Number | Selected recipe's overall desirability from 0 to 1 |
+| `key` | Text | Recipe key for selectionKey, valid only for the front it was issued from |
+| `status` | Text | Selection status: current, stale (front changed), restored, ambiguous, or why a request was refused |
+| `current` | Boolean | True only when the stored recipe is verified on the live front under the same identity |
+| `confirmReport` | Text | Confirmation measurements checked against the selected recipe's prediction intervals |
 
 ## How to use it
 

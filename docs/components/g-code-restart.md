@@ -1,6 +1,6 @@
 ---
 title: "G-code Restart"
-nav_order: 5
+nav_order: 6
 parent: "Components"
 description: "G-code Restart: component inputs and outputs."
 permalink: /docs/components/g-code-restart/
@@ -24,26 +24,26 @@ Panel: `3 G-code`. Nickname: `Restart`. Compute button: yes (runs only when the 
 | Name | Type | Default | Description |
 |---|---|---|---|
 | `gcode` | Text (list) |  | G-code of the failed print as one string or a list of lines |
-| `gcodePath` | Text |  | Optional path of the original G-code file. Percent mode uses its exact bytes. Text only input is reconstructed as UTF-8 with LF and marked approximate |
-| `z` | Number | 10 | Restart Z height, mm. Resume at the first extruding move at or above this Z. Wire one of z, percent or point |
-| `percent` | Number | 50 | Duet file progress, 0 to 100 percent, the value the board or DWC displayed when the print failed |
-| `point` | Point |  | Rhino XYZ point at the failure, for example a Live View or Machine Console position output. Convert raw Duet machine XYZ to Rhino coordinates first. Resumes after the nearest printed point |
+| `gcodePath` | Text |  | Original G-code file path, overriding gcode and giving exact file positions for percent mode |
+| `z` | Number | 10 | Restart at the first extruding move at or above this machine Z in mm, used if percent and point are unset |
+| `percent` | Number | 50 | Restart file progress from 0 to 100 percent (multiply a Print component's 0 to 1 progress by 100) |
+| `point` | Point |  | Failure point in Rhino document units, overriding percent and z to resume after the nearest printed point |
 | `primeE` | Number | 0 | Ram prime before resuming, mm of E. Refills the nozzle after an air bubble (0 = none) |
 | `travelSpeed` | Number | 60 | Feedrate of the safe approach travels, mm/s |
 | `hopSpeed` | Number | 0 | Feedrate of the final descent onto the part, mm/s (0 = travel speed) |
-| `retractSpeed` | Number | 2 | Feedrate of the prime move, mm/s |
+| `retractSpeed` | Number | 2 | Ram speed while priming, mm/s of ram travel |
 | `clearance` | Number | 10 | Clearance above everything printed so far for the approach, mm |
-| `savePath` | Text |  | Optional .gcode file path to write on compute |
-| `robot` | Text |  | Optional Robot Definition, the coordinate frame the job's G-code was emitted in, exactly as the G-code Generator reads it. Unwired keeps the Potterbot SCARA frame (y = -x mirror) for the `point` input and the `resume`, `printed` and `remaining` outputs. A generic Cartesian definition uses the machine's own coordinates |
+| `savePath` | Text |  | Optional local file or folder to save on Compute, overwriting the target (folder uses restart.gcode) |
+| `robot` | Text |  | Optional Robot Definition - the coordinate frame the job's G-code was emitted in, exactly as the G-code Generator reads it. Unwired keeps the Potterbot SCARA frame (y = -x mirror) for the 'point' input and the resume / printed / remaining outputs; a generic Cartesian definition uses the machine's own coordinates |
 
 ## Outputs
 
 | Name | Type | Description |
 |---|---|---|
 | `gcode` | Text (list) | Restart G-code lines |
-| `resume` | Point | Point the print resumes at |
-| `printed` | Curve (list) | Already printed path that the restart skips. Check it matches the part on the bed |
-| `remaining` | Curve (list) | Path the restart file prints |
-| `info` | Text | Diagnostics |
+| `resume` | Point | Restart point in Rhino document units |
+| `printed` | Curve (list) | Skipped path in Rhino document units, to compare with the part already on the bed |
+| `remaining` | Curve (list) | Path to print after restarting, in Rhino document units |
+| `info` | Text | Restart selection, source accuracy and save status |
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

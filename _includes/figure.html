@@ -4,7 +4,8 @@ in assets/images/ for .mp4, .webm, .gif and .png in that order and renders the
 first file that exists (a video element for mp4/webm, an image otherwise).
 A src that carries an extension is used as-is. Until a file exists, the page
 renders a pending note naming the expected path.
-Usage: {% include figure.html src="components/iamlab-slice" alt="..." %}
+Usage: {% include figure.html src="components/iamlab-slice" %}
+An optional alt="..." becomes the alt text and the caption.
 {%- endcomment -%}
 {%- assign base = "/assets/images/" | append: include.src -%}
 {%- assign candidates = "" | split: "," -%}
@@ -25,15 +26,18 @@ Usage: {% include figure.html src="components/iamlab-slice" alt="..." %}
     {%- endfor -%}
   {%- endif -%}
 {%- endfor -%}
+{%- assign alt = include.alt | default: "" -%}
 {%- if target != "" -%}
 <figure class="iamlab-figure">
 {%- if target contains ".mp4" or target contains ".webm" %}
-  <video src="{{ target | relative_url }}" autoplay loop muted playsinline preload="metadata" aria-label="{{ include.alt }}"></video>
+  <video src="{{ target | relative_url }}" autoplay loop muted playsinline preload="metadata"{% if alt != "" %} aria-label="{{ alt }}"{% endif %}></video>
 {%- else %}
-  <img src="{{ target | relative_url }}" alt="{{ include.alt }}" loading="lazy">
+  <img src="{{ target | relative_url }}" alt="{{ alt }}" loading="lazy">
 {%- endif %}
-  <figcaption>{{ include.alt }}</figcaption>
+{%- if alt != "" %}
+  <figcaption>{{ alt }}</figcaption>
+{%- endif %}
 </figure>
 {%- else -%}
-<p class="screenshot-pending">Screenshot pending: {{ include.alt }} <code>{{ include.src }}{% unless include.src contains "." %}.png{% endunless %}</code></p>
+<p class="screenshot-pending">Screenshot pending: <code>{{ include.src }}{% unless include.src contains "." %}.png{% endunless %}</code></p>
 {%- endif -%}

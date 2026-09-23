@@ -1,6 +1,6 @@
 ---
 title: "Graph Mapper"
-nav_order: 6
+nav_order: 7
 parent: "Components"
 description: "Graph Mapper: component inputs and outputs."
 permalink: /docs/components/graph-mapper/
@@ -19,7 +19,7 @@ ships with Grasshopper, with more curve types and editable points.
 
 Panel: `1 Slice`. Nickname: `Graph Map`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-graph-mapper" alt="Graph Mapper: switching the profile from sine to spline, with the wave infill following in the viewport" %}
+{% include figure.html src="components/iamlab-graph-mapper" %}
 
 ## Inputs
 
@@ -27,7 +27,7 @@ Panel: `1 Slice`. Nickname: `Graph Map`. Compute button: no (runs on every chang
 |---|---|---|
 | `t` | Number (list) | Values to remap through the curve |
 
-### Optional group: Input / output domains (default 0..1 to 0..1)
+### Optional group: Input / output domains (default unit ↦ unit)
 
 Right-click the component to switch this group on. The inputs appear only while the group is enabled.
 
@@ -37,7 +37,7 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `inMax` | Number | 1 | Input domain end (maps to the graph's right edge) |
 | `outMin` | Number | 0 | Output range at the graph's bottom edge |
 | `outMax` | Number | 1 | Output range at the graph's top edge |
-| `clip` | Boolean | true | Clamp inputs into the input domain before mapping. The curve is always evaluated inside the graph area, so inputs outside the domain pin to the graph edges either way. This switch only changes the 'unclipped' remark |
+| `clip` | Boolean | true | Control the out-of-domain remark when false, with values outside the domain pinned to the graph edges either way |
 
 ## Outputs
 
@@ -46,6 +46,6 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `y` | Number (list) | Remapped values, one per input |
 | `equation` | Text | The curve as a formula over normalized t |
 | `info` | Text | Graph type, domains, value count |
-| `map` | Text | The curve itself, for components that evaluate it. Connect it into the profile input of Slice to drive a graph wave infill |
+| `map` | Text | Curve definition text for Slice's profile input, used with infill 6 and Wave inputs enabled |
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

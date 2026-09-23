@@ -18,28 +18,28 @@ them use the same bed.
 
 Panel: `2 Place`. Nickname: `Bed`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-print-bed" alt="Print Bed: the bed outline in the viewport and the component on the canvas" %}
+{% include figure.html src="components/iamlab-print-bed" %}
 
 ## Inputs
 
-| Name | Type | Description |
-|---|---|---|
-| `width` | Number | Bed plate width along Rhino X, mm (the full axis for an ellipse) |
-| `depth` | Number | Bed plate depth along Rhino Y, mm (the full axis for an ellipse) |
-| `center` | Point | Bed plate center in Rhino coordinates. The plate, grid and printable area follow it |
-| `printCenter` | Point | Default print center, where a part's bottom center lands. This is not the plate center, so keep them separate |
-| `shape` | Integer | Plate shape: 0 = rectangle (default), 1 = ellipse. Equal width and depth make a circle |
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `width` | Number | 1000 | Bed plate width along Rhino X, mm (the full axis for an ellipse) |
+| `depth` | Number | 700 | Bed plate depth along Rhino Y, mm (the full axis for an ellipse) |
+| `center` | Point |  | Plate center in Rhino document units, used for the plate outline and preview |
+| `printCenter` | Point |  | Default part bottom-center position in Rhino document units, forwarded to Place |
+| `shape` | Integer | 0 | Plate shape: 0 = rectangle (default), 1 = ellipse. Equal width and depth make a circle |
 
 ## Outputs
 
 | Name | Type | Description |
 |---|---|---|
-| `bed` | Text | Print Bed definition. Connect it into the bed input of Place, Robot Simulation and Live View |
+| `bed` | Text | Print Bed definition. Wire it into the bed input of Place, Robot Simulation and Live View |
 | `width` | Number | Bed width, mm |
 | `depth` | Number | Bed depth, mm |
-| `center` | Point | Bed plate center |
-| `printCenter` | Point | Default print center |
-| `outline` | Curve | Bed plate outline |
+| `center` | Point | Plate center in Rhino document units |
+| `printCenter` | Point | Default part bottom-center position in Rhino document units |
+| `outline` | Curve | Plate boundary curve in Rhino document units |
 | `info` | Text | Bed summary |
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

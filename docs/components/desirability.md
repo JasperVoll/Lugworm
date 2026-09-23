@@ -18,32 +18,33 @@ component has a compute button.
 
 Panel: `6 Calibrate`. Nickname: `Desire`. Compute button: yes (runs only when the button is clicked).
 
-{% include figure.html src="components/iamlab-desirability" alt="Desirability on the canvas" %}
+{% include figure.html src="components/iamlab-desirability" %}
 
 ## Inputs
 
-| Name | Type | Description |
-|---|---|---|
-| `models` | Generic (list) | Fitted RSM models from the RSM component, or their JSON strings, one per response |
-| `goals` | Text (list) | Goal per response, same order as models: 'min', 'max', 'target=7 in 6..8', 'range=6..8' or 'none'. Add 'w=2' for weight or 's=2' for shape. min and max ramp over 'a..b' when given, else over the observed data range |
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `models` | Generic (list) |  | RSM Evaluate models or JSON output, one fitted model per response |
+| `goals` | Text (list) | target=7 in 6..8 w=2; min; min | One goal per model in matching order: min, max, target=7 in 6..8, range=6..8 or none (optional w=2, s=2) |
 
 ### Optional group: Factor priors (prefer low/high factor levels)
 
 Right-click the component to switch this group on. The inputs appear only while the group is enabled.
 
-| Name | Type | Description |
-|---|---|---|
-| `factorPriors` | Text (list) | Optional prior per factor: 'none', 'low', 'high' or 'target=x'. Add 'w=' for weight. For example prefer a low layer height for bonding |
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `factorPriors` | Text (list) | low w=1.5; none; high w=1.5 | Optional prior per factor: 'none', 'low', 'high' or 'target=x'. Add 'w=' for weight. For example prefer a low layer height for bonding |
 
 ### Optional group: Search bounds / grid resolution
 
 Right-click the component to switch this group on. The inputs appear only while the group is enabled.
 
-| Name | Type | Description |
-|---|---|---|
-| `lows` | Number (list) | Search lower bound per factor (default: model coding range) |
-| `highs` | Number (list) | Search upper bound per factor |
-| `gridPerDim` | Integer | Grid resolution per factor, clamped so the total stays at or below 500k points |
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `lows` | Number (list) |  | Search minima in actual units, one per factor in model order (otherwise model limits) |
+| `highs` | Number (list) |  | Search maxima in actual units, one per factor in model order (otherwise model limits) |
+| `gridPerDim` | Integer | 15 | Grid resolution per factor, clamped so the total stays at or below 500k points |
+| `feasibleThreshold` | Number | 0.5 | Predicted feasibility below this value is treated as unprintable |
 
 ### Optional group: Recipe sweep (one recipe per target value)
 
@@ -51,18 +52,18 @@ Right-click the component to switch this group on. The inputs appear only while 
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `sweepResponse` | Text |  | Response name to sweep. Its goal becomes target=v for each sweep value |
-| `sweepValues` | Number (list) | 6.5; 7; 7.5; 8 | Target values for the sweep, one optimized recipe each |
+| `sweepResponse` | Text |  | Model response name to optimize at each sweepValues target, required for the sweep |
+| `sweepValues` | Number (list) | 6.5; 7; 7.5; 8 | Target values in sweepResponse units, one optimized recipe per value |
 | `sweepBand` | Number | 0.4 | Acceptance band around each sweep target, plus or minus, in response units |
 
-### Optional group: Pareto front (best trade-offs between goals)
+### Optional group: Pareto front (tradeoffs)
 
 Right-click the component to switch this group on. The inputs appear only while the group is enabled.
 
-| Name | Type | Description |
-|---|---|---|
-| `paretoOn` | Boolean | Also collect the Pareto front of tradeoffs over the individual response desirabilities. Off by default because it evaluates every goal even where the scalarized D is 0. The front depends on the goals and their bounds, not on the weights |
-| `maxFront` | Integer | Front thinning cap by crowding distance. The best recipe per objective always survives |
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `paretoOn` | Boolean |  | Collect the non-dominated recipes over the individual goal desirabilities, for Pareto Select. Goal bounds shape the front, weights do not |
+| `maxFront` | Integer | 200 | Maximum retained tradeoff recipes, preserving each objective's best recipe even if this cap is exceeded |
 
 ### Optional group: Excel export input
 
@@ -70,7 +71,7 @@ Right-click the component to switch this group on. The inputs appear only while 
 
 | Name | Type | Description |
 |---|---|---|
-| `xlsxPath` | Text | Write the optimization and sweep report as .xlsx |
+| `xlsxPath` | Text | Local .xlsx file or folder to export on Compute with Export enabled, overwriting the target |
 
 ## Outputs
 
@@ -80,11 +81,11 @@ Right-click the component to switch this group on. The inputs appear only while 
 | `D` | Number | Overall desirability, 0 to 1 |
 | `predicted` | Number (list) | Predicted responses at the recommended settings |
 | `report` | Text | Readable optimization report. Connect a panel |
-| `alternatives` | Number (tree) | Distinct local optima of the scalarized D, not a Pareto set (see the pareto output). One branch per recipe: factor values, then D |
+| `alternatives` | Number (tree) | Other local best recipes, one branch each: factor values in model order, then overall desirability D |
 | `sweep` | Number (tree) | Sweep recipes, one branch per target: target, factors, D, predictions |
 | `info` | Text | Diagnostics |
-| `interval` | Number (tree) | 95% prediction interval at the recommendation, one branch per response: low, predicted, high. Empty when the model carries no covariance |
-| `pareto` | Number (tree) | Pareto front recipes, with the pareto group enabled. One branch per recipe: factor values, d per active goal, D. Objectives follow the model order, skipping 'none' goals. Wire to Pareto Select `front` |
-| `objectives` | Text (list) | The names of the active goals in model order, without `none` goals: the axes of `pareto`. Wire to Pareto Select `objectiveNames`. Emitted whether or not the pareto group is on |
+| `interval` | Number (tree) | 95% prediction limits in response units, one branch per response: low, predicted, high (empty without model uncertainty data) |
+| `pareto` | Number (tree) | Tradeoff recipes with Pareto enabled and paretoOn true, one branch each: factors, active-goal desirabilities, D. Wire to Pareto Select front |
+| `objectives` | Text (list) | Names of the active goals in model order, without none goals. The axes of the pareto output. Wire to Pareto Select objectiveNames |
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

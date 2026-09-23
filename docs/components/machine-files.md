@@ -19,20 +19,20 @@ Panel: `7 Print`. Nickname: `Files`. Compute button: no (runs on every change).
 
 ## Inputs
 
-| Name | Type | Description |
-|---|---|---|
-| `host` | Text | Host string from the Machine Console host output |
-| `dir` | Text | Directory to browse on the board |
-| `savePath` | Text | Local file or folder for Download. A folder keeps the file name from the board |
-| `moveTo` | Text | Move target: a new name, a directory ending in '/', or a full 0:/ path |
+| Name | Type | Default | Description |
+|---|---|---|---|
+| `host` | Text |  | Host output from Duet Console or Duet Connect, connected before using the file buttons |
+| `dir` | Text | 0:/gcodes | Board directory path to list on Refresh (empty = 0:/gcodes) |
+| `savePath` | Text |  | Local file or folder required before Download, which overwrites an existing file of the same name |
+| `moveTo` | Text |  | Target required before Move: a new filename, a folder ending in /, or a full 0:/ path |
 
 ## Outputs
 
 | Name | Type | Description |
 |---|---|---|
-| `files` | Text (list) | Directory listing with name and size. Folders end with / |
+| `files` | Text (list) | Last refreshed board directory listing with filenames and sizes in bytes (folders end with /) |
 | `selected` | Text | Full board path of the selected entry |
 | `size` | Number | Selected file size, bytes |
-| `info` | Text | Diagnostics |
+| `info` | Text | Selected directory, file and last-action details |
 
 Back to [Components]({{ '/docs/components/' | relative_url }}).

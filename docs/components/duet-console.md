@@ -1,16 +1,17 @@
 ---
-title: "Machine Console"
-nav_order: 11
+title: "Duet Console"
+nav_order: 4
 parent: "Components"
-description: "Machine Console: component inputs and outputs."
-permalink: /docs/components/machine-console/
+description: "Duet Console: component inputs and outputs."
+permalink: /docs/components/duet-console/
 redirect_from:
+  - /docs/components/machine-console/
   - /docs/components/iamlab-machine-console/
 ---
 
-# Machine Console
+# Duet Console
 
-Machine Console is the one window for controlling a printer with
+Duet Console is the one window for controlling a printer with
 a Duet board from Grasshopper. It handles connecting, homing, jogging,
 capturing the bed origin and the nozzle height, checking and uploading a
 job, starting, pausing and cancelling it, sending single commands,
@@ -20,19 +21,19 @@ refused with "use a Duet profile".
 
 Panel: `7 Print`. Nickname: `Console`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-machine-console" alt="Machine Console: opening the console window from the canvas and switching between its Control and Logs pages" %}
+{% include figure.html src="components/iamlab-machine-console" %}
 
 ## Inputs
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `gcode` | Text (list) |  | G-code job as one string or a list of lines |
-| `host` | Text | 192.168.1.42 | Machine hostname or IP address with an optional :port, for example 192.168.1.42 |
-| `password` | Text |  | Duet password (empty = the firmware default 'reprap'). The password is stored as plain text in the .gh file and sent as plain HTTP on the LAN, so use a trusted network. Intentional spaces are kept. |
-| `pollMs` | Integer | 1000 | Status poll interval, ms, 250 to 4000. The session clamps it to 250 to 2000, and a focused window polls at 250 ms while the machine is active |
-| `robot` | Text |  | Optional Robot Definition. Not connected means the Potterbot SCARA with the full check set and the go-to point. Wire a generic Duet Cartesian definition for other Duet machines, which get travel limits stored in the firmware (M208) checks and no go-to move |
-| `points` | Point (list) |  | Optional calibration points in Rhino coordinates, listed in the console's go-to selector |
-| `live` | Boolean | false | Solve the outputs again on machine changes, at most once per poll. When false the outputs refresh on the next ordinary solve only |
+| `gcode` | Text (list) |  | G-code job as text or a list of lines, overridden by a job loaded from Recent prints until cleared |
+| `host` | Text | 192.168.1.42 | Duet hostname or IP address, optionally with :port, required before connecting in the console |
+| `password` | Text |  | Duet password (empty = 'reprap'), saved unencrypted in the .gh file and sent over HTTP |
+| `pollMs` | Integer | 1000 | Status poll interval in ms, clamped to 250 to 2000, or 250 while the console is focused and the machine is active |
+| `robot` | Text |  | Robot Definition text for the connected Duet machine (unwired = Potterbot SCARA, Cartesian profiles disable go-to) |
+| `points` | Point (list) |  | Calibration points in Rhino document units for the SCARA go-to selector, used after connecting and homing |
+| `live` | Boolean | false | Refresh changed visible outputs at most once per second when true (false = refresh on the next solve) |
 
 ### Optional group: Job inputs (name, dry run, arcs, warnings)
 
@@ -40,10 +41,10 @@ Right-click the component to switch this group on. The inputs appear only while 
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `jobName` | Text | print | Remote file name, stored as 0:/gcodes/<name>.gcode. Uploading again overwrites it |
-| `dryRun` | Boolean |  | Start with the M37 firmware simulation instead of M32: no motion, only a time estimate |
-| `arcSupport` | Boolean | true | Firmware arc support (G2/G3) |
-| `blockWarnings` | Boolean |  | Refuse the upload on any warning (overspeed, jerk, singularity). Mast clearance always blocks |
+| `jobName` | Text | print | Remote file name, stored as 0:/gcodes/&lt;name&gt;.gcode. Uploading again overwrites it |
+| `dryRun` | Boolean |  | Use firmware simulation on Start when true, with no movement |
+| `arcSupport` | Boolean | true | Allow G2/G3 arcs in job validation when true, or reject jobs containing arcs when false |
+| `blockWarnings` | Boolean |  | Block upload and start on validation warnings when true (errors and mast clearance violations always block) |
 
 ### Optional group: Machine limit overrides (L1/L2, reach, Z, envelope, elbow)
 
@@ -51,17 +52,17 @@ Right-click the component to switch this group on. The inputs appear only while 
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `L1` | Number | 549.06 | First link length, mm |
-| `L2` | Number | 457.23 | Second link length, mm |
-| `reachMax` | Number | 0 | Maximum reach, mm (0 = L1 + L2) |
-| `reachMin` | Number | 235 | Minimum reach, the dead zone radius, mm (0 = L1 minus L2) |
-| `zMax` | Number | 400 | Build height, mm (firmware M208 Z maximum) |
-| `xMin` | Number | -300 | Lowest allowed X, mm (firmware M208 X minimum) |
-| `xMax` | Number | 10000 | Highest allowed X, mm (firmware M208 X maximum) |
-| `yMin` | Number | -10000 | Lowest allowed Y, mm (firmware M208 Y minimum) |
-| `yMax` | Number | 0 | Highest allowed Y, mm (firmware M208 Y maximum) |
-| `checkEnvelope` | Boolean | true | Check moves against the travel limits stored in the firmware (M208) |
-| `elbow` | Integer |  | Fallback arm mode, 0 up or 1 down, for planning before a verified home exists. A verified home's endstop mode takes precedence |
+| `L1` | Number | 549.06 | First SCARA link length in mm |
+| `L2` | Number | 457.23 | Second SCARA link length in mm |
+| `reachMax` | Number | 0 | Maximum SCARA reach in mm (0 = L1 + L2) |
+| `reachMin` | Number | 235 | Minimum SCARA reach in mm (0 = the absolute difference between L1 and L2) |
+| `zMax` | Number | 400 | Maximum machine Z in mm, corresponding to the firmware M208 limit |
+| `xMin` | Number | -300 | Minimum machine X in mm, corresponding to the firmware M208 limit |
+| `xMax` | Number | 10000 | Maximum machine X in mm, corresponding to the firmware M208 limit |
+| `yMin` | Number | -10000 | Minimum machine Y in mm, corresponding to the firmware M208 limit |
+| `yMax` | Number | 0 | Maximum machine Y in mm, corresponding to the firmware M208 limit |
+| `checkEnvelope` | Boolean | true | Check targets against the machine's Cartesian axis limits when true |
+| `elbow` | Integer | 1 | Fallback arm mode, 0 up or 1 down, for planning before a verified home exists. A verified home's endstop mode takes precedence |
 
 ### Optional group: Jog feedrate
 

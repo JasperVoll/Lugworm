@@ -16,6 +16,7 @@ for LDM in a laboratory setting.
 | Name | Role |
 |---|---|
 | Jasper Vollmert | Developer |
+| Prof. Kay Smarsly | Advisor |
 | Adel Alatassi | Tester |
 | Mayur Gajanan Kale | Tester |
 
@@ -29,12 +30,10 @@ Vollmert, J. & Große, B., 2026. Optimizing and predicting process parameters fo
 
 ## Acknowledgements
 
-- **Open source.** Lugworm builds on Rhino and Grasshopper and on the
-  work of the RepRap, Marlin, RepRapFirmware and Klipper communities. The
+**Open source.** Lugworm builds on Rhino and Grasshopper and thanks the thorough work of the RepRap, RepRapFirmware, Marlin, and Klipper communities. The
   documentation site uses a [Just the Docs](https://just-the-docs.com) template.
 
-Funding and collaborating institutions will be added after their preferred
-credit text has been confirmed.
+We also wish to acknowledge the plugin "Silkworm" as well as GeekDetour/BrickLayers for their fantastic work and inspiration!
 
 ## Contact
 
@@ -44,10 +43,8 @@ machine compatible.
 
 Bugs and feature requests belong in the
 [issue tracker](https://github.com/JasperVoll/Lugworm/issues).
-Include the installed version (Rhino's Package Manager lists it under
-Lugworm; the Details tab of the `.gha` file's properties shows it too), the
-`info` output of the component that failed, and a minimal definition with
-machine passwords removed.
+Include the installed version, the
+`info` output of the component that failed, and a minimal definition.
 
 Institute of Digital and Autonomous Construction (IDAC), Hamburg University of
 Technology, Hamburg, Germany. [Institute news](https://www.tuhh.de/idac/news).

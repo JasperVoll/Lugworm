@@ -20,6 +20,6 @@ package contents, public APIs, or third-party material explicitly.
 - [ ] Machine-control changes fail closed and identify the hardware validation performed
 - [ ] Front matter is unchanged, or `title`, `nav_order`, `parent` and `permalink` are all still correct
 - [ ] Internal links use `{{ '/docs/...' | relative_url }}`, not a hard-coded domain
-- [ ] New screenshots follow `assets/images/README.md` and contain no passwords, IP addresses or private paths
+- [ ] New screenshots contain no passwords, IP addresses or private paths
 - [ ] The GitHub Pages deployment succeeds and the rendered changes are checked online
 - [ ] The solution builds and the task-relevant test projects pass

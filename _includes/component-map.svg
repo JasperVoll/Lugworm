@@ -197,11 +197,11 @@
   <circle cx="17" cy="7" r="0.65" fill="#cde4ff"/></svg>
   <text class="nm" x="442" y="596.7" font-size="13" font-weight="500" fill="#12334f">Interlayer Time</text>
 </a>
-<a href="{{ '/docs/components/machine-console/' | relative_url }}">
-  <title>Machine Console</title>
+<a href="{{ '/docs/components/duet-console/' | relative_url }}">
+  <title>Duet Console</title>
   <rect class="box" x="602" y="292" width="180" height="48" rx="4" fill="#ffffff" stroke="#12334f" stroke-width="2.2"/>
   <svg x="614" y="304" width="24" height="24" viewBox="1.0909 1.0909 21.8182 21.8182" aria-hidden="true"><path d="M 5.45 10.41 A 8 8 0 0 1 18.55 10.41" fill="none" stroke="#0b6f37" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"/><path d="M 8.31 12.42 A 4.5 4.5 0 0 1 15.69 12.42" fill="none" stroke="#0b6f37" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round"/><linearGradient id="ic-iamduetconnect-proposed-connect-lg1" gradientUnits="userSpaceOnUse" x1="10.3" y1="13.3" x2="13.7" y2="16.7"><stop offset="0" stop-color="#c8f0ce"/><stop offset="1" stop-color="#14773c"/></linearGradient><circle cx="12" cy="15" r="1.7" fill="url(#ic-iamduetconnect-proposed-connect-lg1)" stroke="#063a21" stroke-width="1"/><line x1="12" y1="16.5" x2="12" y2="20.5" stroke="#14773c" stroke-width="1.4" stroke-linecap="round"/><line x1="8.5" y1="20.5" x2="15.5" y2="20.5" stroke="#14773c" stroke-width="1.4" stroke-linecap="round"/></svg>
-  <text class="nm" x="648" y="321" font-size="14" font-weight="700" fill="#12334f">Machine Console</text>
+  <text class="nm" x="648" y="321" font-size="14" font-weight="700" fill="#12334f">Duet Console</text>
 </a>
 <a href="{{ '/docs/components/live-view/' | relative_url }}">
   <title>Live View</title>
