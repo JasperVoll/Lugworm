@@ -25,7 +25,7 @@ for LDM in a laboratory setting.
 
 Please use the repository's `CITATION.cff` metadata to cite Lugworm, this helps a lot!
 
-For DoE components see
+For the DoE component justification, also see:
 Vollmert, J. & Große, B., 2026. Optimizing and predicting process parameters for clay additive manufacturing using design of experiments. In: Proceedings of the 37th Forum Bauinformatik. Rostock, Germany, 09/30/2026.
 
 ## Acknowledgements

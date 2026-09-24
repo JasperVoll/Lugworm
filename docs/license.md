@@ -7,18 +7,33 @@ permalink: /docs/license/
 
 # License
 
-Source code and documentation written by Jasper Vollmert are released under the
-MIT License. Jasper Vollmert is the sole copyright holder. IDAC/TUHH is the
-author's employer and affiliation; its acknowledgement does not indicate
-copyright ownership. The copyright and permission notice below are included
-with every copy of that work; the same text is in the repository's
-[LICENSE](https://github.com/JasperVoll/Lugworm/blob/main/LICENSE)
-file and in the distributed package. Files that carry their own license notice
-remain under that notice.
+Lugworm source code and documentation are released under the MIT License.
+Jasper Vollmert is the software's author and developer. The software was
+created in the course of his work at the Institute of Digital and Autonomous
+Construction (IDAC), Hamburg University of Technology (TUHH), using university
+resources. The supervising professor explicitly approved its release under MIT.
+
+TUHH holds the economic rights in the employee-created software under
+[Section 69b of the German Copyright Act (UrhG)](https://www.gesetze-im-internet.de/urhg/__69b.html).
+Jasper Vollmert retains his authorship. This distinction also follows
+[TUHH's IP policy, Part II, Section 1](https://www.tuhh.de/t3resources/tuhh/download/universitaet/verwaltung/ra/Ordnungen_und_Richtlinien/IP_Richtlinie_der_TUHH__rein_nach_AS_Sept2023.pdf).
+The documentation retains its existing Jasper Vollmert copyright notice;
+the software-specific rule in Section 69b is not applied to it.
+Student assistants supported testing, not software authorship. See the
+[team credits]({{ '/docs/about/' | relative_url }}).
+
+The copyright and permission notices below must accompany copies or substantial
+portions of the work. The same license appears in the repository's
+[LICENSE](https://github.com/JasperVoll/Lugworm/blob/main/LICENSE).
+Files carrying their own license notices remain under those terms.
 
 ## MIT License
 
-Copyright (c) 2026 Jasper Vollmert
+Copyright (c) 2026 Hamburg University of Technology (TUHH), software
+Copyright (c) 2026 Jasper Vollmert, documentation
+
+Software author: Jasper Vollmert
+Institute of Digital and Autonomous Construction (IDAC), TUHH
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -52,10 +67,11 @@ McNeel and are not licensed by this repository.
 
 ## No warranty
 
-The warranty disclaimer above is part of the MIT License and applies in full.
-It matters here because the software commands real machinery: no responsibility
-is accepted for the firmware connection or for any problem with a robot,
-printer, or material, including damage, injury, or lost work.
+The MIT warranty and liability disclaimer applies to the extent permitted by
+applicable law. It does not exclude liability that cannot lawfully be excluded.
+In particular, German law limits advance exclusions of liability; see
+[Section 276(3) BGB](https://www.gesetze-im-internet.de/bgb/__276.html) and,
+where applicable, [Section 309 no. 7 BGB](https://www.gesetze-im-internet.de/bgb/__309.html).
 
 Machine control has been tested only on our own machine. Treat any other machine
 as untested, and read the [safety notes]({{ '/' | relative_url }}#safety) before

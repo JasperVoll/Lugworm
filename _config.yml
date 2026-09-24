@@ -27,7 +27,7 @@ gh_edit_link_text: Edit this page on GitHub
 gh_edit_repository: https://github.com/JasperVoll/Lugworm
 gh_edit_branch: main
 gh_edit_view_mode: edit
-footer_content: 'Lugworm is released under the <a href="/Lugworm/docs/license/">MIT License</a>. Copyright &copy; 2026 Jasper Vollmert. Developed at <a href="https://www.tuhh.de/idac/news">IDAC</a>, Hamburg University of Technology. <a href="https://github.com/JasperVoll/Lugworm/issues">Report an issue</a>.'
+footer_content: 'Lugworm is released under the <a href="/Lugworm/docs/license/">MIT License</a>. Software copyright &copy; 2026 TUHH; author: Jasper Vollmert. Documentation copyright &copy; 2026 Jasper Vollmert. Developed at <a href="https://www.tuhh.de/idac/news">IDAC</a>, Hamburg University of Technology. <a href="https://github.com/JasperVoll/Lugworm/issues">Report an issue</a>.'
 plugins:
   - jekyll-remote-theme
   - jekyll-seo-tag

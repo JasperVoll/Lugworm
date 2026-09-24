@@ -39,6 +39,6 @@ When Lugworm contributes to published work, we'd appreciate it if you cite the s
 
 ## License, safety, no warranty
 
-Source and documentation are under the MIT License, see [LICENSE](LICENSE). Vendored and packaged third-party components keep their own licenses: Clipper2 (Boost Software License 1.0), Math.NET Numerics, SkiaSharp, OpenTK and the native Skia library. Rhino and Grasshopper require a licensed Rhino 8 installation for Windows.
+Source and documentation are under the MIT License, see [LICENSE](LICENSE). TUHH holds the economic rights in the software; Jasper Vollmert is its author. The documentation retains its Jasper Vollmert copyright notice. See the [license page](docs/license.md) for attribution and the German legal context. Vendored and packaged third-party components keep their own licenses: Clipper2 (Boost Software License 1.0), Math.NET Numerics, SkiaSharp, OpenTK and the native Skia library. Rhino and Grasshopper require a licensed Rhino 8 installation for Windows.
 
-Lugworm generates toolpaths and can command real machinery. Check every G-code file and robot program in Robot Simulation, keep the emergency stop within reach and do not leave a running print unattended. The software is provided without warranty of any kind; see [LICENSE](LICENSE) for the full disclaimer.
+Lugworm generates toolpaths and can command real machinery. Check every G-code file and robot program in Robot Simulation, keep the emergency stop within reach and do not leave a running print unattended. The MIT warranty and liability disclaimer applies to the extent permitted by applicable law; see [LICENSE](LICENSE) and the [license page](docs/license.md).
