@@ -1,10 +1,15 @@
 name: Documentation site
 
-# Builds the Jekyll site under site/ and deploys it to GitHub Pages. The
-# repository's Pages source must be "GitHub Actions" for the deploy job.
+# Builds the Jekyll site under site/ on every branch and pull request that
+# touches it, and deploys it to GitHub Pages from main only. The repository's
+# Pages source must be "GitHub Actions" for the deploy job.
 on:
   push:
-    branches: [main]
+    branches: ['**']
+    paths:
+      - 'site/**'
+      - '.github/workflows/pages.yml'
+  pull_request:
     paths:
       - 'site/**'
       - '.github/workflows/pages.yml'
@@ -37,8 +42,8 @@ jobs:
           path: ./_site
 
   deploy:
-    # A manual run from another branch only builds; the site deploys from main.
-    if: github.ref == 'refs/heads/main'
+    # Other branches and pull requests only build; the site deploys from main.
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     environment:
