@@ -17,7 +17,7 @@ for LDM in a laboratory setting.
 |---|---|
 | Jasper Vollmert | Developer |
 | Prof. Kay Smarsly | Advisor |
-| Adel Alatassi | Tester |
+| Adel Alatassi | Advisor, Tester |
 | Mayur Gajanan Kale | Tester |
 
 
