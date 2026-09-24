@@ -1,0 +1,40 @@
+name: Build and test
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build and test (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            7.0.x
+            10.0.x
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build (Release, warnings are errors)
+        run: dotnet build Lugworm.sln -c Release --no-incremental -m:1 -warnaserror
+
+      - name: Core tests
+        run: dotnet test Lugworm.Core.Tests/Lugworm.Core.Tests.csproj -c Release --no-build --filter "Category!=Perf"
+
+      - name: Framework smoke tests (net48, net7.0, net7.0-windows)
+        run: dotnet test tests/FrameworkSmoke/Lugworm.FrameworkSmoke.csproj -c Release --no-build
+
+      - name: Tooling tests
+        run: python -m unittest discover -s tests/tooling -p "test_*.py"

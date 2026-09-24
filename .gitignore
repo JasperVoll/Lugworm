@@ -1,19 +1,43 @@
-_site/
-.sass-cache/
-.jekyll-cache/
-.jekyll-metadata
-.bundle/
-.tools/
-vendor/
-*.log
-verification.json
-REPOSITORY-MIGRATION.md
-SETUP.md
+# Build output and IDE state
+bin/
+obj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.gha
+*.yak
+manifest.yml
+dist/
+__pycache__/
+*.pyc
+*.pyo
 
-_food4rhino/
-_outreach/
-_media-work/
-_withheld/
-assets/images/README.md
-tools/
-.github/labels.json
+# LaTeX build artifacts (docs/user-guide)
+docs/user-guide/*.aux
+docs/user-guide/*.log
+docs/user-guide/*.out
+docs/user-guide/*.toc
+docs/user-guide/*.synctex.gz
+
+# Documentation site (site/): Jekyll output, local Ruby runtime, working folders
+site/_site/
+site/.sass-cache/
+site/.jekyll-cache/
+site/.jekyll-metadata
+site/.bundle/
+site/.tools/
+site/vendor/
+site/Gemfile.lock
+site/*.log
+site/verification.json
+site/tools/
+site/_food4rhino/
+site/_outreach/
+site/_media-work/
+site/_withheld/
+
+# OS and editor cruft
+Thumbs.db
+.DS_Store
