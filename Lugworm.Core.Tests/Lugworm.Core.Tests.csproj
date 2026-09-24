@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="xunit" Version="2.6.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.4" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lugworm.Core\Lugworm.Core.csproj" />
+    <!-- Exercise the actual background retention queue without loading Rhino. -->
+    <Compile Include="..\Lugworm\Duet\LogRetentionService.cs" Link="Production\LogRetentionService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fixtures\**\*.json" CopyToOutputDirectory="PreserveNewest" />
+    <!-- The lab Potterbot's real /sys/config.g. Pins the motion-limit parser against an
+         actual machine file rather than a synthetic one; the board copy lives outside
+         the repository, so this tracked copy is the provenance. -->
+    <None Include="fixtures\**\*.g" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Recorded job logs replayed by the continuity tests: the 2026-09-09 dome capture
+         (print.csv, events.log) whose seven false reported positions the operator
+         confirmed, the 2026-09-02 two-run log, and the trimmed intended path derived
+         from the dome run's G-code. -->
+    <None Include="fixtures\**\*.csv" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="fixtures\**\*.log" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="fixtures\**\*.txt" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="fixtures\**\*.gcode" CopyToOutputDirectory="PreserveNewest" />
+    <!-- the REAL embedded robot definition, linked so kinematics tests always run
+         against the file the plugin ships - no hand-copied fixture drift -->
+    <None Include="..\Lugworm\Resources\robot.xml" Link="fixtures\robot.xml" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

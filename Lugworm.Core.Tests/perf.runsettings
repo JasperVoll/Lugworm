@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  D5 (2026-09-14): optional companion settings for the explicit perf run (the
+  exact command, with its flags, is documented in docs/4-unit-tests/TESTING.md -
+  an XML comment cannot contain two adjacent hyphens, so it is not repeated here).
+
+  This file does not define the Category=Perf split itself; that lives in the
+  [Trait("Category", "Perf")] attributes on each wall-clock-budget test. It only
+  removes one more source of contention during a perf run: disabling parallel
+  test execution means the wall-clock-budget tests aren't also competing with
+  unrelated Core tests for CPU inside this same vstest process, on top of the
+  ExclusivePerformanceCollection, which already keeps the budget test classes
+  from competing with each other. Using this file is optional; running with just
+  the Category=Perf filter is still the contract the acceptance criteria exercise.
+-->
+<RunSettings>
+  <RunConfiguration>
+    <DisableParallelization>true</DisableParallelization>
+  </RunConfiguration>
+</RunSettings>

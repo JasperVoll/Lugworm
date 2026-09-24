@@ -1,0 +1,9 @@
+<Project>
+  <!-- Turns on the .NET SDK's built-in code-quality analyzers for this project only.
+       Severities and the project's deliberate exceptions live in the root
+       .editorconfig, not here - see docs/ARCHI.md section 6 "Analyzer policy". -->
+  <PropertyGroup>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+</Project>

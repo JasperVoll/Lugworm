@@ -1,0 +1,13 @@
+# Normalize line endings: store LF in the repo, check out native on each OS.
+* text=auto
+
+# Keep these as-is (binary)
+*.gha binary
+*.yak binary
+*.3dm binary
+*.gh binary
+*.ghx binary
+*.png binary
+*.pdf binary
+*.xlsx binary
+*.zip binary

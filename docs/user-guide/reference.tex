@@ -1,0 +1,995 @@
+% =====================================================================
+%  Lugworm: Complete Reference
+%  Combines the former manual.md (quick reference) and pro-reference.md
+%  (full technical reference) into a single document, organised so every
+%  component has its compact parameter table immediately followed by
+%  its full technical detail, one view per component instead of two
+%  separate documents.
+%
+%  Compile with pdflatex (run twice for the table of contents / links):
+%    pdflatex reference.tex
+%    pdflatex reference.tex
+% =====================================================================
+\documentclass[11pt]{article}
+
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+\definecolor{lugwormblue}{RGB}{0,70,140}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=lugwormblue,
+  citecolor=lugwormblue,
+  urlcolor=lugwormblue,
+  pdftitle={Lugworm Complete Reference},
+  pdfauthor={Jasper Vollmert, IDAC, Hamburg University of Technology},
+  bookmarksopen=true
+}
+
+\titleformat{\section}{\normalfont\Large\bfseries\color{lugwormblue}}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\normalfont\large\bfseries}{\thesubsection}{0.6em}{}
+\titleformat{\subsubsection}{\normalfont\normalsize\bfseries}{\thesubsubsection}{0.6em}{}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small Lugworm: Complete Reference}
+\fancyhead[R]{\small\leftmark}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\newcommand{\param}[1]{\texttt{#1}}
+\newcommand{\iamdeg}{$^{\circ}$}
+\newcommand{\heavy}{\textbf{[Heavy]}}
+
+\setlist[itemize]{leftmargin=1.4em, itemsep=0.15em, topsep=0.2em}
+\setlist[enumerate]{leftmargin=1.6em, itemsep=0.15em, topsep=0.2em}
+
+\title{\color{lugwormblue}\textbf{Lugworm}\\[0.3em]\Large Complete Reference}
+\author{Jasper Vollmert \\ \small Institute of Digital and Autonomous Construction (IDAC) \\ \small Hamburg University of Technology \\ \small jasper.vollmert@tuhh.de}
+\date{\small Generated from \texttt{Lugworm} source (Components/*.cs, Core/*, docs/DECISION\_LOG.md): \today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\noindent This document merges the quick-lookup manual and the full
+technical reference for the \textbf{Lugworm} Grasshopper plugin
+(assembly \param{Lugworm}, author \param{Lugworm}) into a single
+view: every component below carries its compact parameter table
+immediately followed by the technical detail behind it, so there is one
+place to look rather than two documents to cross-reference. For a
+plain-language introduction see \emph{beginner-guide.md}; for guided
+practice see \emph{exercises.md}. This document assumes Grasshopper and
+G-code familiarity.
+
+The plugin documented here is the current, actively developed C\# tool.
+An earlier Python GHPython prototype
+(\param{ClaySlicer2}/\param{ClayMover2}/\param{ClayGcode2},
+\param{clay\_core\_v2.py}) is superseded: per
+\param{docs/DECISION\_LOG.md} entry D030, that Python toolkit is kept
+only as a fixture-regeneration script for the test suite of this plugin, not
+as a user-facing tool.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% =====================================================================
+\section{Overview and pipeline}
+% =====================================================================
+
+All components live under one Grasshopper tab, \textbf{Lugworm}, split
+into seven numbered panels that match the order you would actually use
+them in:
+
+\begin{center}
+\texttt{1 Slice\quad|\quad 2 Place\quad|\quad 3 G-code\quad|\quad 4 Robot\quad|\quad 5 Analyze\quad|\quad 6 Calibrate\quad|\quad 7 Print}
+\end{center}
+
+The core print pipeline:
+
+\begin{verbatim}
+your 3D geometry
+      |
+      v
++-------------+  contours (one    +-------------+  moved contours   +--------------+
+|Slice |- branch/layer) ->|Place |------------------>|Lugworm G-code |--> .gcode
++-------------+                   +-------------+                   |   Generator  |
+ "cut it into                      "put it on                       +--------------+
+  layers"                           the bed,                         "write the machine
+                                     fix the seam"                    instructions"
+\end{verbatim}
+
+From \param{G-code Generator}, the file either goes straight to a
+Marlin/Duet printer, or through \param{G-code Restart} /
+\param{Save G-code}. The machine itself is an explicit selection:
+\param{Robot Definition} emits a profile string
+(\texttt{iamlab-robot:v1:\ldots}) that every robot-dependent component
+accepts on one \param{robot} input, and \param{Robot Simulation}
+validates the program on the selected machine (see \S 6). Everything in
+the core pipeline also runs with \textbf{no robot selected at all}.
+
+Three further component groups sit alongside the pipeline:
+\textbf{Analyze} (\param{Overhang}, \param{Print Stats})
+for checking a slice or finished G-code before committing to print;
+\textbf{Calibrate} (\param{DoE Design}, \param{Lugworm RSM
+Evaluate}, \param{Desirability}, \param{Test Geometry})
+for finding good settings for a new material via designed experiments
+rather than guesswork; and \textbf{Print} (the \param{Lugworm Duet
+\ldots} components) for direct Duet WiFi machine control, documented
+in \emph{DUET\_CONTROL.md} rather than here.
+
+\subsection{Component index}
+
+\begin{longtable}{@{}p{3.9cm}p{1.8cm}p{2.0cm}p{6.9cm}@{}}
+\toprule
+\textbf{Display name} & \textbf{Nickname} & \textbf{Panel} & \textbf{Purpose} \\
+\midrule
+\endhead
+\param{Slice} & Slice & 1 Slice & Mesh/Brep/Surface $\rightarrow$ contour tree \\
+\param{Graph Mapper} & Graph Map & 1 Slice & Remap numbers through an editable curve \\
+\param{Place} & Place & 2 Place & Bed placement and seam control \\
+\param{Print Bed} & Bed & 2 Place & One bed definition for Place/Simulation/Live \\
+\param{G-code Generator} & G-code & 3 G-code & Contour tree $\rightarrow$ Marlin/Duet G-code \\
+\param{G-code Restart} & Restart & 3 G-code & Resume a failed print mid-way \\
+\param{Save G-code} & Save & 3 G-code & Write G-code to a timestamped file \\
+\param{Robot Definition} & Robot Def & 4 Robot & Select the machine profile (one wire) \\
+\param{Robot Simulation} & Robot Sim & 4 Robot & Visualize/simulate/validate on the selected machine \\
+\param{Overhang} & Overhang & 5 Analyze & Per-segment overhang/printability analysis \\
+\param{Print Stats} & Stats & 5 Analyze & Length/volume/mass/time summary (robot-aware) \\
+\param{DoE Design} & DoE & 6 Calibrate & Design-of-experiments run plan generator \\
+\param{RSM Evaluate} & RSM & 6 Calibrate & Response-surface model fitting \\
+\param{Desirability} & Desire & 6 Calibrate & Recommend settings from fitted models \\
+\param{Test Geometry} & TestGeo & 6 Calibrate & Parametric calibration coupons \\
+\param{Duet Connect/Status/Jog/Print/Live/Files/Terminal} & & 7 Print & Direct Duet WiFi machine control (see \emph{DUET\_CONTROL.md}) \\
+\bottomrule
+\end{longtable}
+
+The pre-2.0 \param{Robot} component is hidden from the ribbon
+but still deserializes and solves in saved documents; \param{Lugworm
+Robot Simulation} replaces it (\S 6).
+
+\heavy{} marks components with a manual compute button (cached per
+component instance) rather than automatic recompute-on-change: \param{Lugworm
+Slice}, \param{G-code Generator}, \param{G-code Restart},
+\param{Overhang}, \param{RSM Evaluate}, and \param{Lugworm
+Desirability}.
+
+% =====================================================================
+\section{Architecture and compute model}
+% =====================================================================
+
+\param{Lugworm/Components/*.cs} hold thin Grasshopper adapters
+(parameter registration, caching, viewport preview); \param{Lugworm.Core/*}
+holds the actual algorithms, organised by concern: \param{Analysis},
+\param{Arcs}, \param{Clipping}, \param{Doe}, \param{Duet},
+\param{Extrusion}, \param{Gcode}, \param{Geometry}, \param{Machine},
+\param{Paths}, \param{Robot}, \param{Slicing}. This mirrors the Python
+prototype's split (thin adapter + pure core) but as a compiled library
+with a dedicated test project (\param{Lugworm.Core.Tests}, 980+
+tests as of the 2.6.0 release).
+
+\subsection{Heavy components and the compute gate}
+
+\heavy{} components show a manual compute button instead of
+recomputing on every canvas edit. Results are cached per component
+instance (\param{SolveCache}, keyed by instance GUID) and evicted on
+component deletion or document close. The robot simulator's cache key
+is a content fingerprint (order-sensitive FNV-1a hash over every
+sampled coordinate, extrude flags, and the full G-code string: a
+reordering or interior-vertex edit is guaranteed to invalidate it,
+fixed 2026-07-14 after an earlier bounding-box-sum fingerprint let stale
+\param{danger=false} results survive a real edit). \param{Lugworm Save
+G-code} and \param{G-code Restart} are not Heavy (cheap/live),
+though \param{Save G-code} has its own manual \param{write} gate for a
+different reason: avoiding re-writing a file on every recompute.
+
+\subsection{Document units, language, and file I/O}
+
+Version 2.6.0 introduced three behaviours that apply across the plugin:
+
+\begin{itemize}
+  \item \textbf{Document units.} Geometry is converted at the Rhino/Core
+  boundary, so a document in millimetres, inches, or metres slices
+  correctly and previews overlay the document geometry at document
+  scale. Plain-number inputs documented in mm (\param{layerHeight},
+  \param{width}, \param{spacing}, tolerances, \ldots) remain physical
+  millimetres regardless of document units, and emitted G-code /
+  Duet traffic is always plain mm. Changing document units
+  mid-session invalidates Heavy caches (``no cached result: press
+  Compute'') rather than replaying a stale-scale result.
+  \item \textbf{Language/culture.} Machine-readable text (G-code,
+  CSV, reports) is culture-invariant: a German-locale Windows
+  emits decimal points, never commas. CSV \emph{inputs} (RSM tables,
+  pump calibration) are detected per file as English (\texttt{1.5}) or
+  German (\texttt{1,5}); a file mixing both conventions, using thousands
+  separators, or with malformed quoting is refused with the offending
+  line named, never silently misread.
+  \item \textbf{Background file I/O.} File reads and writes (G-code
+  save/restart, pump CSV, overhang CSV, RSM read/export) run in
+  cancellable background workers so the canvas never
+  blocks on a slow disk or network share. While a job is pending the
+  component replays its last good outputs and reports
+  ``writing/loading \ldots''; the result lands on the follow-up solve.
+\end{itemize}
+
+\subsection{Multi-geometry input}
+
+\param{Slice}'s \param{geo} is a list parameter (single items
+auto-promote). A single object emits the old flat \texttt{\{i\}} path
+structure unchanged (backward compatible); a true list emits
+\texttt{\{object;layer\}} paths. Downstream components (\param{Place},
+\param{G-code Generator}, \param{Robot Simulation}) iterate branches generically and handle
+both shapes. Multi-object printing is \textbf{sequential} (all of object
+A's layers, then object B's, ...), order given by the input list or
+overridden by the \param{printOrder} toggle-group input: deliberately
+not layer-interleaved, since interleaving invites SCARA nozzle/part
+collisions and travel time would dominate anyway; true interleaving
+needs a collision-aware travel planner that does not exist yet.
+
+\subsection{Geometry validation policy}
+
+From \param{Core/Geometry} (\param{GeometryInput.Prepare} +
+\param{MeshChecks.Analyze}):
+
+\begin{itemize}
+  \item \textbf{Rejected outright:} null/unsupported type, unmeshable Brep, zero faces, non-manifold edges.
+  \item \textbf{Warned, still sliced:} open mesh (naked edges), degenerate faces, disconnected components, non-solid Brep.
+  \item \textbf{Auto-fixed, reported:} inconsistent face normals via \param{Mesh.UnifyNormals}.
+\end{itemize}
+
+Breps still section via precise \param{BrepPlane} intersection
+(unchanged from before), but are \emph{additionally} meshed for
+validation/adaptive-slope/conical-shear use: a Brep pays a
+meshing cost even in plain planar mode now, with no size-based opt-out
+currently built.
+
+% =====================================================================
+\section{Slice: Panel 1 Slice \heavy{}}
+% =====================================================================
+
+\emph{``Slice a mesh/brep/surface (or a list of them) into a clay contour tree.''}
+
+\begin{longtable}{@{}p{3.0cm}p{2.0cm}p{1.6cm}p{7.0cm}@{}}
+\toprule
+\textbf{Parameter} & \textbf{Unit} & \textbf{Default} & \textbf{Description} \\
+\midrule
+\endhead
+\param{geo} & Geometry, list & required & Mesh/Brep/Surface(s) to slice; validated per \S 2.3. \\
+\param{layerHeight} & mm & 3.0 & Layer spacing. \\
+\param{firstLayer} & mm & 3.0 & \param{0} $\rightarrow$ half a normal layer. \\
+\param{wallCount} & int & 1 & Number of perimeters. \\
+\param{spacing} & mm & 10.0 & Wall/infill spacing: \textbf{hard error if $\leq 0$}. \\
+\param{mode} & int & 0 & 0 Planar / 1 Conical. \\
+\param{infill} & int & 0 & 0 None / 1 Zigzag / 2 Concentric / 3 Spiral / 4 Fermat. \\
+\param{cornerRadius} & mm & 0.0 & Fillets sharp corners (over-fill correction). \\
+\param{tol} & mm & 0.05 & Linearisation/simplification tolerance. \\
+\bottomrule
+\end{longtable}
+
+\textbf{Toggle groups:}
+\textbf{Adaptive} (\param{hMin} = layerHeight$\times$0.5, \param{hMax} =
+layerHeight$\times$1.5, planar-only); \textbf{Conical} (\param{coneAngle} = 20\iamdeg, \param{nozzleClear} =
+25\iamdeg, advisory collision warning only); \textbf{Zigzag} (\param{angle} = 0\iamdeg); \textbf{Spiralize} (menu toggle, no parameter: requires exactly one
+closed contour per layer, all layers); \textbf{Meshing} (\param{meshDensity} = 0.5, \param{meshMaxEdge} = 0,
+\param{meshMinEdge} = 0: controls Brep-to-mesh conversion quality for
+validation/adaptive/conical); \textbf{Multi-object} (\param{printOrder}, an index list).
+
+\textbf{Outputs:} \param{contours} (Curve tree), \param{layers} (int),
+\param{info} (str: reports per-object issues; one bad object in a
+list does not abort the whole solve).
+
+\textbf{Non-planar specifics.} Because conical ring spacing follows the
+sheared surface rather than a constant vertical Z step,
+\textbf{extrusion volume in conical (and adaptive) mode is only
+nominal} unless the \param{varh} group of the G-code component is
+enabled (\S 5.1). The heat method (\param{mode = 2}) was
+\textbf{retired in 4.0.0}: it emitted perimeter rings only and fell
+back to planar on most real meshes. A saved definition carrying
+\param{mode = 2} slices planar and reports a warning.
+
+% =====================================================================
+\section{Place: Panel 2 Place}
+% =====================================================================
+
+\emph{``Place contours on the bed and set the seam (clay / LDM).''} Not
+Heavy (live).
+
+\begin{longtable}{@{}p{3.0cm}p{2.0cm}p{2.2cm}p{6.4cm}@{}}
+\toprule
+\textbf{Parameter} & \textbf{Unit} & \textbf{Default} & \textbf{Description} \\
+\midrule
+\endhead
+\param{contours} & Curve tree & required & From Slice. \\
+\param{bed} & Bed definition & & Optional \param{Print Bed} wire; supplies the print centre when \param{printCenter} is unwired. \\
+\param{printCenter} & Point, mm & (339, $-193$, 0) & The lab's SCARA bed ``sweet spot''; wins over the bed definition when wired. \\
+\param{zOffset} & mm & 0.0 & Added after placement. \\
+\param{move} & Vector & zero & Extra manual shift alongside centring. \\
+\param{seamMode} & int & 1 & 0 Keep / 1 Align / 2 Stagger / 3 Nearest / 4 Guide / 5 Track-below. \\
+\bottomrule
+\end{longtable}
+
+\textbf{Seam group:} \param{seamAngle} (0\iamdeg, modes 1 to 2),
+\param{seamPoint} (mode 3), \param{seamCurve} (modes 4 to 5: ``Guide''
+follows a supplied curve, ``Track-below'' keeps the seam aligned with
+the layer underneath rather than a fixed target: new in the
+2026-07-14 run).
+
+Placement math: \(dx = printCenter.X - bboxCenter.X + move.X\) (and
+analogously for Y, and Z with \param{zOffset}).
+
+\textbf{Outputs:} \param{moved}, \param{seams} (point tree),
+\param{info}. Placement is robot-independent: whether the placed part is
+reachable is validated in one place only, \param{Robot
+Simulation} (\S 6), so Place itself emits no reach warning.
+
+\subsection{Print Bed}
+
+\emph{``Define the print bed once: size, position and default print
+center: and wire it to placement, simulation and live view.''} Not
+Heavy. Emits a versioned definition string
+(\texttt{iamlab-bed:v1:w=\ldots;d=\ldots;cx=\ldots}) consumed by
+\param{Place}, \param{Robot Simulation} and \param{Lugworm
+Live View}; an unrecognised string fails loudly rather than resolving to
+wrong geometry.
+
+Two separations are deliberate. \textbf{Plate centre is not print
+centre}: \param{center} is the plate, \param{printCenter} is where a
+part's bottom-centre lands: (468, $-441$) versus (339, $-193$) on the
+lab machine. And \textbf{reach belongs to the arm, not the plate}: \param{reachMin} and \param{reachMax} of the bed default to ``ask the robot
+profile'' and exist only so a physically restricted plate can narrow the
+annulus. Every pre-existing bed input on the consuming components
+survives and overrides the definition when wired, so saved documents are
+untouched.
+
+% =====================================================================
+\section{G-code Generator: Panel 3 G-code \heavy{}}
+% =====================================================================
+
+\emph{``Convert any curve/polyline tree into material-extrusion G-code
+(Marlin / Duet RRF).''}
+
+\subsection{Core parameters}
+
+\begin{longtable}{@{}p{3.4cm}p{1.8cm}p{1.6cm}p{6.5cm}@{}}
+\toprule
+\textbf{Parameter} & \textbf{Unit} & \textbf{Default} & \textbf{Description} \\
+\midrule
+\endhead
+\param{crvs} & Curve tree & required & From Place. \\
+\param{robot} & Robot definition & & Selects the coordinate frame (and machine defaults). \textbf{Unwired = legacy Potterbot frame}; see below. \\
+\param{layerHeight} & mm & must match Slice & E cross-section height. \\
+\param{width} & mm & 10.0 & Layer width. \\
+\param{ramDiameter} & mm & 94.0 & Cartridge bore; warns (not a hard limit) outside 5 to 200\,mm. \\
+\param{pressureCoeff} & & 1.2 & Overall flow multiplier, final calibration knob. \\
+\param{printSpeed} & mm/s & 43 & Extruding feedrate. \\
+\param{travelSpeed} & mm/s & 30 & Non-extruding feedrate. \\
+\param{retractSpeed} & mm/s & 1 & Ram screw speed for retract \& prime (the screw moves in raw mm; retraction $\approx 0.1$\,mm, so keep this small). \\
+\param{firstLayerSpeedFactor} & & 0.5 & Speed multiplier, first layer only. \\
+\param{retraction} & 0/1 & & Master on/off for pull-back/prime behaviour. \\
+\param{seamTol} & mm & & Seam-adjacent tolerance for coast/lead-in placement. \\
+\param{firmware} & enum & Duet-RRF / Marlin & Changes exact G-code dialect emitted. \\
+\param{relativeE} & bool & true & \texttt{M83}-style relative E. \\
+\param{pressureOffset} & mm & & Plunger pull-back (``retraction'' for paste). \\
+\param{primeExtra} & mm & & Extra prime on restart. \\
+\param{coast} & mm & & Stop extruding this far before a path end. \\
+\param{zHop} & mm & & Travel lift. \\
+\param{hopSpeed} & mm/s & & Z-hop feedrate. \\
+\param{footerZLift} & mm & & End-of-print lift. \\
+\param{dwell} & ms & & Pause after prime. \\
+\param{leadIn} & mm & & Flow ramp-in length. \\
+\param{leadInBoost} & & & Flow multiplier during lead-in. \\
+\param{minLayerTime} & s & & Slow a layer that would print faster than this. \\
+\param{zOffset} & mm & 0.0 & Nozzle-to-bed calibration shim, added on top of geometry the slicer has already placed at its true height. The slicer owns layer height; leave at 0 unless the Z zero of the machine needs a correction. \\
+\param{tol} & mm & & Curve simplification tolerance. \\
+\param{savePath} & path, optional & & Write directly from this component (background write; the saved path is reported on the completion re-solve). \\
+\bottomrule
+\end{longtable}
+
+\textbf{Coordinate frame.} \param{GcodeConfig.CoordinateFrame} comes from
+the wired robot definition and is applied in the emitters (arc sense
+flips with the reflection). An \textbf{unwired} \param{robot} input
+resolves to \param{potterbot-scara-v4} and its calibrated legacy frame
+(a mirror about $y = -x$): every G-code emitted before 2.0.0 carried
+that reflection, so defaulting to identity would have silently mirrored
+the lab's saved definitions. A Cartesian user must wire a definition
+(\param{generic-cartesian}, \param{generic-duet-cartesian}, or
+\param{none}) to get the identity frame. The active frame is reported in
+\param{info} (\texttt{frame:\ldots}).
+
+\subsection{Optional toggle groups}
+
+\begin{itemize}
+  \item \textbf{advance / retractaccel}: firmware pressure-advance and acceleration overrides (the \texttt{M900}/\texttt{M204}-equivalent hand-off to firmware).
+  \item \textbf{arcs}: built-in arc fitting (\texttt{G2}/\texttt{G3}) instead of linear-only output.
+  \item \textbf{arcwelder}: post-process via the ArcWelder CLI instead of the built-in fitter; \textbf{depends on \param{arcs}} (auto-disabled if arcs is off). See \S 8.3 for a critical historical bug here.
+  \item \textbf{skirt}: purge ring before the real print.
+  \item \textbf{floors}: solid base layer count.
+  \item \textbf{headeroverride}: replace the auto-generated header entirely.
+  \item \textbf{pump}: screw pump support (any speed-controlled pump): \param{nozzleDiameter}, \param{pumpCalibCsv}, \param{slipFactor}. See \S 8.1: \textbf{this group only calculates a recommended pump setting; it does not alter E-values in the emitted G-code.}
+  \item \textbf{varh} (variable layer-height flow): \param{varhMin} (0.25), \param{varhMax} (2.5): clamps the per-point flow multiplier derived from \param{VariableFlow.LocalHeights}. \textbf{Turn this on whenever slicing used adaptive or conical mode.}
+  \item \textbf{ecomp} (slope-compensated flow): \param{eCompRefMul} (1.0 = no-op), \param{eCompRefDeg} (45\iamdeg): experimental extra-flow correction on inclined walls via \param{SlopeFlow.Multipliers}. \textbf{NEEDS\_INPUT: uncalibrated; leave off until an inclined-wall calibration print has been run.}
+\end{itemize}
+
+\textbf{Outputs:} \param{gcode} (list), \param{gcode\_text} (str),
+\param{preview}/\param{travels} (curve trees), \param{length} (mm),
+\param{volume} (cm$^3$), \param{time} (min), \param{info}, \param{pump}
+(text summary, populated only if the pump group is active),
+\param{start} (first point), \param{startGcode} (a jog-to-start block,
+useful for manually positioning before a resumed/robot print).
+
+% =====================================================================
+\subsection{G-code Restart}
+% =====================================================================
+
+\emph{``Resume a failed print mid-way, cutting the G-code at a Z height,
+Duet \% or XYZ position and rebuild it from there.''} Heavy.
+
+\begin{longtable}{@{}p{3.4cm}p{2.0cm}p{7.9cm}@{}}
+\toprule
+\textbf{Parameter} & \textbf{Unit} & \textbf{Description} \\
+\midrule
+\endhead
+\param{gcode} & Text list & From the G-code component. \\
+\param{z} / \param{percent} / \param{point} & mixed & Mutually exclusive cut selectors; priority \textbf{point $>$ percent $>$ z} if more than one is supplied. \param{point} is a Rhino document-coordinate XYZ point (for example, a Live or Console position output), not raw Duet machine XYZ. \\
+\param{primeE} & mm & Re-prime distance at the resume point. \\
+\param{travelSpeed}, \param{hopSpeed}, \param{retractSpeed} & mm/s & Resume-move feedrates. \\
+\param{clearance} & mm & Safety lift before the resume travel. \\
+\param{savePath} & path & Output location. \\
+\bottomrule
+\end{longtable}
+
+\textbf{Outputs:} \param{gcode}, \param{gcode\_text}, \param{resume}
+(the point execution resumes from), \param{printed}/\param{remaining}
+(curve lists: useful to visually confirm the cut point before
+committing), \param{info}.
+
+% =====================================================================
+\subsection{Save G-code}
+% =====================================================================
+
+\emph{``Write G-code to a folder with a date/time-stamped filename.''}
+
+\begin{longtable}{@{}p{3.4cm}p{2.0cm}p{7.9cm}@{}}
+\toprule
+\textbf{Parameter} & \textbf{Unit} & \textbf{Description} \\
+\midrule
+\endhead
+\param{gcode} & Text list & Input G-code. \\
+\param{folder} & path & Destination folder. \\
+\param{prefix} & str & Default \texttt{"print"}. \\
+\param{write} & bool & Wire a \textbf{Button}, not a persistent Toggle, so it fires once per click rather than on every solve. \\
+\param{dateTime} / \param{format} & & Override group; \param{format} default \texttt{"yyyy-MM-dd\_HH-mm"}. \\
+\bottomrule
+\end{longtable}
+
+\textbf{Outputs:} \param{path}, \param{written} (bool: true only on
+the solve where the write completed, not persistently), \param{info}.
+The write itself runs in a background worker (2.6.0): the press reports
+``writing \ldots'' immediately and \param{written = true} arrives on the
+completion re-solve, so a slow network share never freezes the canvas.
+The component persists \param{\_lastPath}/\param{\_lastInfo}
+across sessions so re-opening the file still shows the last write's
+outcome.
+
+% =====================================================================
+\section{Robot selection and simulation: Panel 4 Robot}
+% =====================================================================
+
+\subsection{Robot Definition}
+
+\emph{``Select a robot or Cartesian machine profile for kinematics,
+visualization and program generation.''} Not Heavy. Emits a stable,
+versioned string, \texttt{iamlab-robot:v1:<profile-id>}, which every
+robot-dependent component accepts on a single \param{robot} input.
+\param{RobotCatalog.Resolve} also accepts canonical ids and short
+aliases (\texttt{"scara"}, \texttt{"none"}), so a
+plain text panel works as well as the component. An unknown definition
+raises a clear error instead of silently resolving to the wrong
+machine.
+
+\begin{longtable}{@{}p{4.2cm}p{2.2cm}p{2.6cm}p{3.6cm}@{}}
+\toprule
+\textbf{Profile id} & \textbf{Mechanism} & \textbf{Program} & \textbf{Direct control} \\
+\midrule
+\endhead
+\param{none} & none & RepRap G-code & \\
+\param{generic-cartesian} & Cartesian & RepRap G-code & \\
+\param{generic-duet-cartesian} & Cartesian & RepRap G-code & Duet (7 Print) \\
+\param{potterbot-scara-v4} & SCARA & RepRap G-code & Duet (7 Print) \\
+\bottomrule
+\end{longtable}
+
+Adding a robot is one \param{RobotCatalog} entry, plus a solver in
+\param{Core/Robot/} only if it needs IK, plus a mesh provider only if it
+should be drawn (\emph{ARCHI.md} \S 12.1). A Cartesian machine needs
+neither.
+
+\subsection{Robot Simulation}
+
+\emph{``Visualize G-code/toolpaths and, when a Robot Definition supplies
+kinematics, simulate and validate the selected robot.''} Replaces the
+pre-2.0 \param{Robot} component (hidden but still solving in
+saved documents). The numerical
+solvers were not changed by the unification: the dispatch on the wired
+profile selects which validator runs.
+
+\begin{longtable}{@{}p{3.2cm}p{2.0cm}p{2.0cm}p{6.4cm}@{}}
+\toprule
+\textbf{Parameter} & \textbf{Unit} & \textbf{Default} & \textbf{Description} \\
+\midrule
+\endhead
+\param{robot} & definition & & Empty/\param{none} = model-free toolpath and extrusion viewer. \\
+\param{gcode} / \param{toolpath} & & required & Program (one string or lines), or curves used when G-code is empty. \\
+\param{sim} & 0 to 1 & 1 & Scrub through the accumulated print. \\
+\param{showRobot} / \param{showExtrusion} & bool & true & Viewport preview toggles. \\
+\param{width} / \param{height} & mm & 10 / 0 & Layer preview cross-section (\param{0} = infer from layer metadata). \\
+\param{bed} & definition & & Optional \param{Print Bed}; the explicit bed inputs override it when wired. \\
+\bottomrule
+\end{longtable}
+
+\textbf{Groups:} \textbf{bed} (\param{bedWidth} 1000, \param{bedDepth}
+700, \param{bedCenter}: visualization extents); \textbf{robotopts}
+(\param{baseOffset}: bed/toolpath origin in robot-base coordinates;
+\param{armMode}: SCARA arm mode used when the path is not anchored by
+homing: a path with a \texttt{G28} takes its arm mode from the homing
+endstops of the machine).
+
+\textbf{Outputs:} \param{joints} (Number tree, one branch per joint:
+empty without kinematics), \param{arm}/\param{tcp}/\param{bed} (preview
+geometry), \param{reachOK}, \param{problems} (flagged target
+positions), \param{messages}, \param{info}. Any target outside the limits of the selected machine also raises a hard red runtime
+\textbf{Error} (``targets are outside robot limits'').
+\textbf{Never bypass or silence that error}: if it fires, the fix is to
+change the print (geometry, placement, or speeds), not to hide the
+message. Deposition and travel draw in different colours (RoyalBlue
+layer vs.\ thinner ochre travel), in both display modes.
+
+\subsection{SCARA profile: ``Potterbot Scara v4''}
+
+The SCARA validator walks the program with
+\param{ScaraKinematics}/\param{RobotChecks} against the shipped
+Potterbot profile: link lengths $L1 = 549.39$\,mm / $L2 = 458.62$\,mm
+(firmware \texttt{M669 P/D}), reach annulus 235\,mm to $L1{+}L2$, $z$
+range 0 to 1143\,mm, \param{maxFeed} 150\,mm/s, \param{maxJointSpeed}
+120\iamdeg/s, joint ranges $J1 = -311.1$\iamdeg{} to $49.1$\iamdeg,
+$J3 = \pm 151.93$\iamdeg{} (the \emph{relative} elbow angle: firmware
+naming), $J2 = 0$ to 1030\,mm (the prismatic Z-carriage), and a
+near-singularity jerk flag. It also models the real Cartesian workspace
+and emulates the arm-mode of the firmware and joint-wrap choices, so a
+toolpath that validates is one the machine will follow.
+
+J1's firmware range spans 360.2\iamdeg{} but wraps at the $\pm 180$\iamdeg{}
+boundary: angle comparisons for range-checking accept $\pm 360$\iamdeg{}
+equivalents (fixed 2026-07-14 after a real $-200$\iamdeg{} pose, in range,
+normalised to $+160$\iamdeg{} and incorrectly flagged as unsafe).
+
+% =====================================================================
+\section{Analyze components: Panel 5 Analyze}
+% =====================================================================
+
+\subsection{Overhang \heavy{}}
+
+\emph{``Per-layer / per-segment overhang analysis for printability
+assessment.''}
+
+\begin{longtable}{@{}p{3.2cm}p{2.0cm}p{2.0cm}p{6.4cm}@{}}
+\toprule
+\textbf{Parameter} & \textbf{Unit} & \textbf{Default} & \textbf{Description} \\
+\midrule
+\endhead
+\param{contours} & tree & required & From Slice or Place. \\
+\param{warnDeg} & \iamdeg{} & 25 & Warning threshold: \textbf{placeholder, not calibrated}. \\
+\param{failDeg} & \iamdeg{} & 45 & Failure threshold, clamped $\geq$ \param{warnDeg}; \textbf{placeholder}. \\
+\param{tol} & mm & 0.5 & Segment tolerance. \\
+\param{colorMode} & & 0 & 0 = three classes, 1 = continuous magma ramp from 0 to \param{failDeg}. \\
+\param{global} & & off & Off = local reference (angle from the layer normal, the stagger); on = global reference (angle from world Z, the lean against gravity). Picks which reading the thresholds, colours and legend use. \\
+\param{csvPath} & path & & Export group. \\
+\bottomrule
+\end{longtable}
+
+\textbf{Outputs:} \param{angles} (the \textbf{primary} metric: each
+segment's angle vs. the \emph{local} layer-surface normal, estimated via
+a windowed Newell-normal fit over an approximately 15-point window around
+the segment; for planar layers this is only the world-Z angle, but for
+non-planar (conical) layers it measures actual layer-on-layer
+stagger, which is what limits printability there),
+\param{anglesWorld} (the gravity-relative angle vs world Z: switch
+\param{global} on to classify by it if gravity load is considered the
+dominant failure mode for a given mix rather than stagger),
+\param{summary} (CSV text), \param{info}, \param{legend} (a wire for
+Legend) and \param{colors}. Colour-coded viewport preview in
+magma hues, three classes or a continuous ramp.
+
+\textbf{\param{warnDeg}/\param{failDeg} are explicitly uncalibrated
+placeholders}: published 3D-concrete-printing studies put safe
+unsupported wall inclination around 15 to 35\iamdeg, and the shipped defaults
+sit inside that envelope, but they are not measured values for any
+specific material. Calibrate via a staircase-cone test print and set the
+measured angles as plain inputs (they are not constants).
+
+\subsection{Print Stats}
+
+\emph{``Lengths, extruded volume/mass, time estimate and per-layer
+breakdown of a print job.''} Not Heavy.
+
+\begin{longtable}{@{}p{3.2cm}p{2.0cm}p{2.0cm}p{6.4cm}@{}}
+\toprule
+\textbf{Parameter} & \textbf{Unit} & \textbf{Default} & \textbf{Description} \\
+\midrule
+\endhead
+\param{gcode} / \param{toolpath} & & required & Source. \\
+\param{robot} & definition & & Optional; enables the joint-speed-aware time model (see below). \\
+\param{width} & mm & 4 & Layer width, for the geometric volume fallback. \\
+\param{height} & mm & 0 & \param{0} = auto-derive from Z-steps. \\
+\param{density} & g/cm$^3$ & 2.0 & Material density (clay $\approx 2.0$). \\
+\param{ramDiameter} & mm & 94 & \textbf{If set and the G-code has E values, volume is computed exactly from E}; otherwise falls back to the geometric width$\times$height estimate. \\
+\param{printFeed} / \param{travelFeed} & mm/s & 25 / 60 & Feeds group. \\
+\param{accel} & mm/s$^2$ & 0 (off) & Non-zero enables a trapezoidal accel-aware time model instead of the naive distance/feed estimate. \\
+\bottomrule
+\end{longtable}
+
+\textbf{Outputs:} \param{report} (formatted text), \param{timeMin},
+\param{volumeCm3}, \param{massG}, \param{extrudeLen}, \param{travelLen},
+\param{layers}, \param{perLayer} (tree of \texttt{[z, length, time]} per
+layer).
+
+\textbf{Robot-aware time (2.1.0).} With a kinematic \param{robot}
+definition wired, each segment's feed is additionally capped by the joint-speed limits of the machine, inverting the same check
+\param{RobotChecks} enforces:
+\[
+feed \le \min(\text{requested},\ MaxFeed,\ MaxJointSpeed \cdot dist/|\Delta J_i|)
+\]
+Near the reach boundary or the dead zone a small Cartesian step demands
+a large joint move, the cap collapses, and the segment correctly takes
+longer. The joint-limited time is reported \emph{alongside} the
+Cartesian estimate with a percentage delta, and \param{timeMin}
+publishes the most constrained model available (robot-limited, else
+accel-aware, else the naive lower bound). \param{robot = none} and
+non-kinematic profiles leave every existing path bit-identical.
+
+% =====================================================================
+\section{Calibration workflow: Panel 6 Calibrate}
+% =====================================================================
+
+A structured way to find good print-parameter settings for a new
+material or machine instead of guessing, built around four components
+used in sequence:
+
+\begin{verbatim}
+DoE Design --> (print + measure) --> RSM Evaluate --> Desirability
+        ^
+        |
+Test Geometry (sample shapes for the print runs)
+\end{verbatim}
+
+\subsection{DoE Design}
+
+Generates a run plan for a chosen set of factors (parameter names,
+low/high bounds) and a design type: \textbf{DSD} (definitive screening
+design, 4 to 12 factors: good for a first pass to find which factors
+matter), \textbf{BBD} (Box to Behnken, 3 to 7 factors, 15/27/46/54/62 runs: supports a full quadratic response surface), \textbf{Taguchi}
+(L4/L8/L9/L12/L16/L18/L27 orthogonal arrays), \textbf{FullFact2} (full
+2-level factorial, 1 to 10 factors), \textbf{FracFact2} (fractional
+factorial, 4 to 9 factors, named generator sets with a reported
+resolution).
+
+\begin{longtable}{@{}p{3.2cm}p{9.3cm}@{}}
+\toprule
+\textbf{Parameter} & \textbf{Description} \\
+\midrule
+\endhead
+\param{names}, \param{lows}, \param{highs} & Factor names and bounds. \\
+\param{design} & Default \texttt{"BBD"}. \\
+\param{responses} & Response names (creates empty columns to fill in). \\
+\param{centres}, \param{centerPts}, \param{levels}, \param{seed}, \param{fracRuns} & Advanced group. \\
+\param{sigma}, \param{effect}, \param{sims}, \ldots & Power group (2.3.0): Monte-Carlo power analysis: ``can this 15-run plan detect a 0.3\,mm effect'' answered before any clay is mixed, with a warning under the conventional 0.8. \\
+\param{xlsxPath}, \param{csvPath} & Export group. \\
+\bottomrule
+\end{longtable}
+
+\textbf{Outputs:} \param{runs} (actual-units tree), \param{coded} ($-1$
+to $+1$ tree), \param{factorNames} (feeds \param{RSM Evaluate}),
+\param{runLabels}, \param{table}, \param{power} (when the power group is
+active), \param{info}.
+
+\subsection{Printing and measuring the runs}
+
+Use \textbf{Test Geometry} to generate a consistent sample coupon
+per run, slice/place/G-code it with the settings from that DoE row,
+print it, and measure the chosen responses by hand (e.g. dimensional
+accuracy, surface finish score, collapse/overhang behaviour, cycle
+time). Right-click dropdown shapes: Cylinder, Vase, TwistedVase,
+Frustum, Wall, Box.
+
+\begin{longtable}{@{}p{3.2cm}p{2.0cm}p{2.0cm}p{6.4cm}@{}}
+\toprule
+\textbf{Parameter} & \textbf{Unit} & \textbf{Default} & \textbf{Description} \\
+\midrule
+\endhead
+\param{plane} & & & Placement group. \\
+\param{height} & mm & 100 & Overall height. \\
+\param{radius} & mm & 40 & Overall radius. \\
+\param{waveAmp}, \param{waveCount}, \param{twistDeg}, \param{sides}, \param{topRatio} & mixed & & Profile group (shape-dependent). \\
+\param{length}, \param{width} & mm & & Wall/box group. \\
+\bottomrule
+\end{longtable}
+
+\textbf{Outputs:} \param{geometry} (feeds \param{Slice}),
+\param{sections}, \param{info}.
+
+\subsection{RSM Evaluate \heavy{}}
+
+Fits a response-surface model (Linear / 2FI / Quadratic) per response
+via ordinary least squares (QR decomposition), reporting coefficients
+with standard error/t/p-values, R\textsuperscript{2}/adjusted-R\textsuperscript{2}/predicted-R\textsuperscript{2},
+RMSE, and a full ANOVA including a lack-of-fit vs.\ pure-error split.
+
+\begin{longtable}{@{}p{3.2cm}p{9.3cm}@{}}
+\toprule
+\textbf{Parameter} & \textbf{Description} \\
+\midrule
+\endhead
+\param{tablePath} & Filled-in measurements file. \\
+\param{factorNames} & From \param{DoE Design}. \\
+\param{responseNames} & Auto-detected if left blank. \\
+\param{model} & Linear / 2FI / Quadratic. \\
+\param{lows}, \param{highs}, \param{centres} & Ranges group. \\
+\param{X}, \param{Y} & Direct-data group (bypasses the file if data already lives in Grasshopper). \\
+\param{xlsxReport} & Export group. \\
+\bottomrule
+\end{longtable}
+
+\textbf{Outputs:} \param{models} (feeds \param{Desirability}),
+\param{report}, \param{equations}, \param{predicted}, \param{json},
+\param{diag} (2.3.0: leverage, studentized residuals, Cook's distance
+per run, VIF per term, with warnings on Cook's $D > 1$ / VIF $> 10$),
+\param{info}. \textbf{Watch for a weak-fit warning (adjusted-R\textsuperscript{2}
+$< 0.5$)}: a weak model here means the downstream Desirability
+recommendation is only as good as a poor fit, not a reliable optimum.
+
+\textbf{File formats.} \param{tablePath} accepts Excel or CSV. CSVs are
+detected per file as English (\texttt{1.5}) or German (\texttt{1,5})
+number format; mixed conventions, thousands separators or malformed
+quoting raise a \param{CsvFormatException} naming the line, independent
+of the Windows locale: never a silently wrong number.
+
+\subsection{Desirability \heavy{}}
+
+Takes the fitted \param{models} plus a \textbf{goal string per
+response} (a small DSL: \texttt{max}, \texttt{min}, \texttt{target=7 in
+6..8}, \texttt{range=L..H}, with optional weight \texttt{w=} and shape
+\texttt{s=} modifiers) and searches for the factor settings that best
+satisfy all goals simultaneously, using Derringer to Suich weighted
+geometric-mean desirability, a grid search (capped at 500{,}000 points)
+plus Nelder to Mead refinement for precision.
+
+\begin{longtable}{@{}p{3.2cm}p{9.3cm}@{}}
+\toprule
+\textbf{Parameter} & \textbf{Description} \\
+\midrule
+\endhead
+\param{models} & From \param{RSM Evaluate}. \\
+\param{goals} & Goal DSL strings, one per response. \\
+\param{factorPriors} & Priors group: biases the search toward preferred regions. \\
+\param{lows}, \param{highs}, \param{gridPerDim} & Bounds group; \param{gridPerDim} default 15. \\
+\param{sweepResponse}, \param{sweepValues}, \param{sweepBand} & Sweep group: reproduces a ``recipe per target value'' style campaign. \\
+\param{xlsxPath} & Export group. \\
+\bottomrule
+\end{longtable}
+
+\textbf{Outputs:} \param{settings} (recommended actual-unit factor
+values), \param{D} (overall desirability, 0 to 1), \param{predicted},
+\param{report}, \param{alternatives} (\emph{local optima of the
+scalarised D}, not a Pareto set), \param{sweep}, \param{interval}
+(2.3.0: 95\,\% prediction/confidence intervals; alternatives whose
+predictions sit inside the interval of the recommendation are marked
+\texttt{$\approx$best} rather than ranked), and: with the optional
+\textbf{pareto} group enabled: \param{pareto} (a non-dominated front
+over the individual goal desirabilities, with a 2-objective scatter in
+the report; 3+ objectives get a note instead of a misleading 2D
+projection).
+
+A Graph-Mapper-style \textbf{goal-curve strip} (prototype, 2.3.0)
+appears below the desirability profile after the first solve: drag the
+ramp ends, target, or shape handle instead of typing goal text. Edits
+are stored as per-response overrides of the wired goal string (never
+modifying it), survive save/reopen, and reset with the \texttt{X}
+control; weight stays text-only and there is no undo.
+
+% =====================================================================
+\section{Utility components: Panel 1 Slice}
+% =====================================================================
+
+\subsection{Graph Mapper}
+
+\emph{``Remap numbers through an editable curve: drag the grips on the
+canvas.''} The stock Graph Mapper's job with improved mechanics: pick a
+curve family (including custom point curves you own), drag grips
+directly on the component, and feed the remapped stream into any
+numeric input: a flow or speed gradient over layers is the typical
+use. Styling follows the Grasshopper canvas skin.
+
+% =====================================================================
+\section{Rationale: pressure and pump}
+% =====================================================================
+
+\subsection{Pump extrusion}
+
+The \param{pump} group on \param{G-code Generator} computes the
+volumetric flow the pump needs to deliver:
+\[
+Q = h \cdot w \cdot v \cdot \eta
+\]
+(layer height $\times$ layer width $\times$ print speed $\times$
+\param{slipFactor}), converted from mm$^3$/s to l/min, using
+\param{firstLayerSpeedFactor} for the first layer. Example from the test
+suite: $h=10$\,mm, $w=30$\,mm, $v=50$\,mm/s $\rightarrow$ \textbf{0.9
+l/min}. \param{slipFactor} (default 1.0) is a calibration term
+back-calculated after a real print by comparing planned vs.\ actually
+deposited volume: typically $\geq 1.0$.
+
+\textbf{This group does not touch the emitted G-code.} The E-values in
+the file remain exactly the ram/plunger volumetric model's output,
+unchanged, regardless of whether the pump group is on. This is
+deliberate: a screw pump is driven by its own speed interface (typically
+an analog 0 to 10\,V input), not the motion controller's E-axis, so there is nothing
+meaningful to write into the G-code without knowing the specific control
+wiring: leaving E intact is harmless if pump-driven and still correct
+if ram-driven. (If a controller does drive the pump: e.g.\ a Duet
+\texttt{M950}/\texttt{M42} PWM mapping: a flavor-specific control line
+could be added; it is not currently implemented.)
+
+\textbf{Calibration is measured, never hardcoded.} \param{pumpCalibCsv}
+is a \texttt{setting, flow\_lpm} table; the lookup is
+\textbf{piecewise-linear interpolation only}: it will not extrapolate
+beyond the measured range (a warning and no recommendation, rather than
+a guess, results outside that range). This is an explicit policy
+decision: no pump's rated range is built in, because manufacturer
+figures differ between models and listings, and even correct numbers
+would not account for a specific material's rheology, pump wear, or
+hose setup. The measured table's flow range is the only range. The shipped CSV is a placeholder
+full of \texttt{NEEDS\_INPUT} markers.
+
+\paragraph{Bucket-test calibration protocol (approximately 15 minutes).}
+\begin{enumerate}
+  \item Mix material and prime the line.
+  \item Choose 4 to 6 settings spanning the working range (e.g.\ 2, 4, 6, 8, 10\,V).
+  \item Run each into a tared bucket for 60 seconds and weigh.
+  \item Measure fresh material density separately with a 1-litre cup.
+  \item Compute \(flow\_lpm = \frac{mass_g}{density_{g/ml} \times 1000 \times time_{min}}\).
+  \item Enter rows in ascending setting order in \param{pumpCalibCsv}.
+\end{enumerate}
+Repeat whenever material/mix or hose length changes: this is not a
+one-time calibration.
+
+\subsection{Legacy calibration values (30\,mm ram machine)}
+
+The only surviving \emph{field-measured} calibration for a smaller,
+30\,mm-bore ram cartridge machine (as opposed to the current 94\,mm-ram
+defaults), preserved from the deleted Python v1 toolkit's
+\param{RamGcodeBody.py}:
+
+\begin{longtable}{@{}lrr@{}}
+\toprule
+\textbf{Parameter} & \textbf{30\,mm-ram (legacy, measured)} & \textbf{94\,mm-ram (current default)} \\
+\midrule
+\endhead
+\param{layerHeight} & 3.02\,mm & 2.0\,mm \\
+\param{width} & 7.0\,mm & 4.0\,mm \\
+\param{pressureCoeff} & 1.3 & 1.0 \\
+\param{printSpeed} & 43.0\,mm/s & 20.0\,mm/s \\
+\param{travelSpeed} & 40.0\,mm/s & 60.0\,mm/s \\
+\param{retractSpeed} & 10.0\,mm/s & 2.0\,mm/s \\
+\param{pressureOffset} & 1.0\,mm & 0.1\,mm \\
+\param{zHop} & 2.0\,mm & 0.0\,mm \\
+\bottomrule
+\end{longtable}
+
+If printing on a 30\,mm-ram machine, start from the legacy column: it
+was deliberately rescaled for the 94\,mm defaults, so do not ``correct''
+the current defaults back toward these unless the hardware actually
+matches the 30\,mm case. Note this table reflects the historical Python
+prototype's defaults (\param{width} 4.0\,mm, \param{printSpeed}
+20\,mm/s), which differ from the current defaults of the plugin listed
+in \S 5 (\param{width} 10.0\,mm, \param{printSpeed} 43\,mm/s): the defaults of the plugin have since been retuned independently of this legacy
+record.
+
+\subsection{A real historical bug worth knowing about (ArcWelder)}
+
+Until fixed on 2026-07-14, the ArcWelder CLI integration passed a path
+tolerance as a bare number (\texttt{5.0}) where the executable actually
+expects a fraction in $(0,1)$ (\texttt{0.05} = 5\%): the CLI rejected
+every call and the code \textbf{silently fell back to unwelded (plain
+G1) output} with no visible error. Any G-code generated by
+\param{arcwelder} from before this fix was never actually welded despite
+reporting success; the fix now also surfaces the CLI's exit code and
+stderr on failure instead of silently succeeding.
+
+% =====================================================================
+\section{Known limits and explicit placeholders}
+% =====================================================================
+
+The following are shipped defaults that make the tool work out of the
+box, \textbf{not} calibrated values for any particular material or
+machine:
+
+\begin{itemize}
+  \item \param{Overhang}'s \param{warnDeg}/\param{failDeg} (25\iamdeg/45\iamdeg).
+  \item The pump group's shipped \param{pumpCalibCsv}: placeholder, \texttt{NEEDS\_INPUT}.
+  \item The \param{ecomp} group's \param{eCompRefMul} (1.0 = no-op): uncalibrated.
+\end{itemize}
+
+Other known limits:
+
+\begin{itemize}
+  \item An \textbf{unwired} \param{robot} input on the G-code generator keeps the legacy Potterbot coordinate frame (mirror about $y = -x$) for backwards compatibility: wire a definition to get the identity frame a normal Cartesian machine expects. The active frame is always visible in \param{info}.
+  \item Extrusion volume off-planar (adaptive/conical modes) is only nominal unless \param{varh} is enabled on the G-code component.
+  \item Time estimates are a lower bound unless \param{Print Stats}'s \param{accel} input is set non-zero (opt-in trapezoidal model) or a kinematic robot definition is wired (joint-limited model).
+  \item Unwired Duet control components (7 Print) default to the lab's Potterbot SCARA; the SCARA calibration components are SCARA-only.
+  \item A known pre-existing bug in wall offsetting around hole orientation is logged but not yet fixed.
+\end{itemize}
+
+% =====================================================================
+\section{Troubleshooting}
+% =====================================================================
+
+\begin{longtable}{@{}p{4.6cm}p{7.8cm}@{}}
+\toprule
+\textbf{Symptom} & \textbf{Check} \\
+\midrule
+\endhead
+Heavy component shows stale/empty result & Click its compute button: it does not auto-recompute. \\
+\param{spacing} throws a hard error & Must be $> 0$. \\
+Volume/time implausible & Does \param{layerHeight} match between Slice and G-code Generator? \\
+Conical/adaptive volume looks off & Enable the \param{varh} group on G-code Generator. \\
+Robot Simulation shows a red limits error & Do not bypass: fix geometry/placement/speed, re-simulate. \\
+G-code looks mirrored on a Cartesian machine & Wire a Robot Definition: unwired keeps the legacy Potterbot frame (check \texttt{frame:} in \param{info}). \\
+Part lands somewhere odd after changing document units & Heavy caches are invalidated on a unit change: press Compute again; mm-labelled inputs stay physical mm. \\
+RSM/pump CSV refused & The named line mixes English/German number formats (or has broken quoting): export one consistent convention. \\
+Pump group changes nothing in G-code & Correct: pump only calculates a setting, never touches E. \\
+ArcWelder output looks unwelded & Confirm the CLI actually ran (info/exit code): was a real historical bug, fixed 2026-07-14. \\
+Spiralize falls back / fails & A layer has $\neq 1$ closed contour: simplify the profile. \\
+Save G-code never writes & \param{write} needs a Button (one-shot), not a persistent Toggle. \\
+Save reports ``writing \ldots'' but no \param{written = true} & Writes are asynchronous: the confirmation arrives on the follow-up solve; a failure surfaces as a warning instead. \\
+RSM Evaluate fit looks unreliable & Check adjusted-R\textsuperscript{2}: below 0.5 is a flagged weak fit. \\
+\bottomrule
+\end{longtable}
+
+% =====================================================================
+\section{Testing and provenance}
+% =====================================================================
+
+\param{Lugworm.Core.Tests} (980+ tests as of 2.6.0) runs the
+algorithmic core independent of Grasshopper/Rhino: arc fitting,
+offset/clipping, DoE design generation and inference, G-code
+parsing/restart, geometry validation, robot
+IK/limit checks (SCARA and Cartesian gates), machine-fingerprint
+trust, CSV format detection, SemVer/update check, and the
+pump/variable-flow/slope-compensation math each have dedicated test
+files. If \param{Lugworm.Core} is modified, run this suite before
+trusting new behaviour in Grasshopper.
+
+\param{docs/DECISION\_LOG.md} in the project root records every
+non-obvious design decision (the ambiguity, the choice, the reason, and
+how to change it) across all development phases: consult it before
+assuming a behaviour is a bug rather than a deliberate, documented
+choice. \param{docs/AUDIT\_PHASE0*.md} and \param{docs/RUN\_REPORT*.md}
+record point-in-time snapshots of what was fixed or added in each
+development pass, including the ArcWelder and robot-fingerprint fixes
+described in section 8.3 and section 2.1.
+
+\end{document}

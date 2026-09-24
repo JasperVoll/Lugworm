@@ -1,0 +1,29 @@
+job started
+2026-09-09T07:47:34.9641851Z INFO: requested Z speed 40 mm/s exceeds the configured M203 Z25 mm/s - the board will clip this axis, affecting timing only, not geometry; print started (M32): 0:/gcodes/print.gcode
+2026-09-09T07:47:35.0483786Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:35.3905568Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:35.7237841Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:36.0550641Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:36.3897649Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:36.7662364Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:37.1346302Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:37.4899900Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:37.8549255Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:38.2100682Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:38.5651711Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:38.9427500Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:39.2859345Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:39.6236605Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:39.9472630Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:40.3103896Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:40.6868482Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:41.0669550Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:41.4374085Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:41.8055613Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:47:42.1831673Z arm configuration unknown: an axis is unhomed
+2026-09-09T07:48:26.1012056Z arm configuration unknown: connection interrupted
+2026-09-09T07:48:27.1016222Z arm configuration unknown: reconnecting
+2026-09-09T07:55:05.1647160Z !! M112 EMERGENCY STOP
+2026-09-09T07:55:05.4925673Z Cancelled printing file 0:/gcodes/print.gcode, print time was 0h 7m
+2026-09-09T07:55:05.4925917Z arm configuration unknown: uninitiated firmware status transition
+job ended (Halted)

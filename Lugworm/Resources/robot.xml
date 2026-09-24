@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Custom 3-DOF SCARA clay printer (3DPotter Potterbot Scara v4, SN SCV4-2373).
+     Kinematics from the machine's actual RepRapFirmware 3.1.1 config.g:
+       M669 K4 P549.06 D457.23 A-41.1:319.1 B-151.2:151.2 C0:0:0 T1 R235
+     Z travel from M208 Z400 (vendor config "Not Calibrated" - the physical rail is
+     ~1448 mm; raise J2 max here AND M208 in config.g once the Z axis is calibrated).
+     Layers (one kinematic group each): Base=Fundament (the only static part),
+     LinearRailZ=Schiene (the Z-rail, swung by J1),
+     UpperArm1=Schieber+Oberer Arm (link1), LowerArm2=Gelenk+Unterer Arm (link2), Nozzle=Part 6.
+     Chain: base -(J1 rev Z)- mast -(J2 prism Z)- carriage(virtual)
+            carriage -(fixed)- link1 (P=549.06) -(J3 rev Z)- link2 (D=457.23) -(fixed)- tool.
+     ONLY THE FUNDAMENT IS STATIC. J1 is the base rotation and it swings the WHOLE
+     Z-rail (mast/LinearRailZ) about the pivot, together with the proximal arm that
+     rides it; the Fundament underneath stays put. Confirmed against the machine
+     2026-08-26. A brief 1.13.0 experiment made the rail static as well - wrong, the
+     rail turns with the arm.
+     The carriage is virtual (no geometry): J2 lifts it along the rotating column and
+     link1 is rigidly carried by it (a link can have only one parent joint, so the
+     lift + rotate need a carriage between them).
+     A vertical lift commutes with a rotation about a vertical axis, so the nozzle
+     still equals Forward(J1,J3,J2) (FK invariant,
+     RobotRobustnessTests.SelfCheck_ShippedRobotXml_Passes).
+     pivot = real point in the .3dm assembly frame (mm); home = joint value at the modeled pose.
+     J2.home = modeled nozzle-tip Z so the nozzle lands on the bed (Z=0) when J2=0.
+     axialScale = firmware length / measured pivot span: stretches each arm mesh along its
+     axis so mesh joints meet the kinematic joints and the nozzle tracks the toolpath. -->
+<ScaraRobot name="Potterbot-Scara-v4" units="mm" angleUnits="deg">
+  <Base x="0" y="0" z="0"/>
+  <Links>
+    <Link name="base"     layer="Base"/>
+    <Link name="mast"     layer="LinearRailZ"/>
+    <Link name="carriage"/>
+    <Link name="link1"    layer="UpperArm1" length="549.06" axialScale="0.9656"/>
+    <Link name="link2"    layer="LowerArm2" length="457.23" axialScale="1.0065"/>
+    <Link name="tool"     layer="Nozzle"/>
+  </Links>
+  <Reach min="235" max="1006.29"/>
+  <!-- Cartesian position after homeall.g. MEASURED on the machine (2026-07-17)
+       and confirmed by the SD card's homeall.g park move "G0 X200 Y-500 F4000"
+       (Z homes UP to the M208 max, 400). Re-measure and update after any change
+       to homeall.g or the homed Z reference. M114 after a full G28 measured joints
+       -18.489° / -116.054° on 2026-08-24; the negative distal angle establishes arm mode 1. -->
+  <HomePose calibrated="true" x="200" y="-500" z="400" armMode="1"/>
+  <!-- Placement of the Fundament, the one link no joint drives - so this is its
+       whole pose, not a correction on top of one. Rotation is about the vertical
+       J1 axis (positive counter-clockwise seen from above), then an XY offset;
+       because the registration is a pure translation these are equally a rotation
+       about the robot's vertical axis in the Rhino viewport and plain Rhino XY
+       millimetres. Drawing only - nothing here reaches validation.
+       CONFIRMED against the machine 2026-08-26, in the Rhino frame.
+       2026-09-04: offsetY 82 -> 44. Once the J1 pivot was re-centred on the Z-rail
+       axis the column turned about the right point, but the Fundament was left
+       sitting 38 mm too far in +Y of the robot's own base; observed on the machine
+       and corrected by moving the base, and only the base, 38 mm in -Y. -->
+  <BasePlacement rotDeg="-180" offsetX="3" offsetY="44"/>
+  <Joints>
+    <!-- J1 pivot re-centred 2026-09-02 on the Z-rail's own axis: XY = bbox centre of the
+         LinearRailZ brep (= the J2 pivot XY). The previous value (-22.739203 123.034922) was
+         the arm's pivot hole, 32 mm beside the column axis, so the rail swung about a point
+         next to itself in the viewport. J1/J3 home and link1 axialScale are recomputed from
+         the pivots (home = atan2 of the measured link directions). Drawing only - the
+         kinematics use the M669 lengths; not yet checked against the machine. -->
+    <Joint name="J1"  type="revolute"  axis="0 0 1" parent="base"     child="mast"
+           pivot="0 99.980388 519.886900"                home="136.7483"   min="-41.1" max="319.1"/>
+    <Joint name="J2"  type="prismatic" axis="0 0 1" parent="mast"     child="carriage"
+           pivot="0 99.980388 49.9"                       home="239.937263" min="0"    max="400"/>
+    <Joint name="Jshoulder" type="fixed"            parent="carriage" child="link1"/>
+    <Joint name="J3"  type="revolute"  axis="0 0 1" parent="link1"    child="link2"
+           pivot="-414.149550 489.596919 542.386953"      home="126.9121"   min="-151.2" max="151.2"/>
+    <Joint name="Jtip" type="fixed"                 parent="link2"    child="tool"
+           pivot="-464.308585 38.125453 239.937263"/>
+  </Joints>
+</ScaraRobot>

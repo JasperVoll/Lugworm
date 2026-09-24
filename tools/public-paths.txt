@@ -1,0 +1,40 @@
+# Public source allowlist.
+#
+# Paths of this repository that reach the public GitHub repository. tools/release.ps1
+# builds the scanned export (dist/source-Lugworm-<version>.zip) from these committed
+# paths, tools/publish-source.ps1 replaces exactly these paths in the public checkout
+# with that export, and the tooling tests read this file. One path per line, relative
+# to the repository root, forward slashes; a directory exports everything committed
+# below it. Everything not listed stays private. In the public repository these paths
+# are owned by this tree and overwritten on every import; site/, .github/, and the
+# public .gitignore are owned by the public repository. Never list .gitignore (it
+# names internal folders) or docs/github (a separate repository).
+Lugworm.sln
+LICENSE
+THIRD-PARTY-NOTICES.md
+CITATION.cff
+.editorconfig
+.gitattributes
+README.md
+CONTRIBUTING.md
+INSTALL.md
+UPGRADE.md
+Lugworm
+Lugworm.Core
+Lugworm.Core.Tests
+third_party
+tools
+tests/FrameworkSmoke
+tests/tooling
+tests/grasshopper
+docs/ARCHI.md
+docs/ARCHI-rules.md
+docs/reference
+docs/user-guide
+docs/2-changelog
+# the public README, INSTALL and ARCHI link these explicitly; the rest of docs/dev stays internal
+docs/dev/RUNNING_IN_VS.md
+docs/dev/TESTING.md
+docs/dev/RELEASING.md
+docs/dev/COMPONENT-TEST-SHEET.md
+docs/4-unit-tests/COVERAGE-DEBT.md

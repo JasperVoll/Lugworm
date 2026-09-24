@@ -1,0 +1,166 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+  <PropertyGroup>
+    <!-- Select the framework(s) you wish to target.
+        Rhino 6: net45
+        Rhino 7: net48
+        Rhino 8 Windows: net48, net7.0, net7.0-windows, net7.0-windows10.0.22000.0, etc
+        Rhino 8 Mac: net7.0, net7.0-macos, net7.0-macos12.0, etc
+    -->
+    <TargetFrameworks>net7.0-windows;net7.0;net48</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <TargetExt>.gha</TargetExt>
+    <NoWarn>NU1701;NETSDK1086;CA1416</NoWarn>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <!-- Specifies information for Assembly and Yak -->
+    <Version>0.1.0-beta</Version>
+    <Title>Lugworm</Title>
+    <Company>Institute of Digital and Autonomous Construction (IDAC), Hamburg University of Technology</Company>
+    <Authors>Jasper Vollmert</Authors>
+    <Copyright>Copyright (c) 2026 Hamburg University of Technology (TUHH)</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>Slicer, G-code generator (Marlin / Duet RRF / Klipper), Duet console and robot simulator for paste extrusion in Rhino 8 Grasshopper.</Description>
+    <!-- Dev build output (avoid Program Files admin lock). Add this folder to
+         Rhino's Grasshopper Developer Settings search paths, or copy the .gha to
+         %APPDATA%\Grasshopper\Libraries. Re-point for release/Yak as needed. -->
+    <BaseOutputPath>bin\</BaseOutputPath>
+  </PropertyGroup>
+  
+  <!-- Release binaries must not embed local paths (PDB path in the PE debug
+       directory) - map the project directory to a neutral prefix. -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <PathMap>$(MSBuildProjectDirectory)=/Lugworm</PathMap>
+  </PropertyGroup>
+
+  <!-- HttpMessageHandler surfaces in the machine session's signature (Duet/MachineSession);
+       the framework TFM needs the facade reference. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grasshopper" Version="8.0.23304.9001" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+  <!-- SkiaSharp renders the Duet Console window. The whole stack is EXACT-pinned to
+       2.88.6 on purpose: Rhino 8.34 ships no SkiaSharp, but the LunchBox Yak package
+       ships SkiaSharp 2.88.6 managed+native at its net7.0 root, and every 2.88.x
+       managed identity is 2.88.0.0 - so in Grasshopper's shared load context the
+       first plugin loaded wins. Matching their exact version makes the coexistence
+       benign whichever of us loads first. Do not float these versions. -->
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="2.88.6" />
+    <PackageReference Include="SkiaSharp.Views.Desktop.Common" Version="2.88.6" />
+    <PackageReference Include="SkiaSharp.Views.WindowsForms" Version="2.88.6" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Win32" Version="2.88.6" />
+  </ItemGroup>
+
+  <!-- Windows-only product: the macOS native must never reach the output, and the
+       runtimes/ tree is redundant once the native sits where each TFM's loader
+       actually probes (see IamPlaceSkiaNative). Removing it also removes the
+       failure the spike hit, where runtimes/ resolution fell through to PATH. -->
+  <Target Name="IamDropForeignNatives" AfterTargets="Build" Condition="'$(TargetFramework)' != ''">
+    <ItemGroup>
+      <IamForeignNative Include="$(OutDir)**\*.dylib" />
+      <IamForeignNative Include="$(OutDir)**\*.so" />
+      <IamRuntimesDir Include="$(OutDir)runtimes" />
+    </ItemGroup>
+    <Delete Files="@(IamForeignNative)" ContinueOnError="true" />
+    <RemoveDir Directories="@(IamRuntimesDir)" ContinueOnError="true" />
+  </Target>
+
+  <!-- Native placement differs by TFM, and each half was measured:
+
+       net48   - SkiaSharp's OWN package targets already copy the natives into per-
+                 architecture subfolders (x64\, x86\, arm64\) beside the managed dll, and
+                 its netfx loader picks the one matching the process. Nothing to do here
+                 except verify the x64 copy actually arrived.
+       netcore - the runtime assets arrive as three RIDs all named libSkiaSharp.dll. They
+                 must NOT be copied by file name: doing so lands whichever comes last at
+                 the assembly root, in practice the 32-bit one, and Rhino 8 is x64, so
+                 every Skia call dies with BadImageFormatException. Select win-x64
+                 explicitly and put it at the assembly ROOT - with the stock runtimes/
+                 layout the process instead picked up a foreign libSkiaSharp.dll from
+                 Git's mingw64\bin off PATH, and a root-placed native beats PATH. -->
+  <Target Name="IamPlaceSkiaNative" AfterTargets="Build" Condition="'$(TargetFramework)' != '' and !($(TargetFramework.StartsWith('net4')))">
+    <ItemGroup>
+      <IamSkiaNative Include="@(ReferenceCopyLocalPaths)"
+                     Condition="'%(Filename)%(Extension)' == 'libSkiaSharp.dll' AND $([System.String]::Copy('%(FullPath)').Contains('win-x64'))" />
+    </ItemGroup>
+    <Error Condition="'@(IamSkiaNative)' == ''"
+           Text="win-x64 libSkiaSharp.dll not found among the restored native assets - the console would ship without a usable renderer." />
+    <Copy SourceFiles="@(IamSkiaNative)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+  </Target>
+
+  <!-- net48 relies on the package's own x64\ copy; fail the build if it is not there
+       rather than shipping a console that cannot paint. -->
+  <Target Name="IamVerifyNetfxSkiaNative" AfterTargets="Build" Condition="'$(TargetFramework)' != '' and $(TargetFramework.StartsWith('net4'))">
+    <Error Condition="!Exists('$(OutDir)x64\libSkiaSharp.dll')"
+           Text="$(OutDir)x64\libSkiaSharp.dll is missing - SkiaSharp's netfx loader probes that folder, so the console would have no renderer." />
+  </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Lugworm.Core\Lugworm.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\*.png" />
+    <!-- the 64 px Food4Rhino package icon travels in the yak package root, not
+         inside the assembly - keep it out of the embedded resources -->
+    <EmbeddedResource Remove="Resources\package-icon.png" />
+    <EmbeddedResource Include="Resources\*.xml" />
+    <EmbeddedResource Include="Resources\*.3dm" />
+    <EmbeddedResource Include="Resources\*.csv" />
+  </ItemGroup>
+  
+  <!-- For Windows only builds -->
+  <PropertyGroup Condition="$(TargetFramework.Contains('-windows')) or $(TargetFramework.StartsWith('net4'))">
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+
+  <!-- Reference WinForms for .NET 7.0 on macOS -->
+  <ItemGroup Condition="!($(TargetFramework.Contains('-windows')) or $(TargetFramework.StartsWith('net4')))">
+    <!-- Rhino 8.11 and later you can use this -->
+    <!-- <FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms" /> -->
+    
+    <!-- Rhino 8.10 and earlier -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies.net48" Version="1.0.3" ExcludeAssets="all" GeneratePathProperty="true" />
+    <Reference Include="$(PkgMicrosoft_NETFramework_ReferenceAssemblies_net48)\build\.NETFramework\v4.8\System.Windows.Forms.dll" Private="False" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+  <!-- Yak packaging is OPT-IN since 2.6.0 (AUD-REL-001): the package produced from
+       raw build output is a development artifact (PDBs, deps files, three TFM
+       payloads, uncurated manifest) and looked deceptively uploadable. Public
+       packaging is tools/release.ps1, which stages an allowlist, scans for PII
+       and builds with the win platform tag. Pass -p:BuildYakPackage=true for the
+       old behaviour when a quick local dev package is genuinely wanted. -->
+  <Target Name="BuildYakPackage" AfterTargets="DispatchToInnerBuilds" Condition="'$(BuildYakPackage)' == 'true'">
+    <PropertyGroup>
+      <YakExecutable Condition="$(YakExecutable) == '' and $([MSBuild]::IsOSPlatform(windows)) and Exists('C:\Program Files\Rhino 8\System\Yak.exe')">C:\Program Files\Rhino 8\System\Yak.exe</YakExecutable>
+      <YakExecutable Condition="$(YakExecutable) == '' and $([MSBuild]::IsOSPlatform(macos)) and Exists('/Applications/Rhino 8.app/Contents/Resources/bin/yak')">/Applications/Rhino 8.app/Contents/Resources/bin/yak</YakExecutable>
+    </PropertyGroup>
+
+    <Warning Text="Could not find Yak executable" Condition="$(YakExecutable) == ''" />
+
+    <ItemGroup>
+      <YakPackagesToDelete Include="$(OutputPath)\*.yak;$(OutputPath)\**\manifest.yml" />
+    </ItemGroup>
+
+    <Delete Files="@(YakPackagesToDelete)" />
+
+    <!-- Keep stale files from earlier component/manual runs out of the package. These
+         directories were produced by legacy DoE save-path tests inside OutputPath. -->
+    <RemoveDir Directories="$(OutputPath)\net7.0-windows\Desktop;$(OutputPath)\net7.0-windows\False;$(OutputPath)\net7.0-windows\True" />
+
+    <Exec Command="&quot;$(YakExecutable)&quot; spec" WorkingDirectory="$(OutputPath)" Condition="$(YakExecutable) != ''" />
+    <Exec Command="&quot;$(YakExecutable)&quot; build" WorkingDirectory="$(OutputPath)" Condition="$(YakExecutable) != ''" />
+
+  </Target>
+
+</Project>

@@ -1,0 +1,11 @@
+# Test Geometry: standard specimens and the zig-zag path
+
+Moved verbatim out of `../ARCHI.md` section 12.3 during the 4.4.0 documentation
+compaction. ARCHI keeps the two rules; the dimensions, the conformity disclaimer and
+the zig-zag reasoning live here.
+
+**Test specimens are data, not drawing code** (since 4.2.0, `Core/Calibration/TestSpecimens.cs`). The Test Geometry component's standard shapes read their nominal dimensions from a Rhino-free table - EN 196-1 (160x40x40 prism, 100 mm bending span), EN ISO 178 (80x10x4, span 64), ASTM D790 (127x12.7x3.2, span 51.2), EN 12390 (150 cube, Ø150x300 cylinder) and ASTM D695 (12.7x12.7x25.4) - so the numbers are unit-tested and cannot drift while a component is edited. The 16:1 span-to-depth ratio of the two plastics bars is asserted rather than hard-coded twice. `TestSpecimen.Scaled` carries the standard's name and the span through a scale, because a scaled body still has to describe itself; `specimenScale` exists at all because an ISO 178 bar is 4 mm thick and an ASTM D790 bar 3.2 mm, both **thinner than one LDM layer**, and the component says so rather than emitting an unprintable body in silence.
+
+**The component makes no conformity claim, deliberately.** These are nominal geometries. Layer orientation, surface finish, curing and the anisotropy of an extruded part sit outside the geometry, and every one of these standards was written for cast or moulded material. Both the component's remark and the wiki page say so; a scaled specimen additionally warns that it is no longer at the standard's dimensions.
+
+**The zig-zag is a toolpath, and the component says so twice** (`Core/Calibration/ZigzagPath.cs`, same file). A boustrophedon line for extrusion tests - straight passes joined alternately, optionally stacked, with the 180° reversals optionally rounded to a half circle of radius pitch/2. It leaves `geometry` empty on purpose and emits on the **`path`** output (index 3, appended in 4.2.0), which goes straight into the G-code generator: putting a curve through the slicer would section a curve, not a solid. Stacked layers alternate their start side so a stack does not seam at the same end every layer. The reversals are the point of the test - a straight line only shows steady-state flow, while a turn shows whether the layer tears inside the corner and over-deposits outside it.

@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net48;net7.0;net7.0-windows</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+  </PropertyGroup>
+  <!-- Same package identities/versions as the existing suite; no new dependency. -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="xunit" Version="2.6.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.4" />
+    <ProjectReference Include="..\..\Lugworm.Core\Lugworm.Core.csproj" />
+  </ItemGroup>
+  <!-- Compile the actual existing assertions against each shipping Core TFM.
+       Keep the large net10 suite unchanged; add touched policies here as needed. -->
+  <ItemGroup>
+    <Compile Include="..\..\Lugworm.Core.Tests\OverhangAdaptiveLevelsTests.cs" Link="OverhangAdaptiveLevelsTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\AdaptiveSlopeTests.cs" Link="AdaptiveSlopeTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\VariableFlowTests.cs" Link="VariableFlowTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\CultureInvarianceTests.cs" Link="CultureInvarianceTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\DuetJsonTests.cs" Link="DuetJsonTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\GcodeTests.cs" Link="GcodeTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\TerminalPolicyTests.cs" Link="TerminalPolicyTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\JogRepeatPolicyTests.cs" Link="JogRepeatPolicyTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\PollCadencePolicyTests.cs" Link="PollCadencePolicyTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\PrintConsoleExpirePolicyTests.cs" Link="PrintConsoleExpirePolicyTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\PrintConsoleStateTests.cs" Link="PrintConsoleStateTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\LivePoseTimelineTests.cs" Link="LivePoseTimelineTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\LiveRenderStatsTests.cs" Link="LiveRenderStatsTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\LivePathDeviationTests.cs" Link="LivePathDeviationTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\DeviationColorScaleTests.cs" Link="DeviationColorScaleTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\LogRetentionTests.cs" Link="LogRetentionTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\InterlayerTimeTests.cs" Link="InterlayerTimeTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\LegendSpecTests.cs" Link="LegendSpecTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\GcodeBuilderTests.cs" Link="GcodeBuilderTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\KlipperCommandsTests.cs" Link="KlipperCommandsTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\ComponentSettingsTests.cs" Link="ComponentSettingsTests.cs" />
+  </ItemGroup>
+</Project>

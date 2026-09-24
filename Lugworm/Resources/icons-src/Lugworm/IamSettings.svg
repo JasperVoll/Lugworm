@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="1.0909 1.0909 21.8182 21.8182">
+  <title>Load Settings: a folder of settings files with two parameter sliders</title>
+  <defs>
+    <linearGradient id="tab" gradientUnits="userSpaceOnUse" x1="12" y1="3.5" x2="12" y2="8.5">
+      <stop offset="0" stop-color="#eef6ff"/>
+      <stop offset="1" stop-color="#cde4ff"/>
+    </linearGradient>
+    <linearGradient id="body" gradientUnits="userSpaceOnUse" x1="12" y1="8" x2="12" y2="21">
+      <stop offset="0" stop-color="#cde4ff"/>
+      <stop offset="1" stop-color="#639ed3"/>
+    </linearGradient>
+  </defs>
+  <polygon points="2.5,4 9,4 11,6.5 21.5,6.5 21.5,10 2.5,10" fill="url(#tab)" stroke="#12334f" stroke-width="1" stroke-linejoin="round"/>
+  <polygon points="2.5,8.5 21.5,8.5 21.5,20.5 2.5,20.5" fill="url(#body)" stroke="#12334f" stroke-width="1" stroke-linejoin="round"/>
+  <line x1="5.5" y1="12.5" x2="18.5" y2="12.5" stroke="#28699f" stroke-width="1.4" stroke-linecap="round"/>
+  <line x1="5.5" y1="17" x2="18.5" y2="17" stroke="#28699f" stroke-width="1.4" stroke-linecap="round"/>
+  <circle cx="8.5" cy="12.5" r="2" fill="#eef6ff" stroke="#12334f" stroke-width="1"/>
+  <circle cx="15.5" cy="17" r="2" fill="#eef6ff" stroke="#12334f" stroke-width="1"/>
+</svg>

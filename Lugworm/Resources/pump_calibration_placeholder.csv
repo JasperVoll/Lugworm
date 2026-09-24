@@ -1,0 +1,27 @@
+# Pump calibration table — PLACEHOLDER (NEEDS_INPUT)
+# ------------------------------------------------------------------
+# pump:      NEEDS_INPUT  (make/model; any speed-controlled screw pump)
+# material:  NEEDS_INPUT  (calibrate per material / mix!)
+# date:      NEEDS_INPUT
+# operator:  NEEDS_INPUT
+#
+# columns: setting,flow_lpm
+#   setting  = pump control value you set (e.g. the 0-10 V analog signal in volts,
+#              or % speed — pick ONE scale and stay consistent)
+#   flow_lpm = measured delivery rate in litres of fresh mortar per minute
+#
+# HOW TO MEASURE (bucket test, ~15 min — full protocol in docs/reference/pump-extrusion.md):
+#   1. mix the material exactly as for printing; prime pump + hose until flow is steady
+#   2. pick 4-6 settings spread over the usable range (e.g. 2, 4, 6, 8, 10 V)
+#   3. per setting: pump into a tared bucket for a timed 60 s, weigh the bucket
+#   4. flow_lpm = mass[kg] / fresh_density[kg/l] / time[min]
+#      (fresh density from a filled, struck-off 1 l cup: mass in kg = density in kg/l)
+#   5. replace the NEEDS_INPUT rows below with your points (ascending settings, one per line)
+#   6. re-run the print plan — the component refuses to recommend settings until then
+#
+# rows below are intentionally UNUSABLE placeholders, not plausible-looking numbers:
+2.0,NEEDS_INPUT
+4.0,NEEDS_INPUT
+6.0,NEEDS_INPUT
+8.0,NEEDS_INPUT
+10.0,NEEDS_INPUT

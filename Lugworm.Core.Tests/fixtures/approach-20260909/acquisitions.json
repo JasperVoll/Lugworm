@@ -1,0 +1,3769 @@
+{
+ "schema": 1,
+ "metadata": {
+  "fixture": "Lugworm.Core.Tests/fixtures/approach-20260909/acquisitions.json",
+  "what": "The whole sustained below-envelope approach excursion of run 20260909-131323-d30110, acquisitions 6424-6491 inclusive, in acquisition order, with each reply body verbatim.",
+  "sourceRunId": "20260909-131323-d30110",
+  "sourceFile": "diagnostics.jsonl",
+  "jobGcodeSha256": "4ec8f1a21f6116d4e6068d47264f244a4f5df9350bb3c3c4921ffa0095112da8",
+  "extractedUtc": "2026-09-09T14:17:24Z",
+  "extractedBy": "docs/dev/analysis/approach-20260909/extract_approach_window.py",
+  "acquisitionRange": [
+   6424,
+   6491
+  ],
+  "acquisitionsInRange": 68,
+  "acquisitionIdsMissingFromLog": [],
+  "overlappingRecordsDeduplicated": 492,
+  "anonymization": "manifest.json's host IP address and machine fingerprint are NOT read by the extraction script and appear nowhere here. Records are rebuilt from an explicit field allowlist, so a field added to the log later cannot leak in. The move.axes bodies themselves carry no identifying data.",
+  "rawBodies": "Each acquisition's `body` is the reply's own JSON text, copied character for character. Nothing is re-serialised, rounded, reordered, clamped or repaired.",
+  "recordedVsBody": "`recordedMachine` is what the session parsed and logged, AFTER the single-axis glitch filter; `bodyMachine` is what the body itself states. They are both kept so a repair upstream stays visible instead of being flattened away.",
+  "envelopeToleranceMm": 2.0,
+  "expectationDerivation": "Derived from the firmware's OWN envelope in each acquisition's own body, never from an assumed print bed or a Z=0 floor. For each of X, Y and Z the body's move.axes `min`/`max` pair is read; a pair that is missing, non-finite or degenerate (max <= min, or both zero as the legacy rr_status path leaves them) makes that axis UNCONSTRAINED, not zero-sized. The acquisition is expected to be Hold with rejectedByEnvelope=true when a constrained axis' own machinePosition falls outside [min - tolerance, max + tolerance] with tolerance 2.0 mm, naming the axis, the reported value and the limit it broke; otherwise Show. Halted/Off hold first, and an unhomed axis set alone does NOT hold (HideArmWhileUnhomed is off by default, because the job's own G28 and cancel.g unhome for seconds and the arm must not flash). On this machine X is min -300 max 10000 and Y is min -10000 max 0, so a negative coordinate is a perfectly legal one; only Z, min 0 max 400, is broken here - by up to 389 mm.",
+  "expectedShow": 3,
+  "expectedHold": 65,
+  "expectedRejectedByEnvelope": 65
+ },
+ "acquisitions": [
+  {
+   "acq": 6424,
+   "poll": 73,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:37.4095163Z",
+   "responseReceivedUtc": "2026-09-09T13:13:37.4213284Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1297,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    195.959,
+    -498.675,
+    400
+   ],
+   "recordedUser": [
+    200,
+    -500,
+    400
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 60,
+   "topSpeedMms": 60,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    195.959,
+    -498.675,
+    400.0
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Show",
+    "rejectedByEnvelope": false,
+    "envelopeKnown": true,
+    "reason": null
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":195.959,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":200.000,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-498.675,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-500.000,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":400.000,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":400.000,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6425,
+   "poll": 74,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:37.6618367Z",
+   "responseReceivedUtc": "2026-09-09T13:13:37.6839919Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1290,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    276.616,
+    -402.21,
+    -2.247
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Discontinuity",
+   "bodyMachine": [
+    276.616,
+    -402.21,
+    -2.247
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -2.247 mm is 2.247 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":276.616,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-402.210,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-2.247,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6426,
+   "poll": 75,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:37.9084733Z",
+   "responseReceivedUtc": "2026-09-09T13:13:37.9212560Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1290,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    277.772,
+    -400.717,
+    -8.165
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    277.772,
+    -400.717,
+    -8.165
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -8.165 mm is 8.165 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":277.772,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-400.717,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-8.165,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6427,
+   "poll": 76,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:38.1593654Z",
+   "responseReceivedUtc": "2026-09-09T13:13:38.1708814Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1291,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    278.985,
+    -399.138,
+    -14.419
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    278.985,
+    -399.138,
+    -14.419
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -14.419 mm is 14.419 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":278.985,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-399.138,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-14.419,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6428,
+   "poll": 77,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:38.4097325Z",
+   "responseReceivedUtc": "2026-09-09T13:13:38.4220868Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1291,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    280.196,
+    -397.547,
+    -20.698
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    280.196,
+    -397.547,
+    -20.698
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -20.698 mm is 20.698 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":280.196,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-397.547,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-20.698,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6429,
+   "poll": 78,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:38.6598124Z",
+   "responseReceivedUtc": "2026-09-09T13:13:38.6737022Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1291,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    281.394,
+    -395.96,
+    -26.954
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    281.394,
+    -395.96,
+    -26.954
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -26.954 mm is 26.954 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":281.394,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-395.960,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-26.954,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6430,
+   "poll": 79,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:38.9116172Z",
+   "responseReceivedUtc": "2026-09-09T13:13:38.9244013Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1291,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    282.592,
+    -394.357,
+    -33.251
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    282.592,
+    -394.357,
+    -33.251
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -33.251 mm is 33.251 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":282.592,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-394.357,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-33.251,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6431,
+   "poll": 80,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:39.1599284Z",
+   "responseReceivedUtc": "2026-09-09T13:13:39.1722186Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1291,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    283.763,
+    -392.777,
+    -39.447
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    283.763,
+    -392.777,
+    -39.447
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -39.447 mm is 39.447 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":283.763,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-392.777,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-39.447,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6432,
+   "poll": 81,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:39.4089589Z",
+   "responseReceivedUtc": "2026-09-09T13:13:39.4208950Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1291,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    284.929,
+    -391.187,
+    -45.665
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    284.929,
+    -391.187,
+    -45.665
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -45.665 mm is 45.665 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":284.929,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-391.187,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-45.665,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6433,
+   "poll": 82,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:39.6603215Z",
+   "responseReceivedUtc": "2026-09-09T13:13:39.6728222Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1291,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    286.1,
+    -389.574,
+    -51.962
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    286.1,
+    -389.574,
+    -51.962
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -51.962 mm is 51.962 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":286.100,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-389.574,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-51.962,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6434,
+   "poll": 83,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:39.9112144Z",
+   "responseReceivedUtc": "2026-09-09T13:13:39.9236531Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1291,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    287.262,
+    -387.964,
+    -58.236
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    287.262,
+    -387.964,
+    -58.236
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -58.236 mm is 58.236 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":287.262,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-387.964,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-58.236,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6435,
+   "poll": 84,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:40.1617550Z",
+   "responseReceivedUtc": "2026-09-09T13:13:40.1742026Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1291,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    288.41,
+    -386.355,
+    -64.484
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    288.41,
+    -386.355,
+    -64.484
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -64.484 mm is 64.484 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":288.410,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-386.355,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-64.484,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6436,
+   "poll": 85,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:40.4113797Z",
+   "responseReceivedUtc": "2026-09-09T13:13:40.4231087Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1291,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    289.549,
+    -384.747,
+    -70.723
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    289.549,
+    -384.747,
+    -70.723
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -70.723 mm is 70.723 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":289.549,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-384.747,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-70.723,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6437,
+   "poll": 86,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:40.6618941Z",
+   "responseReceivedUtc": "2026-09-09T13:13:40.6737351Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1291,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    290.682,
+    -383.129,
+    -76.987
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    290.682,
+    -383.129,
+    -76.987
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -76.987 mm is 76.987 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":290.682,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-383.129,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-76.987,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6438,
+   "poll": 87,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:40.9125168Z",
+   "responseReceivedUtc": "2026-09-09T13:13:40.9241915Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1291,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    291.811,
+    -381.508,
+    -83.245
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    291.811,
+    -381.508,
+    -83.245
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -83.245 mm is 83.245 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":291.811,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-381.508,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-83.245,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6439,
+   "poll": 88,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:41.1621840Z",
+   "responseReceivedUtc": "2026-09-09T13:13:41.1741912Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1291,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    292.928,
+    -379.887,
+    -89.498
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    292.928,
+    -379.887,
+    -89.498
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -89.498 mm is 89.498 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":292.928,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-379.887,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-89.498,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6440,
+   "poll": 89,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:41.4132718Z",
+   "responseReceivedUtc": "2026-09-09T13:13:41.4251474Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1291,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    294.04,
+    -378.256,
+    -95.773
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    294.04,
+    -378.256,
+    -95.773
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -95.773 mm is 95.773 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":294.040,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-378.256,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-95.773,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6441,
+   "poll": 90,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:41.6613213Z",
+   "responseReceivedUtc": "2026-09-09T13:13:41.6731312Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    295.129,
+    -376.641,
+    -101.97
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    295.129,
+    -376.641,
+    -101.97
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -101.97 mm is 101.97 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":295.129,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-376.641,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-101.970,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6442,
+   "poll": 91,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:41.9126551Z",
+   "responseReceivedUtc": "2026-09-09T13:13:41.9249823Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    296.23,
+    -374.998,
+    -108.264
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    296.23,
+    -374.998,
+    -108.264
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -108.264 mm is 108.264 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":296.230,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-374.998,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-108.264,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6443,
+   "poll": 92,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:42.1620629Z",
+   "responseReceivedUtc": "2026-09-09T13:13:42.1748510Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    297.312,
+    -373.366,
+    -114.507
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    297.312,
+    -373.366,
+    -114.507
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -114.507 mm is 114.507 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":297.312,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-373.366,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-114.507,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6444,
+   "poll": 93,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:42.4180973Z",
+   "responseReceivedUtc": "2026-09-09T13:13:42.4314821Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    298.418,
+    -371.685,
+    -120.926
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    298.418,
+    -371.685,
+    -120.926
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -120.926 mm is 120.926 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":298.418,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-371.685,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-120.926,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6445,
+   "poll": 94,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:42.6632103Z",
+   "responseReceivedUtc": "2026-09-09T13:13:42.6762909Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    299.458,
+    -370.083,
+    -127.024
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    299.458,
+    -370.083,
+    -127.024
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -127.024 mm is 127.024 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":299.458,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-370.083,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-127.024,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6446,
+   "poll": 95,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:42.9140565Z",
+   "responseReceivedUtc": "2026-09-09T13:13:42.9260534Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    300.522,
+    -368.434,
+    -133.294
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    300.522,
+    -368.434,
+    -133.294
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -133.294 mm is 133.294 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":300.522,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-368.434,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-133.294,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6447,
+   "poll": 96,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:43.1635964Z",
+   "responseReceivedUtc": "2026-09-09T13:13:43.1755837Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    301.569,
+    -366.791,
+    -139.529
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    301.569,
+    -366.791,
+    -139.529
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -139.529 mm is 139.529 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":301.569,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-366.791,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-139.529,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6448,
+   "poll": 97,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:43.4126753Z",
+   "responseReceivedUtc": "2026-09-09T13:13:43.4251773Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    302.614,
+    -365.145,
+    -145.768
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    302.614,
+    -365.145,
+    -145.768
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -145.768 mm is 145.768 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":302.614,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-365.145,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-145.768,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6449,
+   "poll": 98,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:43.6645929Z",
+   "responseReceivedUtc": "2026-09-09T13:13:43.6764945Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    303.653,
+    -363.485,
+    -152.048
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    303.653,
+    -363.485,
+    -152.048
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -152.048 mm is 152.048 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":303.653,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-363.485,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-152.048,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6450,
+   "poll": 99,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:43.9112577Z",
+   "responseReceivedUtc": "2026-09-09T13:13:43.9233096Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    304.667,
+    -361.85,
+    -158.219
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    304.667,
+    -361.85,
+    -158.219
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -158.219 mm is 158.219 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":304.667,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-361.850,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-158.219,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6451,
+   "poll": 100,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:44.1608624Z",
+   "responseReceivedUtc": "2026-09-09T13:13:44.1731875Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    305.687,
+    -360.194,
+    -164.469
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    305.687,
+    -360.194,
+    -164.469
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -164.469 mm is 164.469 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":305.687,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-360.194,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-164.469,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6452,
+   "poll": 101,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:44.4114880Z",
+   "responseReceivedUtc": "2026-09-09T13:13:44.4238033Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    306.699,
+    -358.527,
+    -170.736
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    306.699,
+    -358.527,
+    -170.736
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -170.736 mm is 170.736 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":306.699,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-358.527,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-170.736,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6453,
+   "poll": 102,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:44.6621123Z",
+   "responseReceivedUtc": "2026-09-09T13:13:44.6736786Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    307.703,
+    -356.865,
+    -176.983
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    307.703,
+    -356.865,
+    -176.983
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -176.983 mm is 176.983 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":307.703,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-356.865,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-176.983,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6454,
+   "poll": 103,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:44.9119465Z",
+   "responseReceivedUtc": "2026-09-09T13:13:44.9240039Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    308.699,
+    -355.196,
+    -183.241
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    308.699,
+    -355.196,
+    -183.241
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -183.241 mm is 183.241 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":308.699,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-355.196,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-183.241,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6455,
+   "poll": 104,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:45.1617984Z",
+   "responseReceivedUtc": "2026-09-09T13:13:45.1741174Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    309.684,
+    -353.531,
+    -189.482
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    309.684,
+    -353.531,
+    -189.482
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -189.482 mm is 189.482 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":309.684,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-353.531,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-189.482,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6456,
+   "poll": 105,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:45.4105785Z",
+   "responseReceivedUtc": "2026-09-09T13:13:45.4230889Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    310.659,
+    -351.863,
+    -195.714
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    310.659,
+    -351.863,
+    -195.714
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -195.714 mm is 195.714 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":310.659,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-351.863,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-195.714,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6457,
+   "poll": 106,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:45.6610342Z",
+   "responseReceivedUtc": "2026-09-09T13:13:45.6729467Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    311.628,
+    -350.19,
+    -201.957
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    311.628,
+    -350.19,
+    -201.957
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -201.957 mm is 201.957 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":311.628,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-350.190,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-201.957,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6458,
+   "poll": 107,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:45.9098107Z",
+   "responseReceivedUtc": "2026-09-09T13:13:45.9248518Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    312.597,
+    -348.5,
+    -208.258
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    312.597,
+    -348.5,
+    -208.258
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -208.258 mm is 208.258 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":312.597,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-348.500,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-208.258,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6459,
+   "poll": 108,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:46.1595945Z",
+   "responseReceivedUtc": "2026-09-09T13:13:46.1719530Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    313.541,
+    -346.841,
+    -214.436
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    313.541,
+    -346.841,
+    -214.436
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -214.436 mm is 214.436 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":313.541,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-346.841,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-214.436,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6460,
+   "poll": 109,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:46.4092482Z",
+   "responseReceivedUtc": "2026-09-09T13:13:46.4211552Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    314.483,
+    -345.163,
+    -220.666
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    314.483,
+    -345.163,
+    -220.666
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -220.666 mm is 220.666 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":314.483,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-345.163,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-220.666,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6461,
+   "poll": 110,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:46.6612320Z",
+   "responseReceivedUtc": "2026-09-09T13:13:46.6726877Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    315.426,
+    -343.47,
+    -226.954
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    315.426,
+    -343.47,
+    -226.954
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -226.954 mm is 226.954 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":315.426,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-343.470,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-226.954,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6462,
+   "poll": 111,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:46.9098537Z",
+   "responseReceivedUtc": "2026-09-09T13:13:46.9220798Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    316.349,
+    -341.787,
+    -233.181
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    316.349,
+    -341.787,
+    -233.181
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -233.181 mm is 233.181 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":316.349,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-341.787,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-233.181,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6463,
+   "poll": 112,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:47.1614743Z",
+   "responseReceivedUtc": "2026-09-09T13:13:47.1740788Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    317.28,
+    -340.084,
+    -239.482
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    317.28,
+    -340.084,
+    -239.482
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -239.482 mm is 239.482 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":317.280,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-340.084,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-239.482,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6464,
+   "poll": 113,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:47.4123248Z",
+   "responseReceivedUtc": "2026-09-09T13:13:47.4244444Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    318.195,
+    -338.39,
+    -245.746
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    318.195,
+    -338.39,
+    -245.746
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -245.746 mm is 245.746 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":318.195,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-338.390,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-245.746,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6465,
+   "poll": 114,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:47.6593876Z",
+   "responseReceivedUtc": "2026-09-09T13:13:47.6711367Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    319.088,
+    -336.718,
+    -251.913
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    319.088,
+    -336.718,
+    -251.913
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -251.913 mm is 251.913 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":319.088,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-336.718,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-251.913,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6466,
+   "poll": 115,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:47.9090762Z",
+   "responseReceivedUtc": "2026-09-09T13:13:47.9231221Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    319.983,
+    -335.02,
+    -258.175
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    319.983,
+    -335.02,
+    -258.175
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -258.175 mm is 258.175 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":319.983,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-335.020,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-258.175,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6467,
+   "poll": 116,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:48.1588699Z",
+   "responseReceivedUtc": "2026-09-09T13:13:48.1722442Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    320.874,
+    -333.317,
+    -264.436
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    320.874,
+    -333.317,
+    -264.436
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -264.436 mm is 264.436 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":320.874,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-333.317,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-264.436,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6468,
+   "poll": 117,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:48.4082896Z",
+   "responseReceivedUtc": "2026-09-09T13:13:48.4204223Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    321.748,
+    -331.63,
+    -270.645
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    321.748,
+    -331.63,
+    -270.645
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -270.645 mm is 270.645 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":321.748,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-331.630,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-270.645,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6469,
+   "poll": 118,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:48.6585458Z",
+   "responseReceivedUtc": "2026-09-09T13:13:48.6709273Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    322.618,
+    -329.923,
+    -276.901
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    322.618,
+    -329.923,
+    -276.901
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -276.901 mm is 276.901 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":322.618,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-329.923,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-276.901,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6470,
+   "poll": 119,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:48.9084058Z",
+   "responseReceivedUtc": "2026-09-09T13:13:48.9208750Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    323.482,
+    -328.22,
+    -283.154
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    323.482,
+    -328.22,
+    -283.154
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -283.154 mm is 283.154 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":323.482,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-328.220,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-283.154,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6471,
+   "poll": 120,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:49.1585290Z",
+   "responseReceivedUtc": "2026-09-09T13:13:49.1706885Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    324.336,
+    -326.513,
+    -289.398
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    324.336,
+    -326.513,
+    -289.398
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -289.398 mm is 289.398 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":324.336,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-326.513,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-289.398,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6472,
+   "poll": 121,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:49.4068590Z",
+   "responseReceivedUtc": "2026-09-09T13:13:49.4190671Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    325.178,
+    -324.819,
+    -295.598
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    325.178,
+    -324.819,
+    -295.598
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -295.598 mm is 295.598 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":325.178,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-324.819,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-295.598,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6473,
+   "poll": 122,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:49.6580180Z",
+   "responseReceivedUtc": "2026-09-09T13:13:49.6697785Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    326.019,
+    -323.102,
+    -301.869
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    326.019,
+    -323.102,
+    -301.869
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -301.869 mm is 301.869 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":326.019,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-323.102,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-301.869,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6474,
+   "poll": 123,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:49.9070197Z",
+   "responseReceivedUtc": "2026-09-09T13:13:49.9191270Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    326.846,
+    -321.393,
+    -308.107
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    326.846,
+    -321.393,
+    -308.107
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -308.107 mm is 308.107 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":326.846,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-321.393,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-308.107,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6475,
+   "poll": 124,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:50.1649054Z",
+   "responseReceivedUtc": "2026-09-09T13:13:50.1777412Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    327.695,
+    -319.621,
+    -314.565
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    327.695,
+    -319.621,
+    -314.565
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -314.565 mm is 314.565 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":327.695,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-319.621,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-314.565,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6476,
+   "poll": 125,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:50.4069245Z",
+   "responseReceivedUtc": "2026-09-09T13:13:50.4192968Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    328.483,
+    -317.961,
+    -320.614
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    328.483,
+    -317.961,
+    -320.614
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -320.614 mm is 320.614 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":328.483,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-317.961,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-320.614,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6477,
+   "poll": 126,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:50.6569130Z",
+   "responseReceivedUtc": "2026-09-09T13:13:50.6694405Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    329.288,
+    -316.241,
+    -326.859
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    329.288,
+    -316.241,
+    -326.859
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -326.859 mm is 326.859 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":329.288,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-316.241,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-326.859,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6478,
+   "poll": 127,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:50.9072053Z",
+   "responseReceivedUtc": "2026-09-09T13:13:50.9195044Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    330.083,
+    -314.52,
+    -333.115
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    330.083,
+    -314.52,
+    -333.115
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -333.115 mm is 333.115 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":330.083,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-314.520,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-333.115,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6479,
+   "poll": 128,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:51.1557789Z",
+   "responseReceivedUtc": "2026-09-09T13:13:51.1674450Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    330.867,
+    -312.811,
+    -339.317
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    330.867,
+    -312.811,
+    -339.317
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -339.317 mm is 339.317 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":330.867,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-312.811,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-339.317,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6480,
+   "poll": 129,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:51.4088456Z",
+   "responseReceivedUtc": "2026-09-09T13:13:51.4205775Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    331.657,
+    -311.068,
+    -345.644
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    331.657,
+    -311.068,
+    -345.644
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -345.644 mm is 345.644 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":331.657,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-311.068,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-345.644,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6481,
+   "poll": 130,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:51.6550000Z",
+   "responseReceivedUtc": "2026-09-09T13:13:51.6668930Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    332.418,
+    -309.368,
+    -351.798
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    332.418,
+    -309.368,
+    -351.798
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -351.798 mm is 351.798 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":332.418,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-309.368,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-351.798,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6482,
+   "poll": 131,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:51.9048917Z",
+   "responseReceivedUtc": "2026-09-09T13:13:51.9169107Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    333.181,
+    -307.643,
+    -358.046
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    333.181,
+    -307.643,
+    -358.046
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -358.046 mm is 358.046 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":333.181,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-307.643,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-358.046,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6483,
+   "poll": 132,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:52.1555410Z",
+   "responseReceivedUtc": "2026-09-09T13:13:52.1679737Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    333.94,
+    -305.905,
+    -364.325
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    333.94,
+    -305.905,
+    -364.325
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -364.325 mm is 364.325 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":333.940,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-305.905,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-364.325,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6484,
+   "poll": 133,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:52.4052568Z",
+   "responseReceivedUtc": "2026-09-09T13:13:52.4177655Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    334.686,
+    -304.175,
+    -370.571
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    334.686,
+    -304.175,
+    -370.571
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -370.571 mm is 370.571 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":334.686,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-304.175,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-370.571,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6485,
+   "poll": 134,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:52.6559647Z",
+   "responseReceivedUtc": "2026-09-09T13:13:52.6686509Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    335.428,
+    -302.439,
+    -376.84
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    335.428,
+    -302.439,
+    -376.84
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -376.84 mm is 376.84 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":335.428,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-302.439,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-376.840,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6486,
+   "poll": 135,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:52.9081872Z",
+   "responseReceivedUtc": "2026-09-09T13:13:52.9199025Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    336.162,
+    -300.695,
+    -383.124
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    336.162,
+    -300.695,
+    -383.124
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -383.124 mm is 383.124 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":336.162,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-300.695,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-383.124,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6487,
+   "poll": 136,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:53.1551775Z",
+   "responseReceivedUtc": "2026-09-09T13:13:53.1675834Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1292,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    336.877,
+    -298.976,
+    -389.314
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 26.4,
+   "topSpeedMms": 26.4,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    336.877,
+    -298.976,
+    -389.314
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -389.314 mm is 389.314 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":336.877,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-298.976,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-389.314,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6488,
+   "poll": 137,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:53.4032131Z",
+   "responseReceivedUtc": "2026-09-09T13:13:53.4221070Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1290,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    293,
+    -402.552,
+    -0.001
+   ],
+   "recordedUser": [
+    275.74,
+    -402.552,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 10,
+   "topSpeedMms": 10,
+   "recordedTrailQuality": "Discontinuity",
+   "bodyMachine": [
+    293.0,
+    -402.552,
+    -0.001
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Show",
+    "rejectedByEnvelope": false,
+    "envelopeKnown": true,
+    "reason": null
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":293.000,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.740,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-402.552,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.552,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-0.001,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6489,
+   "poll": 138,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:53.6517001Z",
+   "responseReceivedUtc": "2026-09-09T13:13:53.6627320Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1290,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    275.742,
+    -402.552,
+    -2.33
+   ],
+   "recordedUser": [
+    275.293,
+    -402.331,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 10,
+   "topSpeedMms": 10,
+   "recordedTrailQuality": "Discontinuity",
+   "bodyMachine": [
+    275.742,
+    -402.552,
+    -2.33
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -2.33 mm is 2.33 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":275.742,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.293,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-402.552,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.331,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-2.330,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6490,
+   "poll": 139,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:53.9031434Z",
+   "responseReceivedUtc": "2026-09-09T13:13:53.9139605Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1290,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    275.742,
+    -402.552,
+    -4.843
+   ],
+   "recordedUser": [
+    275.293,
+    -402.331,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 10,
+   "topSpeedMms": 10,
+   "recordedTrailQuality": "Valid",
+   "bodyMachine": [
+    275.742,
+    -402.552,
+    -4.843
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Hold",
+    "rejectedByEnvelope": true,
+    "envelopeKnown": true,
+    "reason": "Z -4.843 mm is 4.843 mm below the machine minimum 0 mm"
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":275.742,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":275.293,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-402.552,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.331,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":-4.843,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  },
+  {
+   "acq": 6491,
+   "poll": 140,
+   "connectionGeneration": 1,
+   "requestStartedUtc": "2026-09-09T13:13:54.1618140Z",
+   "responseReceivedUtc": "2026-09-09T13:13:54.1842454Z",
+   "endpoint": "rr_model?key=move.axes&flags=vnd4",
+   "api": "rr_model",
+   "page": 1,
+   "bodyLen": 1285,
+   "bodyTruncated": false,
+   "recordedMachine": [
+    275.293,
+    -402.332,
+    0
+   ],
+   "recordedUser": [
+    274.849,
+    -402.105,
+    0
+   ],
+   "recordedPositionValidity": "Valid",
+   "allHomed": true,
+   "homed": "X+ Y+ Z+",
+   "status": "Processing",
+   "requestedSpeedMms": 1,
+   "topSpeedMms": 1,
+   "recordedTrailQuality": "SuspectSpeed",
+   "bodyMachine": [
+    275.293,
+    -402.332,
+    0.0
+   ],
+   "bodyEnvelope": {
+    "X": [
+     -300.0,
+     10000.0
+    ],
+    "Y": [
+     -10000.0,
+     0.0
+    ],
+    "Z": [
+     0.0,
+     400.0
+    ]
+   },
+   "expected": {
+    "eligibility": "Show",
+    "rejectedByEnvelope": false,
+    "envelopeKnown": true,
+    "reason": null
+   },
+   "body": "{\"key\":\"move.axes\",\"flags\":\"vnd4\",\"result\":[{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"5\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"X\",\"machinePosition\":275.293,\"max\":10000.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-300.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2653.10,\"userPosition\":274.849,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":800.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"6\"],\"homed\":true,\"jerk\":800.0,\"letter\":\"Y\",\"machinePosition\":-402.332,\"max\":0,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":-10000.00,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":800.0,\"speed\":3600.0,\"stepsPerMm\":2652.00,\"userPosition\":-402.105,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]},{\"acceleration\":500.0,\"babystep\":0,\"backlash\":0,\"current\":0,\"drivers\":[\"7\"],\"homed\":true,\"jerk\":600.0,\"letter\":\"Z\",\"machinePosition\":0,\"max\":400.00,\"maxProbed\":false,\"microstepping\":{\"interpolated\":true,\"value\":16},\"min\":0,\"minProbed\":false,\"percentCurrent\":100,\"reducedAcceleration\":200.0,\"speed\":1500.0,\"stepsPerMm\":803.59,\"userPosition\":0,\"visible\":true,\"workplaceOffsets\":[0,0,0,0,0,0,0,0,0]}],\"next\":0}\n"
+  }
+ ]
+}

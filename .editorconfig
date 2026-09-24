@@ -1,0 +1,174 @@
+root = true
+
+# Lugworm coding style. See docs/ARCHI.md section 6 ("Analyzer policy")
+# for the reasoning behind each severity bucket below.
+
+[*.cs]
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+# end_of_line intentionally unset: files are checked out with a mix of CRLF
+# and LF (git core.autocrlf / .gitattributes text=auto) and this policy must
+# not force a mass line-ending rewrite.
+
+# Namespace declaration style is not forced: Core uses block-scoped
+# namespaces, the plugin follows Core, and Lugworm.Core.Tests uses
+# file-scoped namespaces (net10.0-only project) - both are the project's
+# actual, deliberate style, so csharp_style_namespace_declarations is left
+# unset rather than pushed one way and reported as a style violation on the
+# other project.
+
+# --- Analyzer severities -----------------------------------------------
+# none: the project's documented style deliberately breaks the rule
+# (docs/ARCHI.md section 5, section 6).
+dotnet_diagnostic.CA1051.severity = none   # public fields on option/record classes are the documented style (ARCHI section 5)
+dotnet_diagnostic.CA1510.severity = none   # ArgumentNullException.ThrowIfNull is not available on net48
+dotnet_diagnostic.CA1805.severity = none   # explicit default-value field initializers are used deliberately for readability
+dotnet_diagnostic.CA1707.severity = none   # xUnit test method names use underscores by convention (Given_When_Then-style), repo-wide
+
+# suggestion: real but low-stakes/stylistic findings, kept visible in the
+# IDE without failing the 0-warning build gate.
+dotnet_diagnostic.CA1861.severity = suggestion   # avoid constant arrays as arguments
+dotnet_diagnostic.CA1859.severity = suggestion   # use concrete types for performance
+dotnet_diagnostic.CA1822.severity = suggestion   # mark members static
+dotnet_diagnostic.CA1720.severity = suggestion   # identifier contains type name
+dotnet_diagnostic.CA1852.severity = suggestion   # seal internal types
+dotnet_diagnostic.CA1834.severity = suggestion   # prefer StringBuilder.Append(char) over Append(string) for single chars
+dotnet_diagnostic.CA1845.severity = suggestion   # prefer Span-based string concat
+dotnet_diagnostic.CA1866.severity = suggestion   # use char overload (StartsWith/EndsWith)
+dotnet_diagnostic.CA1872.severity = suggestion   # prefer the UTF-8 byte span overload
+dotnet_diagnostic.CA1850.severity = suggestion   # prefer static HashData over ComputeHash
+dotnet_diagnostic.CA1825.severity = suggestion   # avoid zero-length array allocations
+dotnet_diagnostic.CA1846.severity = suggestion   # prefer AsSpan over Substring
+dotnet_diagnostic.CA1835.severity = suggestion   # prefer Memory-based ReadAsync/WriteAsync overloads
+dotnet_diagnostic.CA2263.severity = suggestion   # prefer generic GetService/Enum.Parse overload
+dotnet_diagnostic.CA1865.severity = suggestion   # use 'string.Method(char)' instead of 'string.Method(string)' - sibling of CA1847
+dotnet_diagnostic.CA1862.severity = suggestion   # use StringComparison overloads for case-insensitive comparisons
+dotnet_diagnostic.CA1868.severity = suggestion   # unnecessary call to Contains before Add/Remove on a set
+dotnet_diagnostic.CA1854.severity = suggestion   # prefer TryGetValue over ContainsKey + indexer
+dotnet_diagnostic.CA1716.severity = suggestion   # identifier matches a keyword in another language
+dotnet_diagnostic.CA1844.severity = suggestion   # provide Memory-based overrides of async Stream methods
+dotnet_diagnostic.CA1710.severity = suggestion   # identifier suffix (Collection/Dictionary/...) naming convention
+dotnet_diagnostic.CA1001.severity = suggestion   # owner-of-disposable-field audit: real debt, tracked, not a mechanical H4 fix (see ARCHI section 6)
+dotnet_diagnostic.CA1725.severity = suggestion   # override/interface-implementation parameter name should match the base declaration
+dotnet_diagnostic.CA1826.severity = suggestion   # use the indexable collection's own Count/Length instead of an Enumerable method
+dotnet_diagnostic.CA1827.severity = suggestion   # use Any() instead of Count()/LongCount() when only presence matters
+dotnet_diagnostic.CA1711.severity = suggestion   # identifier suffix should not carry a reserved meaning
+dotnet_diagnostic.CA1875.severity = suggestion   # use the span/array overload for the called API
+dotnet_diagnostic.CA1307.severity = suggestion   # string comparison not specified - see note below
+
+# CA1307's fix is usually "add a StringComparison overload", but for
+# Contains(string, StringComparison), IndexOf(char, StringComparison),
+# Replace(string, string, StringComparison) and GetHashCode(StringComparison)
+# that overload does not exist on net48's real BCL (confirmed: it fires on
+# net7.0/net7.0-windows only, never net48, across every occurrence in this
+# repo) - Core and the plugin both ship net48 (docs/ARCHI.md section 3), so
+# a uniform fix would mean an #if NETFRAMEWORK/#else block at ~80 call
+# sites, or a new shared culture-string helper, either of which is a
+# separate, larger pass and not a mechanical H4 cleanup. CA1309 (the
+# ordinal-specific sibling CA1307 is superseded by) keeps its net48-safe
+# overloads and stays at warning/zero.
+
+# warning: rules that find real mistakes. Zero occurrences is the gate.
+dotnet_diagnostic.CA1305.severity = warning   # IFormatProvider/culture not specified
+dotnet_diagnostic.CA1310.severity = warning   # StringComparison not specified
+dotnet_diagnostic.CA1309.severity = warning   # use ordinal StringComparison
+dotnet_diagnostic.CA2208.severity = warning   # ArgumentException should use the correct parameter/message
+dotnet_diagnostic.CA2231.severity = warning   # overload operator equals on overriding ValueType.Equals
+dotnet_diagnostic.CA2016.severity = warning   # forward the CancellationToken parameter
+dotnet_diagnostic.CA2249.severity = warning   # use String.Contains instead of String.IndexOf
+dotnet_diagnostic.CA1847.severity = warning   # use a char literal for single-character lookups
+dotnet_diagnostic.CA1010.severity = warning   # generic interface should also be implemented on a non-generic collection
+dotnet_diagnostic.CA2201.severity = warning   # do not raise reserved exception types (System.Exception directly)
+dotnet_diagnostic.CA3075.severity = warning   # insecure DTD processing in XML
+dotnet_diagnostic.CA1036.severity = warning   # define comparison operators when implementing IComparable
+dotnet_diagnostic.CA1068.severity = warning   # CancellationToken parameter should be last
+
+# Rules genuinely unaffected by this pass keep the AnalysisLevel default.
+
+# The warning bucket is enforced on Core and the plugin only.
+# Lugworm.Core.Tests does get AnalysisLevel=latest-recommended (so the
+# style/formatting rules above are enforced there too), but the remaining
+# "warning"-tier correctness rules would otherwise fire across the ~1350
+# xUnit test methods (mostly CA1310: test assertions comparing literal
+# strings without an explicit StringComparison, which is normal for test
+# code, not a shipped-behavior bug) - fixing that is a separate, much larger
+# pass, not a mechanical H4 cleanup. Demoted to suggestion here so it stays
+# visible without failing the 0-warning gate. tests/FrameworkSmoke links
+# some of the same source files into its own compile and inherits the same
+# exemption for the same reason.
+[Lugworm.Core.Tests/**]
+dotnet_diagnostic.CA1305.severity = suggestion
+dotnet_diagnostic.CA1310.severity = suggestion
+dotnet_diagnostic.CA1309.severity = suggestion
+dotnet_diagnostic.CA2208.severity = suggestion
+dotnet_diagnostic.CA2231.severity = suggestion
+dotnet_diagnostic.CA2016.severity = suggestion
+dotnet_diagnostic.CA2249.severity = suggestion
+dotnet_diagnostic.CA1847.severity = suggestion
+dotnet_diagnostic.CA1010.severity = suggestion
+dotnet_diagnostic.CA2201.severity = suggestion
+dotnet_diagnostic.CA3075.severity = suggestion
+dotnet_diagnostic.CA1036.severity = suggestion
+dotnet_diagnostic.CA1068.severity = suggestion
+
+[tests/FrameworkSmoke/**]
+dotnet_diagnostic.CA1305.severity = suggestion
+dotnet_diagnostic.CA1310.severity = suggestion
+dotnet_diagnostic.CA1309.severity = suggestion
+dotnet_diagnostic.CA2208.severity = suggestion
+dotnet_diagnostic.CA2231.severity = suggestion
+dotnet_diagnostic.CA2016.severity = suggestion
+dotnet_diagnostic.CA2249.severity = suggestion
+dotnet_diagnostic.CA1847.severity = suggestion
+dotnet_diagnostic.CA1010.severity = suggestion
+dotnet_diagnostic.CA2201.severity = suggestion
+dotnet_diagnostic.CA3075.severity = suggestion
+dotnet_diagnostic.CA1036.severity = suggestion
+dotnet_diagnostic.CA1068.severity = suggestion
+
+# Vendored/foreign code: never analyzed, never reformatted by this policy.
+[third_party/**]
+dotnet_diagnostic.CA1051.severity = none
+dotnet_diagnostic.CA1510.severity = none
+dotnet_diagnostic.CA1805.severity = none
+dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CA1861.severity = none
+dotnet_diagnostic.CA1859.severity = none
+dotnet_diagnostic.CA1822.severity = none
+dotnet_diagnostic.CA1720.severity = none
+dotnet_diagnostic.CA1852.severity = none
+dotnet_diagnostic.CA1834.severity = none
+dotnet_diagnostic.CA1845.severity = none
+dotnet_diagnostic.CA1866.severity = none
+dotnet_diagnostic.CA1872.severity = none
+dotnet_diagnostic.CA1850.severity = none
+dotnet_diagnostic.CA1825.severity = none
+dotnet_diagnostic.CA1846.severity = none
+dotnet_diagnostic.CA1835.severity = none
+dotnet_diagnostic.CA2263.severity = none
+dotnet_diagnostic.CA1865.severity = none
+dotnet_diagnostic.CA1862.severity = none
+dotnet_diagnostic.CA1868.severity = none
+dotnet_diagnostic.CA1854.severity = none
+dotnet_diagnostic.CA1716.severity = none
+dotnet_diagnostic.CA1844.severity = none
+dotnet_diagnostic.CA1710.severity = none
+dotnet_diagnostic.CA1001.severity = none
+dotnet_diagnostic.CA1305.severity = none
+dotnet_diagnostic.CA1310.severity = none
+dotnet_diagnostic.CA1307.severity = none
+dotnet_diagnostic.CA1309.severity = none
+dotnet_diagnostic.CA2208.severity = none
+dotnet_diagnostic.CA2231.severity = none
+dotnet_diagnostic.CA2016.severity = none
+dotnet_diagnostic.CA2249.severity = none
+dotnet_diagnostic.CA1847.severity = none
+dotnet_diagnostic.CA1010.severity = none
+dotnet_diagnostic.CA2201.severity = none
+dotnet_diagnostic.CA3075.severity = none
+dotnet_diagnostic.CA1036.severity = none
+dotnet_diagnostic.CA1068.severity = none
+dotnet_diagnostic.CA1725.severity = none
+
