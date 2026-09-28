@@ -54,7 +54,7 @@ public class CultureInvarianceTests
     /// with a zero nozzle clearance forces the collision line.</summary>
     /// <summary>Closed cylinder of radius r and height h: nv rings of nu vertices, a
     /// centre vertex on each cap. Local so this file still compiles inside
-    /// tests/FrameworkSmoke, which links it without SlicePipelineTests.</summary>
+    /// tests/FrameworkTests, which links it without SlicePipelineTests.</summary>
     static (List<Vec3> V, List<(int, int, int)> F) ClosedCylinder(double r = 20, double h = 30, int nu = 48, int nv = 13)
     {
         var V = new List<Vec3>();

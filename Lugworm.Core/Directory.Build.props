@@ -1,6 +1,6 @@
 <Project>
   <!-- Turns on the .NET SDK's built-in code-quality analyzers for this project only
-       (third_party/Clipper2 and tests/FrameworkSmoke sit outside this folder and are
+       (third_party/Clipper2 and tests/FrameworkTests sit outside this folder and are
        unaffected - see docs/ARCHI.md section 6 "Analyzer policy"). Severities and the
        project's deliberate exceptions live in the root .editorconfig, not here. -->
   <PropertyGroup>

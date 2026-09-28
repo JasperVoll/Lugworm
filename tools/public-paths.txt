@@ -9,6 +9,12 @@
 # are owned by this tree and overwritten on every import; site/, .github/, and the
 # public .gitignore are owned by the public repository. Never list .gitignore (it
 # names internal folders) or docs/github (a separate repository).
+#
+# The public repository carries the code and the documentation site only. Nothing
+# under docs/ is exported (no architecture notes, references, user guide, changelog
+# or dev docs) and neither is UPGRADE.md: the site is the single source of truth for
+# users. README.md, CONTRIBUTING.md, INSTALL.md and THIRD-PARTY-NOTICES.md are the
+# maintainer's public text: keep them short and identical in both repositories.
 Lugworm.sln
 LICENSE
 THIRD-PARTY-NOTICES.md
@@ -18,23 +24,11 @@ CITATION.cff
 README.md
 CONTRIBUTING.md
 INSTALL.md
-UPGRADE.md
 Lugworm
 Lugworm.Core
 Lugworm.Core.Tests
 third_party
 tools
-tests/FrameworkSmoke
+tests/FrameworkTests
 tests/tooling
 tests/grasshopper
-docs/ARCHI.md
-docs/ARCHI-rules.md
-docs/reference
-docs/user-guide
-docs/2-changelog
-# the public README, INSTALL and ARCHI link these explicitly; the rest of docs/dev stays internal
-docs/dev/RUNNING_IN_VS.md
-docs/dev/TESTING.md
-docs/dev/RELEASING.md
-docs/dev/COMPONENT-TEST-SHEET.md
-docs/4-unit-tests/COVERAGE-DEBT.md

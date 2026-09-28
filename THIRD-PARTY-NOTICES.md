@@ -91,45 +91,8 @@ are redistributed in the plugin package, all under the MIT License:
   the WinForms views; used only by the optional OpenGL surface.
 - `OpenTK.GLControl` 3.1.0 — the Open Toolkit contributors. MIT.
 
-The version is pinned to exactly 2.88.6 on purpose. Rhino 8 ships no SkiaSharp,
-but other Grasshopper plugins do, and every 2.88.x build carries the same
-managed assembly identity (2.88.0.0) — so in Grasshopper's shared load context
-whichever plugin loads first wins for all of them. Matching the version already
-present in the ecosystem keeps that coexistence benign in either order.
-
-Only the Windows native is redistributed; this is a Windows-only product.
-
-## DuetWebControl — layout inspiration only
-
-The console's information architecture was informed by looking at
-[DuetWebControl](https://github.com/Duet3D/DuetWebControl) (GPL-3.0) as a user.
-**No DuetWebControl code was read into, copied into, or derived for this
-implementation** — the resemblance is limited to the obvious arrangement of a
-machine-status header, tabs and a jog pad, which is common to machine control
-UIs generally.
-
-## Own assets
-
-`Lugworm/Resources/Robot_Assembly.3dm` (SCARA arm meshes) is the
-authors' own model of the 3DPotter Potterbot Scara v4 — an approximate
-visualization model, not vendor CAD. All icons, calibration data, and
-`robot.xml` are the authors' own work.
-
-## Rhino / Grasshopper SDK
-
-Built against the proprietary Grasshopper / RhinoCommon SDK (NuGet package
-`Grasshopper`, build-time only, not redistributed) — Robert McNeel &
-Associates. Using the plugin requires a licensed Rhino 8 installation.
-
-## Algorithm references (no code redistributed)
-
-- Heat-method scalar field: K. Crane, C. Weischedel, M. Wardetzky,
-  "Geodesics in Heat: A New Approach to Computing Distance Based on Heat
-  Flow," ACM Transactions on Graphics 32(5), 2013 — independent
-  implementation.
-- Monotone cubic interpolation (Graph Mapper's Spline family): F. N. Fritsch,
-  R. E. Carlson, "Monotone Piecewise Cubic Interpolation," SIAM Journal on
-  Numerical Analysis 17(2), 1980 — independent implementation.
+The version is pinned to exactly 2.88.6 on purpose. 
+Only the Windows native is redistributed.
 
 ## BrickLayers — prior art, idea only (GPL-3.0, NOT vendored)
 
@@ -137,26 +100,13 @@ The interlocking-wall idea implemented in
 `Lugworm.Core/Slicing/Bricklayer.cs`, and the wave-modulated infill and
 per-loop wall wave in `Lugworm.Core/Slicing/NonPlanarInfill.cs`, were
 inspired by Roman Tenger's and GeekDetour's G-code post-processing scripts,
-including the `NonPlanarInterlockingWalls.py` behaviour:
+including the behaviour:
 
 - [Bricklayers](https://github.com/TengerTechnologies/Bricklayers) — Roman
   Tenger (GPL-3.0)
 - [BrickLayers](https://github.com/GeekDetour/BrickLayers) — GeekDetour
   (GPL-3.0)
 
-**Those projects are GPL-3.0 and this plugin is MIT. No code, comment, string
+**No code, comment, string
 or data file from either project has been copied, vendored, translated or
-ported line by line.** Their published behaviour — shift alternate perimeter
-loops by half a layer height so the layers interlock; modulate infill Z with a
-periodic function so successive layers mesh; phase adjacent wall loops so their
-waves interlock - was read as a specification from
-their READMEs and public descriptions, and reimplemented from scratch against
-this project's own geometry model.
-
-The implementations are not equivalents of those scripts. They are slicer
-passes, not G-code post-processors: they act on the wall and infill geometry
-this slicer built (so the Rhino preview, the print-time estimate and the robot
-reach checks all see the shifted paths), the adjacency test and its two gates
-are this project's own, and the extrusion consequences are handled by the
-G-code generator's existing variable-layer-height flow rather than by rewriting
-E values.
+ported line by line.** Reimplemented from scratch.

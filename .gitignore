@@ -14,13 +14,6 @@ __pycache__/
 *.pyc
 *.pyo
 
-# LaTeX build artifacts (docs/user-guide)
-docs/user-guide/*.aux
-docs/user-guide/*.log
-docs/user-guide/*.out
-docs/user-guide/*.toc
-docs/user-guide/*.synctex.gz
-
 # Documentation site (site/): Jekyll output, local Ruby runtime, working folders
 site/_site/
 site/.sass-cache/

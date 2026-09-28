@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lugworm.Core.Tests", "Lugwo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lugworm", "Lugworm\Lugworm.csproj", "{C3D4E5F6-A7B8-9012-CDEF-123456789012}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lugworm.FrameworkSmoke", "tests\FrameworkSmoke\Lugworm.FrameworkSmoke.csproj", "{E09E22C3-17D6-4A1D-A69A-39EBC1CF8458}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lugworm.FrameworkTests", "tests\FrameworkTests\Lugworm.FrameworkTests.csproj", "{E09E22C3-17D6-4A1D-A69A-39EBC1CF8458}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "third_party", "third_party", "{0DC175A4-010F-A5A8-72A9-B7A5E3C716E6}"
 EndProject

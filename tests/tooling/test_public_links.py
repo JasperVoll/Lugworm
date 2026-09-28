@@ -5,11 +5,8 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 LINK = re.compile(r"\]\(([^)#\s]+)(?:#[^)]*)?\)")
-PUBLIC_DOCS = ["README.md", "CONTRIBUTING.md", "INSTALL.md", "UPGRADE.md", "docs/ARCHI.md", "docs/dev/TESTING.md",
-               "docs/reference/doe-calibration.md", "docs/reference/duet-control.md",
-               "docs/user-guide/print-console.md",
-               "docs/user-guide/legend.md", "docs/user-guide/settings-files.md",
-               "docs/user-guide/interlayer-time.md"]
+# The public repository carries no docs/ tree; these root documents are all it ships.
+PUBLIC_DOCS = ["README.md", "CONTRIBUTING.md", "INSTALL.md", "THIRD-PARTY-NOTICES.md"]
 
 
 def public_paths():

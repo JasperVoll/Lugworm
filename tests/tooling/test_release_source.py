@@ -5,7 +5,7 @@ import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
 PRIVATE_ONLY = [".gitignore", "AGENTS.md", "CLAUDE.md", "docs/github", "docs/dev/FOOD4RHINO.md",
-                "docs/dev/analysis", "docs/4-unit-tests/TESTING.md", "tests/parity"]
+                "docs/dev/analysis", "docs/4-unit-tests/TESTING.md", "tests/parity", "UPGRADE.md"]
 
 
 def read_script(name):
@@ -51,6 +51,16 @@ class SourceExportTests(unittest.TestCase):
             self.assertFalse(any(private == p or private.startswith(p + "/") for p in paths),
                              "private path is exported: " + private)
         self.assertEqual(len(paths), len(set(paths)), "duplicate allowlist entries")
+
+    def test_public_repository_carries_code_not_docs(self):
+        # The site is the single source of truth for users: nothing under docs/ is exported.
+        exported_docs = [p for p in public_paths() if p == "docs" or p.startswith("docs/")]
+        self.assertEqual([], exported_docs, "docs/ stays private")
+
+    def test_send_zip_carries_install_only(self):
+        release = read_script("release.ps1")
+        self.assertIn("INSTALL.md", release)
+        self.assertNotIn("UPGRADE.md", release, "UPGRADE.md stays private and out of the send zip")
 
     def test_release_and_import_scripts_share_the_allowlist(self):
         for name in ("release.ps1", "publish-source.ps1"):

@@ -278,16 +278,14 @@ elseif ($Mode -eq 'Public') { Fail 'Yak.exe not found - install Rhino 8 on this 
 else { Write-Host 'warning: Yak.exe not found - the candidate zip ships WITHOUT the .yak (install Rhino 8 to build it)' -ForegroundColor Yellow }
 
 # ---- archives: the send zip = the .yak (what INSTALL.md installs) + the raw
-# multi-target payload for manual installs + the two install docs. The docs are
-# added to the zip, not to the stage, so they stay out of the .yak payload. ----
+# multi-target payload for manual installs + INSTALL.md. The doc is added to the
+# zip, not to the stage, so it stays out of the .yak payload. Updating an existing
+# installation is covered by the installation page of the site. ----
 $zip = Join-Path $root "dist\send-Lugworm-$version.zip"
 if (Test-Path $zip) { Remove-Item $zip -Force }
-$zipInputs = @((Join-Path $stage '*'))
-foreach ($doc in @('INSTALL.md', 'UPGRADE.md')) {
-    $docPath = Join-Path $root $doc
-    if (-not (Test-Path $docPath)) { Fail "the send zip needs $doc at the repository root" }
-    $zipInputs += $docPath
-}
+$installDoc = Join-Path $root 'INSTALL.md'
+if (-not (Test-Path $installDoc)) { Fail 'the send zip needs INSTALL.md at the repository root' }
+$zipInputs = @((Join-Path $stage '*'), $installDoc)
 if ($yakDist) { $zipInputs += $yakDist }
 Compress-Archive -Path $zipInputs -DestinationPath $zip
 # verify the FINISHED archive, not just the staging folder

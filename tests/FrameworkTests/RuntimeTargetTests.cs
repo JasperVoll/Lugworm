@@ -4,7 +4,7 @@ using System.Runtime.Versioning;
 using Lugworm.Core.Duet;
 using Xunit;
 
-namespace Lugworm.FrameworkSmoke;
+namespace Lugworm.FrameworkTests;
 
 public class RuntimeTargetTests
 {

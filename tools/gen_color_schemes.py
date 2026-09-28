@@ -287,18 +287,21 @@ def main(argv=None) -> int:
     args = ap.parse_args(argv)
 
     cs, md = build()
+    # docs/ stays in the private repository: the public copy carries the C# registry only.
+    outputs = [(CS_OUT, cs)] + ([(MD_OUT, md)] if MD_OUT.parent.is_dir() else [])
     if args.check:
-        stale = [p for p, text in ((CS_OUT, cs), (MD_OUT, md))
+        stale = [p for p, text in outputs
                  if (p.read_text(encoding="utf-8") if p.exists() else "").replace("\r\n", "\n") != text]
         if stale:
             for p in stale:
                 print(f"{p} is stale - run tools/gen_color_schemes.py", file=sys.stderr)
             return 1
-        print("ColorSchemeData.cs and legend-palette-table.md are up to date")
+        print(" and ".join(p.name for p, _ in outputs) + " up to date")
         return 0
-    CS_OUT.write_text(cs, encoding="utf-8", newline="\n")
-    MD_OUT.write_text(md, encoding="utf-8", newline="\n")
-    print(f"wrote {CS_OUT} ({cs.count('new ColorScheme(')} generated schemes) and {MD_OUT}")
+    for p, text in outputs:
+        p.write_text(text, encoding="utf-8", newline="\n")
+    print(f"wrote {CS_OUT} ({cs.count('new ColorScheme(')} generated schemes)"
+          + (f" and {MD_OUT}" if len(outputs) > 1 else ""))
     return 0
 
 

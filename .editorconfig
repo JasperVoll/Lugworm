@@ -95,7 +95,7 @@ dotnet_diagnostic.CA1068.severity = warning   # CancellationToken parameter shou
 # strings without an explicit StringComparison, which is normal for test
 # code, not a shipped-behavior bug) - fixing that is a separate, much larger
 # pass, not a mechanical H4 cleanup. Demoted to suggestion here so it stays
-# visible without failing the 0-warning gate. tests/FrameworkSmoke links
+# visible without failing the 0-warning gate. tests/FrameworkTests links
 # some of the same source files into its own compile and inherits the same
 # exemption for the same reason.
 [Lugworm.Core.Tests/**]
@@ -113,7 +113,7 @@ dotnet_diagnostic.CA3075.severity = suggestion
 dotnet_diagnostic.CA1036.severity = suggestion
 dotnet_diagnostic.CA1068.severity = suggestion
 
-[tests/FrameworkSmoke/**]
+[tests/FrameworkTests/**]
 dotnet_diagnostic.CA1305.severity = suggestion
 dotnet_diagnostic.CA1310.severity = suggestion
 dotnet_diagnostic.CA1309.severity = suggestion

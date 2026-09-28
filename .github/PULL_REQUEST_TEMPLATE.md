@@ -12,13 +12,13 @@ touches machine-control safety gates, component sockets or option codes, saved
 settings, G-code output, package contents or third-party material. Pull
 requests are reviewed and merged here; the maintainer then applies the merged
 change to the internal development repository, and the next release import
-carries it back unchanged (see CONTRIBUTING.md).
+carries it back unchanged.
 
 ## Checklist
 
-- [ ] The solution builds without warnings and the Core, framework-smoke and tooling tests pass (CI runs them)
+- [ ] The solution builds without warnings and the Core, framework and tooling tests pass (CI runs them)
 - [ ] A confirmed defect comes with a regression test that failed before the fix
-- [ ] No shipped socket was reordered, renamed or removed and no integer option code changed meaning (see docs/ARCHI.md)
+- [ ] No shipped socket was reordered, renamed or removed and no integer option code changed meaning
 - [ ] Machine-control changes fail closed and state which hardware validation was performed, if any
 - [ ] New or copied third-party code or data includes provenance and a compatible license notice
 - [ ] Documentation describes the plugin's actual behaviour; site pages under `site/` keep valid front matter and use `{{ '/docs/...' | relative_url }}` for internal links

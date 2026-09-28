@@ -6,6 +6,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 GENERATOR = ROOT / "tools" / "gen_doe_example.py"
+# The example files live under docs/reference/, which the public repository does not
+# carry (tools/public-paths.txt). AGENTS.md exists only in the private tree, where the
+# files are required and compared; the public copy checks the generator's data alone.
+PRIVATE_TREE = (ROOT / "AGENTS.md").exists()
 
 
 def _load():
@@ -61,6 +65,7 @@ class DoeExampleMeasurements(unittest.TestCase):
     def test_fit_stays_the_clean_reference(self):
         self.assertEqual([], self.gen.verify(self.diag))
 
+    @unittest.skipUnless(PRIVATE_TREE, "the example workbook stays in the private docs/")
     def test_shipped_workbook_matches_the_generator(self):
         self.assertTrue(self.gen.XLSX_OUT.exists(), f"{self.gen.XLSX_OUT} is missing")
         expected = self.gen.workbook_parts()
@@ -71,6 +76,7 @@ class DoeExampleMeasurements(unittest.TestCase):
                 self.assertEqual(content, current[name],
                                  "run tools/gen_doe_example.py")
 
+    @unittest.skipUnless(PRIVATE_TREE, "the augmented example stays in the private docs/")
     def test_augmented_fixture_matches_the_generator(self):
         self.assertTrue(self.gen.AUGMENTED_OUT.exists(), f"{self.gen.AUGMENTED_OUT} is missing")
         self.assertEqual(self.gen.augmented_csv(),
