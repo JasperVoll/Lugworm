@@ -17,7 +17,6 @@ not a Toggle, so that every click writes exactly one file.
 
 Panel: `3 G-code`. Nickname: `Save`. Compute button: no (runs on every change).
 
-{% include figure.html src="components/iamlab-save-g-code" %}
 
 ## Inputs
 

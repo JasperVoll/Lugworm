@@ -26,7 +26,6 @@ Lugworm requires **Rhino 8 on Windows**. The packaged `.yak` file includes the p
 3. Restart Rhino 8, run `Grasshopper`, and look for the **Lugworm** ribbon tab:
    `1 Slice`, `2 Place`, `3 G-code`, `4 Robot`, `5 Analyze`, `6 Calibrate`, `7 Print`.
 
-{% include figure.html src="getting-started/iamlab-tab" %}
 
 ## Manual installation
 
