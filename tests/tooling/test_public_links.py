@@ -9,18 +9,23 @@ LINK = re.compile(r"\]\(([^)#\s]+)(?:#[^)]*)?\)")
 PUBLIC_DOCS = ["README.md", "CONTRIBUTING.md", "INSTALL.md", "THIRD-PARTY-NOTICES.md"]
 
 
-def public_paths():
+def allowlist_entries():
     lines = (ROOT / "tools" / "public-paths.txt").read_text(encoding="utf-8-sig").splitlines()
     return [line.strip() for line in lines if line.strip() and not line.strip().startswith("#")]
 
 
+def public_paths():
+    return [e for e in allowlist_entries() if not e.startswith("!")]
+
+
+def under(rel, entries):
+    return any(rel == e.rstrip("/") or rel.startswith(e.rstrip("/") + "/") for e in entries)
+
+
 def is_public(rel, allow):
     rel = rel.replace("\\", "/")
-    for entry in allow:
-        entry = entry.rstrip("/")
-        if rel == entry or rel.startswith(entry + "/"):
-            return True
-    return False
+    private = [e[1:] for e in allowlist_entries() if e.startswith("!")]
+    return under(rel, allow) and not under(rel, private)
 
 
 class PublicLinkTests(unittest.TestCase):

@@ -309,7 +309,10 @@ if (Test-Path $srcZip) { Remove-Item $srcZip -Force }
 # replaces exactly these paths in the public checkout) and the tooling tests share it.
 $allowlistFile = Join-Path $root 'tools\public-paths.txt'
 if (-not (Test-Path $allowlistFile)) { Fail "public source allowlist is missing: $allowlistFile" }
-$publicPaths = @(Get-Content $allowlistFile | ForEach-Object { $_.Trim() } | Where-Object { $_ -and -not $_.StartsWith('#') })
+$allowEntries = @(Get-Content $allowlistFile | ForEach-Object { $_.Trim() } | Where-Object { $_ -and -not $_.StartsWith('#') })
+# "!path" keeps a path below an exported directory private.
+$publicPaths = @($allowEntries | Where-Object { -not $_.StartsWith('!') })
+$privatePaths = @($allowEntries | Where-Object { $_.StartsWith('!') } | ForEach-Object { $_.Substring(1) })
 if (-not $publicPaths) { Fail 'public source allowlist is empty' }
 if ($publicPaths -contains '.gitignore') { Fail 'the private .gitignore must not be exported (it names internal folders)' }
 foreach ($publicPath in $publicPaths) {
@@ -318,7 +321,13 @@ foreach ($publicPath in $publicPaths) {
         Fail "public source path is not committed: $publicPath"
     }
 }
-git archive --format=zip -o $srcZip HEAD -- @publicPaths
+foreach ($privatePath in $privatePaths) {
+    if (-not @($publicPaths | Where-Object { $privatePath.StartsWith($_ + '/') })) {
+        Fail "private path '!$privatePath' is not below an exported directory"
+    }
+}
+$archiveSpecs = @($publicPaths) + @($privatePaths | ForEach-Object { ":(exclude)$_" })
+git archive --format=zip -o $srcZip HEAD -- @archiveSpecs
 if ($LASTEXITCODE -ne 0) { Fail 'git archive failed' }
 # The source export is an artifact too. Scan the finished ZIP entry-by-entry so
 # UTF-16 paths/usernames hidden in binary resources cannot bypass the source gate.
@@ -330,6 +339,11 @@ try {
         Test-Bytes $ms.ToArray() "source-zip:$($entry.FullName)" -TextDoc:($entry.FullName -match '\.md$')
         if ($entry.FullName -match '(^|/)(bin|obj|dist)/|\.patched$|\.pdb$|\.user$|\.suo$') {
             Fail "forbidden file in source archive: $($entry.FullName)"
+        }
+        foreach ($privatePath in $privatePaths) {
+            if ($entry.FullName -eq $privatePath -or $entry.FullName.StartsWith($privatePath + '/')) {
+                Fail "private path in source archive: $($entry.FullName)"
+            }
         }
     }
 }

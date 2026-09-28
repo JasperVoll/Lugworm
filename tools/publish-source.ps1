@@ -5,7 +5,8 @@
 # there as one import commit. This private repository stays the development
 # authority and its history never leaves. The paths listed in tools/public-paths.txt
 # are owned by this tree and replaced on every import; everything else in the public
-# checkout (site/, .github/, the public .gitignore) is left untouched.
+# checkout (site/, .github/, the public .gitignore) is left untouched. A "!path" line
+# keeps a path below an exported directory private, so the import removes it there.
 #
 # The export is trusted only when dist/SOURCE-EXPORT-<version>.txt says it was built
 # from the current HEAD and its SHA-256 still matches, so the public commit always
@@ -36,12 +37,21 @@ function Invoke-Git([string]$dir, [string[]]$gitArgs) {
     if ($LASTEXITCODE -ne 0) { Fail "git $($gitArgs -join ' ') failed in $dir" }
 }
 
-function Read-Allowlist([string]$file) {
+function Read-AllowlistEntries([string]$file) {
     if (-not (Test-Path $file)) { Fail "public source allowlist is missing: $file" }
-    $paths = @(Get-Content $file | ForEach-Object { $_.Trim() } | Where-Object { $_ -and -not $_.StartsWith('#') })
+    return @(Get-Content $file | ForEach-Object { $_.Trim() } | Where-Object { $_ -and -not $_.StartsWith('#') })
+}
+
+function Read-Allowlist([string[]]$entries) {
+    $paths = @($entries | Where-Object { -not $_.StartsWith('!') })
     if (-not $paths) { Fail 'public source allowlist is empty' }
     if ($paths -contains '.gitignore') { Fail 'the private .gitignore must not be exported (it names internal folders)' }
     return $paths
+}
+
+# "!path" lines: paths below an exported directory that stay private.
+function Read-PrivateList([string[]]$entries) {
+    return @($entries | Where-Object { $_.StartsWith('!') } | ForEach-Object { $_.Substring(1) })
 }
 
 function Test-ManagedPath([string]$rel, [string[]]$paths) {
@@ -75,7 +85,9 @@ if ($srcHash -ne $record['sha256']) {
     Fail "the export ZIP does not match its record ($srcHash vs $($record['sha256'])) - rerun tools/release.ps1"
 }
 
-$publicPaths = Read-Allowlist (Join-Path $root 'tools\public-paths.txt')
+$allowEntries = Read-AllowlistEntries (Join-Path $root 'tools\public-paths.txt')
+$publicPaths = Read-Allowlist $allowEntries
+$privatePaths = Read-PrivateList $allowEntries
 
 # ---- public checkout ----
 if (-not $PublicCheckout) { $PublicCheckout = Join-Path $root 'docs\github' }
@@ -116,6 +128,7 @@ try {
         if ($name.EndsWith('/')) { continue }
         if ($name.StartsWith('/') -or $name -match '^[A-Za-z]:' -or $name -match '(^|/)\.\.(/|$)') { Fail "unsafe path in export: $name" }
         if (-not (Test-ManagedPath $name $publicPaths)) { Fail "export entry outside the allowlist: $name" }
+        if ($privatePaths -and (Test-ManagedPath $name $privatePaths)) { Fail "export entry on the private list: $name - rerun tools/release.ps1" }
         $dest = Join-Path $pub ($name -replace '/', '\')
         $dir = Split-Path $dest -Parent
         if (-not (Test-Path -LiteralPath $dir)) { New-Item -ItemType Directory -Path $dir | Out-Null }

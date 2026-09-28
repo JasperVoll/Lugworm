@@ -15,6 +15,12 @@
 # or dev docs) and neither is UPGRADE.md: the site is the single source of truth for
 # users. README.md, CONTRIBUTING.md, INSTALL.md and THIRD-PARTY-NOTICES.md are the
 # maintainer's public text: keep them short and identical in both repositories.
+#
+# A line starting with "!" keeps a path below an exported directory private: it is
+# left out of the export, and because the import replaces the whole directory, it is
+# removed from the public checkout on the next import. It may name a path that is not
+# committed (yet). Icon and logo sources and the scripts that draw them stay private:
+# the release carries only the rendered icons the build embeds and package-icon.png.
 Lugworm.sln
 LICENSE
 THIRD-PARTY-NOTICES.md
@@ -32,3 +38,8 @@ tools
 tests/FrameworkTests
 tests/tooling
 tests/grasshopper
+!Lugworm/Resources/icons-src
+!tools/gen_food4rhino_logo.py
+!tools/gen_lugworm_logo.py
+!tools/make_food4rhino_logo.ps1
+!tools/make_package_icon.ps1

@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="1.0909 1.0909 21.8182 21.8182"><defs>
-    <linearGradient id="am4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffd0e3"/><stop offset=".48" stop-color="#de6a9d"/><stop offset="1" stop-color="#a92764"/></linearGradient>
-    <linearGradient id="hot4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#de6a9d"/><stop offset="1" stop-color="#a92764"/></linearGradient>
-    <linearGradient id="gr4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#de6a9d"/><stop offset="1" stop-color="#a92764"/></linearGradient>
-    <linearGradient id="gy4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fafafa"/><stop offset="1" stop-color="#8c8c8c"/></linearGradient>
-    <radialGradient id="dk4" cx="28%" cy="22%" r="90%"><stop offset="0" stop-color="#565656"/><stop offset="1" stop-color="#050505"/></radialGradient>
-  </defs><g stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="12" rx="9" ry="7.5" fill="url(#am4)" stroke="#55102f" stroke-width="1.1"/><ellipse cx="12" cy="12" rx="5.3" ry="4.2" fill="none" stroke="#e84c8d" stroke-width="1.7"/><ellipse cx="12" cy="12" rx="2.2" ry="1.6" fill="#de6a9d" stroke="#55102f" stroke-width=".8"/><circle cx="12" cy="12" r="1.15" fill="#000"/><rect x="11.517" y="11.517" width="0.9659999999999999" height="0.9659999999999999" fill="#fff"/></g></svg>
