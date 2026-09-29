@@ -10,8 +10,7 @@ permalink: /docs/getting-started/installation/
 
 Lugworm requires **Rhino 8 on Windows**. The packaged `.yak` file includes the plugin and its dependencies.
 
-{: .warning }
-> **The public package is being prepared.** For early access, contact [jasper.vollmert@tuhh.de](mailto:jasper.vollmert@tuhh.de). Once published, the package will be available from [Releases](https://github.com/JasperVoll/Lugworm/releases). Use the instructions below when you have the package.
+You can download the package on food4rhino: https://www.food4rhino.com/en/app/lugworm
 
 ## Install with Yak (recommended)
 

@@ -5,32 +5,9 @@ description: "The MIT License for Lugworm, and the third-party components it dep
 permalink: /docs/license/
 ---
 
-# License
-
-Lugworm source code and documentation are released under the MIT License.
-Jasper Vollmert is the software's author and developer. The software was
-created in the course of his work at the Institute of Digital and Autonomous
-Construction (IDAC), Hamburg University of Technology (TUHH), using university
-resources. The supervising professor explicitly approved its release under MIT.
-
-TUHH holds the economic rights in the employee-created software under
-[Section 69b of the German Copyright Act (UrhG)](https://www.gesetze-im-internet.de/urhg/__69b.html).
-Jasper Vollmert retains his authorship. This distinction also follows
-[TUHH's IP policy, Part II, Section 1](https://www.tuhh.de/t3resources/tuhh/download/universitaet/verwaltung/ra/Ordnungen_und_Richtlinien/IP_Richtlinie_der_TUHH__rein_nach_AS_Sept2023.pdf).
-The documentation retains its existing Jasper Vollmert copyright notice;
-the software-specific rule in Section 69b is not applied to it.
-Student assistants supported testing, not software authorship. See the
-[team credits]({{ '/docs/about/' | relative_url }}).
-
-The copyright and permission notices below must accompany copies or substantial
-portions of the work. The same license appears in the repository's
-[LICENSE](https://github.com/JasperVoll/Lugworm/blob/main/LICENSE).
-Files carrying their own license notices remain under those terms.
-
 ## MIT License
 
-Copyright (c) 2026 Hamburg University of Technology (TUHH), software
-Copyright (c) 2026 Jasper Vollmert, documentation
+Copyright (c) 2026 Jasper Vollmert
 
 Software author: Jasper Vollmert
 Institute of Digital and Autonomous Construction (IDAC), TUHH
