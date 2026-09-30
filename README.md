@@ -47,8 +47,7 @@ mechanism.
 
 ## License
 
-[MIT](LICENSE), © 2026 Hamburg University of Technology (software) and Jasper
-Vollmert (documentation). Bundled third-party components are
+[MIT](LICENSE), © 2026 Jasper Vollmert . Bundled third-party components are
 listed in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md) (Clipper2, Boost
 1.0; Math.NET Numerics, MIT).
 [license page](https://jaspervoll.github.io/Lugworm/docs/license/).

@@ -15,7 +15,7 @@ Lugworm is a Rhino 8 plugin for clay and cementitious-material 3D printing. It w
 developed at the Institute of Digital and Autonomous Construction (IDAC), Hamburg University
 of Technology, for liquid deposition modelling (LDM) in a laboratory setting.
 
-You can find the food4rhino instance here: https://www.food4rhino.com/en/app/lugworm
+You can find the food4rhino instance here: [food4rhino](https://www.food4rhino.com/en/app/lugworm).
 The open source code will be published after additional testing.
 
 <div class="iamlab-actions">
