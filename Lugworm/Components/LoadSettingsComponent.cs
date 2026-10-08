@@ -72,6 +72,9 @@ namespace Lugworm.Components
         string _scannedFolder = "";
         string _fingerprint = "";
         bool _registered;
+        bool _watch = true;
+        string _folder = "";
+        string _lastApplyReport = "";
 
         sealed class Result
         {
@@ -85,6 +88,8 @@ namespace Lugworm.Components
             var res = new Result();
             string folder = GetString(DA, "folder", "").Trim();
             bool watch = GetBool(DA, "watch", true);
+            _folder = folder;
+            _watch = watch;
             var doc = OnPingDocument();
             Guid documentId = doc?.DocumentID ?? Guid.Empty;
 
@@ -116,18 +121,7 @@ namespace Lugworm.Components
             string? readError = null;
             try
             {
-                if (!Directory.Exists(folder)) throw new DirectoryNotFoundException("folder not found: " + folder);
-                string fingerprint = Fingerprint(folder);
-                bool reuse = _index != null
-                             && string.Equals(_scannedFolder, folder, StringComparison.OrdinalIgnoreCase)
-                             && (!watch || string.Equals(_fingerprint, fingerprint, StringComparison.Ordinal));
-                if (!reuse)
-                {
-                    var texts = Read(folder, out var unreadableFiles);
-                    _index = Merge(SettingsFolder.Scan(texts), unreadableFiles);
-                    _scannedFolder = folder;
-                    _fingerprint = fingerprint;
-                }
+                RefreshIndex(folder, watch);
             }
             catch (Exception ex)
             {
@@ -184,6 +178,7 @@ namespace Lugworm.Components
                 watch ? "watching" : "scanned once",
                 folder,
             });
+            if (_lastApplyReport.Length > 0) res.Info += "\nLast apply: " + _lastApplyReport;
             Message = res.Files.Count.ToString(CultureInfo.InvariantCulture) + " files";
             return res;
         }
@@ -201,37 +196,72 @@ namespace Lugworm.Components
         void ApplyToCanvas()
         {
             var doc = OnPingDocument();
+            if (doc == null || !RefreshForApply() || _index == null) return;
             var index = _index;
-            if (doc == null || index == null || index.ByComponent.Count == 0) return;
-
-            RecordUndoEvent("Lugworm: apply settings to canvas");
-            int components = 0, created = 0, updated = 0, skipped = 0;
-            var unknownGroups = new List<string>();
-
-            foreach (var target in doc.Objects.OfType<IamComponentBase>())
+            // Snapshot before the first source object is added to the document.
+            var targets = doc.Objects.OfType<IamComponentBase>()
+                .Where(c => !ReferenceEquals(c, this) && index.For(c.SettingsKey) != null)
+                .Select(c => (c, index.For(c.SettingsKey)!)).ToArray();
+            var applied = SettingsIo.ApplyBatch(doc, targets, "Lugworm: apply settings to canvas");
+            int created = applied.Sum(a => a.result.Created.Count);
+            int updated = applied.Sum(a => a.result.Updated.Count);
+            int skipped = applied.Sum(a => a.result.Skipped.Count);
+            var details = new List<string>();
+            foreach (var (component, result, unknown) in applied)
             {
-                if (ReferenceEquals(target, this)) continue;
-                var settings = index.For(target.SettingsKey);
-                if (settings == null) continue;
-                var wired = SettingsIo.ApplyCore(target, settings, out var unknown);
-                components++;
-                created += wired.Created.Count;
-                updated += wired.Updated.Count;
-                skipped += wired.Skipped.Count;
-                foreach (string g in unknown) unknownGroups.Add(target.SettingsKey + "/" + g);
-                target.ExpireSolution(false);
+                string label = component.Name + " [" + component.InstanceGuid.ToString("N").Substring(0, 8) + "]";
+                details.AddRange(result.Created.Select(n => label + "/" + n + ": created"));
+                details.AddRange(result.Updated.Select(n => label + "/" + n + ": updated"));
+                details.AddRange(result.Skipped.Select(n => label + "/" + n + ": skipped"));
+                details.AddRange(result.Notes.Select(n => label + "/" + n));
+                details.AddRange(unknown.Select(g => label + ": unknown group " + g));
+                var settings = index.For(component.SettingsKey)!;
+                details.AddRange(settings.Inputs.Keys.Where(k => component.Params.IndexOfInputParam(k) < 0)
+                    .Select(k => label + "/" + k + ": no matching input"));
             }
-
-            if (unknownGroups.Count > 0)
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
-                    "Unknown feature group(s): " + string.Join(", ", unknownGroups));
-            AddRuntimeMessage(GH_RuntimeMessageLevel.Remark,
-                "Applied to " + SettingsIo.Count(components, "component") + ": "
+            _lastApplyReport = "Applied to " + SettingsIo.Count(applied.Count, "component") + ": "
                 + created.ToString(CultureInfo.InvariantCulture) + " created, "
                 + updated.ToString(CultureInfo.InvariantCulture) + " updated, "
-                + skipped.ToString(CultureInfo.InvariantCulture) + " skipped");
+                + skipped.ToString(CultureInfo.InvariantCulture) + " skipped";
+            if (details.Count > 0) _lastApplyReport += "\n" + string.Join("\n", details);
+            SetSettingsReport(new[] { (GH_RuntimeMessageLevel.Remark, _lastApplyReport) });
             ExpireSolution(true);
             Grasshopper.Instances.RedrawCanvas();
+        }
+
+        /// <summary>Button actions refresh the owning scan before using its values,
+        /// even when Grasshopper considers this component's previous solve current.</summary>
+        internal bool RefreshForApply()
+        {
+            var doc = OnPingDocument();
+            if (doc == null || !_registered || SettingsRegistry.OwnerFor(doc.DocumentID) != InstanceGuid) return false;
+            try
+            {
+                RefreshIndex(_folder, _watch);
+                SettingsRegistry.Register(doc.DocumentID, InstanceGuid, _folder, _index!);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Release(doc.DocumentID);
+                SetSettingsReport(new[] { (GH_RuntimeMessageLevel.Warning, "Settings folder unusable: " + ex.Message) });
+                ExpireSolution(true);
+                return false;
+            }
+        }
+
+        void RefreshIndex(string folder, bool watch)
+        {
+            bool sameFolder = _index != null && string.Equals(_scannedFolder, folder, StringComparison.OrdinalIgnoreCase);
+            if (sameFolder && !watch) return;
+            if (!Directory.Exists(folder)) throw new DirectoryNotFoundException("folder not found: " + folder);
+            string fingerprint = Fingerprint(folder);
+            if (sameFolder && string.Equals(_fingerprint, fingerprint, StringComparison.Ordinal)) return;
+            var texts = Read(folder, out var unreadableFiles);
+            var scanned = Merge(SettingsFolder.Scan(texts), unreadableFiles);
+            _index = scanned;
+            _scannedFolder = folder;
+            _fingerprint = fingerprint;
         }
 
         // ---- folder reading ----

@@ -86,6 +86,9 @@ namespace Lugworm.Core.Settings
 
         /// <summary>The wired slider's current decimal places.</summary>
         public int SourceSliderDecimals;
+
+        /// <summary>The apparent settings object is itself fed by upstream data.</summary>
+        public bool SourceHasInputs;
     }
 
     /// <summary>What the plan decided for one input, and why.</summary>
@@ -172,6 +175,15 @@ namespace Lugworm.Core.Settings
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
 
+            if (value != null && input.SourceCount <= 1 && !input.SourceHasInputs &&
+                (input.SourceCount == 0 || IsSettingsSource(input.Kind)))
+            {
+                string? invalid = ValidateValue(input, value);
+                if (invalid != null)
+                    return Decision(input, SettingsPlanAction.Skip, SettingsObjectKind.None, reason: invalid,
+                                    note: input.Name + ": " + invalid + " - left alone");
+            }
+
             if (input.SourceCount > 0) return DecideWired(input, value);
             return DecideUnwired(input, value);
         }
@@ -194,6 +206,10 @@ namespace Lugworm.Core.Settings
                                 reason: "fed by " + input.SourceCount.ToString(CultureInfo.InvariantCulture)
                                         + " sources - applying the file would overwrite them");
 
+            if (input.SourceHasInputs)
+                return Decision(input, SettingsPlanAction.Skip, SettingsObjectKind.None,
+                                reason: "source carries upstream data, not an editable setting");
+
             switch (input.Kind)
             {
                 case SettingsSourceKind.Slider:
@@ -210,6 +226,11 @@ namespace Lugworm.Core.Settings
                         if (!input.SourceSliderIsInteger && input.Type != SettingsInputType.Integer)
                             decimals = Math.Max(input.SourceSliderDecimals,
                                                 Math.Min(MaxSliderDecimals, DecimalsOf(value.AsText())));
+                        int effectiveDecimals = input.SourceSliderIsInteger || input.Type == SettingsInputType.Integer
+                            ? 0 : decimals;
+                        if (!FitsPrecision(v, effectiveDecimals))
+                            return Decision(input, SettingsPlanAction.Skip, SettingsObjectKind.Slider,
+                                            reason: "value would be rounded by the slider");
                         return Decision(input, SettingsPlanAction.Update, SettingsObjectKind.Slider,
                                         sliderDecimals: decimals);
                     }
@@ -247,6 +268,9 @@ namespace Lugworm.Core.Settings
                 return Decision(input, SettingsPlanAction.None, SettingsObjectKind.None,
                                 reason: "this build does not declare the input");
 
+            if (input.IsList && input.Type != SettingsInputType.Other)
+                return Decision(input, SettingsPlanAction.Create, SettingsObjectKind.Panel);
+
             if (input.SpecItems != null && input.SpecItems.Count > 0)
             {
                 if (value == null)
@@ -270,10 +294,14 @@ namespace Lugworm.Core.Settings
                         return Decision(input, SettingsPlanAction.Create, SettingsObjectKind.Panel,
                                         note: input.Name + ": " + value.AsText()
                                               + " is outside a slider's range - a panel carries it instead");
+                    if (value != null && !FitsPrecision(value.AsNumber(), MaxSliderDecimals))
+                        return Decision(input, SettingsPlanAction.Create, SettingsObjectKind.Panel,
+                                        note: input.Name + ": value needs more slider precision - a panel carries it instead");
                     return Decision(input, SettingsPlanAction.Create, SettingsObjectKind.Slider);
 
                 case SettingsInputType.Boolean:
-                    return Decision(input, SettingsPlanAction.Create, SettingsObjectKind.Toggle);
+                    return Decision(input, SettingsPlanAction.Create,
+                                    input.IsList ? SettingsObjectKind.Panel : SettingsObjectKind.Toggle);
 
                 case SettingsInputType.Text:
                     return Decision(input, SettingsPlanAction.Create, SettingsObjectKind.Panel);
@@ -296,6 +324,7 @@ namespace Lugworm.Core.Settings
         public static string? CaptureRefusal(SettingsInputSource input)
         {
             if (input == null) throw new ArgumentNullException(nameof(input));
+            if (input.SourceHasInputs) return "source carries upstream data, not a setting";
             if (input.SourceCount > 1) return "several sources";
             if (input.SourceCount == 1 && !IsSettingsSource(input.Kind))
                 return "wired from " + SourceWord(input) + " - data, not a setting";
@@ -309,6 +338,50 @@ namespace Lugworm.Core.Settings
                || kind == SettingsSourceKind.Panel || kind == SettingsSourceKind.ValueList;
 
         // ---- value feasibility and matching ----
+
+        /// <summary>Every recipient must participate in this apply and request the
+        /// same value. A null request represents a recipient that is left alone.</summary>
+        public static bool SharedSourceAgrees(SettingsValue value, IEnumerable<SettingsValue?> recipientValues)
+        {
+            foreach (var requested in recipientValues)
+                if (requested == null || !value.Equals(requested)) return false;
+            return true;
+        }
+
+        static string? ValidateValue(SettingsInputSource input, SettingsValue value)
+        {
+            if (value.IsList && !input.IsList) return "a list cannot replace a scalar setting";
+            if (value.IsList && input.SourceCount == 1 &&
+                (input.Kind == SettingsSourceKind.Slider || input.Kind == SettingsSourceKind.Toggle ||
+                 input.Kind == SettingsSourceKind.ValueList))
+                return "this source cannot carry a list";
+
+            for (int i = 0; i < value.Count; i++)
+            {
+                if (value.IsList && value.Kind == SettingsKind.Text &&
+                    value.TextAt(i).IndexOfAny(new[] { '\r', '\n' }) >= 0)
+                    return "a panel cannot preserve newlines inside individual list items";
+                if (input.Type == SettingsInputType.Number || input.Type == SettingsInputType.Integer ||
+                    input.Kind == SettingsSourceKind.Slider)
+                {
+                    double number;
+                    if (value.Kind == SettingsKind.Bool) number = value.BoolValues[i] ? 1 : 0;
+                    else if (!double.TryParse(value.TextAt(i), NumberStyles.Float, CultureInfo.InvariantCulture, out number))
+                        return "value is not a number";
+                    if (double.IsNaN(number) || double.IsInfinity(number)) return "value must be finite";
+                    if (input.Type == SettingsInputType.Integer &&
+                        (number != Math.Truncate(number) || number < int.MinValue || number > int.MaxValue))
+                        return "value is not a supported integer";
+                }
+                if ((input.Type == SettingsInputType.Boolean || input.Kind == SettingsSourceKind.Toggle) &&
+                    value.Kind == SettingsKind.Text && !bool.TryParse(value.TextAt(i), out _))
+                    return "value is not a boolean";
+            }
+            return null;
+        }
+
+        static bool FitsPrecision(double value, int decimals)
+            => Math.Round(value, Math.Max(0, Math.Min(15, decimals))).Equals(value);
 
         /// <summary>Whether a slider can hold this number at all.</summary>
         public static bool SliderCanCarry(double v)
@@ -337,13 +410,16 @@ namespace Lugworm.Core.Settings
         public static int DecimalsOf(string? invariantText)
         {
             string text = invariantText ?? "";
+            int e = text.IndexOfAny(new[] { 'E', 'e' });
+            int exponent = 0;
+            if (e >= 0)
+            {
+                int.TryParse(text.Substring(e + 1), NumberStyles.Integer, CultureInfo.InvariantCulture, out exponent);
+                text = text.Substring(0, e);
+            }
             int dot = text.IndexOf('.');
-#if NETFRAMEWORK
-            if (dot < 0 || text.IndexOf('E') >= 0 || text.IndexOf('e') >= 0) return 0;
-#else
-            if (dot < 0 || text.Contains('E') || text.Contains('e')) return 0;
-#endif
-            return text.Length - dot - 1;
+            int fraction = dot < 0 ? 0 : text.Length - dot - 1;
+            return (int)Math.Max(0L, Math.Min(100L, (long)fraction - exponent));
         }
 
         static string Unquote(string s)

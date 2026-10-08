@@ -4,7 +4,7 @@ param(
     [string]$Baseline = '',
     [switch]$Capture,
     [switch]$InjectFailure,
-    [ValidateSet('contracts', 'pareto-selection', 'interlayer-time')][string]$Probe = 'contracts',
+    [ValidateSet('contracts', 'pareto-selection', 'interlayer-time', 'settings')][string]$Probe = 'contracts',
     [string[]]$AllowedAdditions = @(),
     [string[]]$AllowedRemovals = @(),
     [string[]]$AllowedChanges = @(),

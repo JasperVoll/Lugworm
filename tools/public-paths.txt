@@ -34,6 +34,7 @@ Lugworm
 Lugworm.Core
 Lugworm.Core.Tests
 third_party
+samples
 tools
 tests/FrameworkTests
 tests/tooling

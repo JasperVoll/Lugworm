@@ -223,7 +223,7 @@ def run_host(report):
     # startup or an old result file as a pass. Does not touch machine state.
     assert os.environ.get("IAM_CONTRACT_INJECT_FAILURE") != "1", "Injected host assertion failure"
     probe_name = os.environ.get("IAM_CONTRACT_PROBE", "contracts")
-    if probe_name in ("pareto-selection", "interlayer-time"):
+    if probe_name in ("pareto-selection", "interlayer-time", "settings"):
         import imp
         root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         module_name = "iam_" + probe_name.replace("-", "_")

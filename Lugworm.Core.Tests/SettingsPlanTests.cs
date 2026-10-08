@@ -130,8 +130,10 @@ public class SettingsPlanTests
     {
         Assert.Equal(SettingsPlanAction.Update,
             SettingsPlan.Decide(FedBy("spiral", SettingsSourceKind.Toggle), SettingsValue.Bool(true)).Action);
+        var header = FedBy("header", SettingsSourceKind.Panel);
+        header.Type = SettingsInputType.Text;
         Assert.Equal(SettingsPlanAction.Update,
-            SettingsPlan.Decide(FedBy("header", SettingsSourceKind.Panel), SettingsValue.Text("G28")).Action);
+            SettingsPlan.Decide(header, SettingsValue.Text("G28")).Action);
 
         var list = FedBy("seam", SettingsSourceKind.ValueList);
         list.SourceItems = Items(("Nearest", "0"), ("Aligned", "1"));

@@ -18,11 +18,11 @@
   
   <PropertyGroup>
     <!-- Specifies information for Assembly and Yak -->
-    <Version>0.1.0-beta</Version>
+    <Version>0.1.1-beta</Version>
     <Title>Lugworm</Title>
     <Company>Institute of Digital and Autonomous Construction (IDAC), Hamburg University of Technology</Company>
     <Authors>Jasper Vollmert</Authors>
-    <Copyright>Copyright (c) 2026 Hamburg University of Technology (TUHH)</Copyright>
+    <Copyright>Copyright (c) 2026 Jasper Vollmert</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Slicer, G-code generator (Marlin / Duet RRF / Klipper), Duet console and robot simulator for paste extrusion in Rhino 8 Grasshopper.</Description>
     <!-- Dev build output (avoid Program Files admin lock). Add this folder to

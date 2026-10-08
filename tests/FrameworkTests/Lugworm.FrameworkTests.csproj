@@ -37,5 +37,7 @@
     <Compile Include="..\..\Lugworm.Core.Tests\GcodeBuilderTests.cs" Link="GcodeBuilderTests.cs" />
     <Compile Include="..\..\Lugworm.Core.Tests\KlipperCommandsTests.cs" Link="KlipperCommandsTests.cs" />
     <Compile Include="..\..\Lugworm.Core.Tests\ComponentSettingsTests.cs" Link="ComponentSettingsTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\SettingsPlanTests.cs" Link="SettingsPlanTests.cs" />
+    <Compile Include="..\..\Lugworm.Core.Tests\SettingsApplyRegressionTests.cs" Link="SettingsApplyRegressionTests.cs" />
   </ItemGroup>
 </Project>

@@ -152,6 +152,36 @@ namespace Lugworm.Ui
         protected internal virtual bool AutoWires(string inputName) => true;
         internal IReadOnlyCollection<string> ActiveGroupsForUi => Active;
 
+        // Include dormant inputs without activating groups while the apply is planned.
+        internal IEnumerable<(ParamSpec spec, IGH_Param? parameter)> SettingsInputsForUi(IEnumerable<string>? groups)
+        {
+            var enabled = new HashSet<string>(Active, StringComparer.Ordinal);
+            if (groups != null)
+                foreach (string group in groups)
+                    if (ToggleGroups.Any(g => g.group == group)) enabled.Add(group);
+            foreach (var spec in InputSpecs)
+            {
+                if (spec.Group != "core" && !enabled.Contains(spec.Group)) continue;
+                var parameter = Params.Input.FirstOrDefault(p => p.Name == spec.Name);
+                if (parameter == null) _dormantParams.TryGetValue(spec.Name, out parameter);
+                yield return (spec, parameter);
+            }
+        }
+
+        IReadOnlyList<(GH_RuntimeMessageLevel level, string text)> _settingsReport
+            = Array.Empty<(GH_RuntimeMessageLevel, string)>();
+
+        internal void SetSettingsReport(IReadOnlyList<(GH_RuntimeMessageLevel level, string text)> report)
+        {
+            _settingsReport = report;
+            EmitSettingsReport();
+        }
+
+        void EmitSettingsReport()
+        {
+            foreach (var (level, text) in _settingsReport) AddRuntimeMessage(level, text);
+        }
+
         /// <summary>Stable identity of this component CLASS in a settings file: the type
         /// name without a trailing "Component", lower-cased (SlicerComponent -> "slicer",
         /// DuetPrintConsoleComponent -> "duetprintconsole"). It is the key a settings
@@ -500,6 +530,7 @@ namespace Lugworm.Ui
                     AddRuntimeMessage(GH_RuntimeMessageLevel.Remark,
                         "No cached result. Press Compute");
                 }
+                EmitSettingsReport();
                 return;
             }
 
@@ -520,6 +551,7 @@ namespace Lugworm.Ui
                 Emit(DA, result);
                 RequestRedraw();
             }
+            EmitSettingsReport();
         }
 
         static void RequestRedraw()

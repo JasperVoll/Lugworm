@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net7.0-windows;net7.0;net48</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <EnableDynamicLoading>true</EnableDynamicLoading>
+    <TargetExt>.gha</TargetExt>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <NoWarn>NU1701;NETSDK1086;CA1416</NoWarn>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grasshopper" Version="8.0.23304.9001" ExcludeAssets="runtime" />
+    <ProjectReference Include="../../Lugworm/Lugworm.csproj" Private="false" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="$(TargetFramework.Contains('-windows')) or $(TargetFramework.StartsWith('net4'))">
+    <UseWindowsForms>true</UseWindowsForms>
+  </PropertyGroup>
+  <!-- The bare net7.0 target also compiles the Windows canvas UI. Use the SDK
+       framework reference so the samples need no additional NuGet package. -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net7.0'">
+    <FrameworkReference Include="Microsoft.WindowsDesktop.App.WindowsForms" />
+  </ItemGroup>
+</Project>

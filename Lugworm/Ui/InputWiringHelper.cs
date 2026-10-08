@@ -20,7 +20,7 @@ namespace Lugworm.Ui
         public IReadOnlyList<string> Created => _created ?? (IReadOnlyList<string>)Array.Empty<string>();
         /// <summary>Inputs wired to a single slider / toggle / panel / value list that was set to the file value.</summary>
         public IReadOnlyList<string> Updated => _updated ?? (IReadOnlyList<string>)Array.Empty<string>();
-        /// <summary>Inputs whose upstream is something else and was deliberately left alone.</summary>
+        /// <summary>Inputs deliberately left alone, with the reason for each.</summary>
         public IReadOnlyList<string> Skipped => _skipped ?? (IReadOnlyList<string>)Array.Empty<string>();
         /// <summary>Human-readable notes about values that could not be honoured exactly.</summary>
         public IReadOnlyList<string> Notes => _notes ?? (IReadOnlyList<string>)Array.Empty<string>();
@@ -49,69 +49,143 @@ namespace Lugworm.Ui
         const float ColX = 210f;      // distance left of the component
         const float MinGapY = 22f;    // min vertical spacing between created objects
 
-        /// <param name="recompute">Expire the component once the objects are made. A
-        /// caller that applies a whole folder, or one file under its own undo event,
-        /// passes false and starts the one solution itself.</param>
+        /// <param name="recompute">Expire the component once the objects are made.
+        /// False lets a caller start the solution later; undo is still recorded.</param>
         public static WireResult WireAll(IamComponentBase comp,
                                          IReadOnlyDictionary<string, SettingsValue>? overrides = null,
                                          bool recompute = true)
+        {
+            var doc = comp.OnPingDocument();
+            if (doc == null) return default;
+            var plan = Prepare(comp, overrides);
+            ProtectSharedSources(new[] { plan });
+            var undo = new Grasshopper.Kernel.Undo.GH_UndoRecord("Lugworm: wire inputs");
+            RecordChanges(plan, undo, new HashSet<Guid>());
+            WireResult result;
+            try { result = Execute(plan, undo, new HashSet<Guid>()); }
+            finally { if (undo.ActionCount > 0) doc.UndoUtil.RecordEvent(undo); }
+            if (recompute && result.Created.Count + result.Updated.Count > 0) comp.ExpireSolution(true);
+            return result;
+        }
+
+        internal sealed class WireStep
+        {
+            public string Name = "";
+            public IGH_Param? Parameter;
+            public IGH_Param? Source;
+            public SettingsValue? Value;
+            public SettingsInputDecision Decision = null!;
+            public IGH_DocumentObject? NewObject;
+            public string? Refusal;
+        }
+
+        internal sealed class WiringPlan
+        {
+            public IamComponentBase Component = null!;
+            public List<WireStep> Steps = new List<WireStep>();
+        }
+
+        internal static WiringPlan Prepare(IamComponentBase comp,
+            IReadOnlyDictionary<string, SettingsValue>? overrides, IEnumerable<string>? groups = null)
+        {
+            var plan = new WiringPlan { Component = comp };
+            foreach (var (spec, parameter) in comp.SettingsInputsForUi(groups))
+            {
+                var input = parameter == null ? new SettingsInputSource(spec.Name) : DescribeSources(parameter);
+                input.HasSpec = true;
+                input.Type = TypeOf(spec.Type);
+                input.IsList = spec.Access != GH_ParamAccess.item;
+                var list = comp.ValueListsForUi.FirstOrDefault(v => v.param == spec.Name);
+                if (list.items != null && list.items.Length > 0) input.SpecItems = Items(list.items);
+                SettingsValue? value = null;
+                if (overrides != null && overrides.TryGetValue(spec.Name, out var found)) value = found;
+                var decision = SettingsPlan.Decide(input, value);
+                var step = new WireStep
+                {
+                    Name = spec.Name, Parameter = parameter, Value = value, Decision = decision,
+                    Source = parameter?.SourceCount == 1 ? parameter.Sources[0] : null,
+                };
+                if (decision.Action == SettingsPlanAction.Create)
+                {
+                    if (value == null && !comp.AutoWires(spec.Name)) step.Refusal = "not automatically wired";
+                    else step.NewObject = Make(spec.Nick, spec, comp.ValueListsForUi, value, decision);
+                }
+                plan.Steps.Add(step);
+            }
+            return plan;
+        }
+
+        internal static void ProtectSharedSources(IEnumerable<WiringPlan> plans)
+        {
+            var steps = plans.SelectMany(p => p.Steps).ToArray();
+            // Freeze every request before refusing any: order must not select a winner.
+            var requests = steps.Where(s => s.Parameter != null)
+                .ToDictionary(s => s.Parameter!, s => s.Decision.Action == SettingsPlanAction.Update ? s.Value : null);
+            foreach (var step in steps)
+            {
+                if (step.Decision.Action != SettingsPlanAction.Update || step.Source == null) continue;
+                if (!SettingsPlan.SharedSourceAgrees(step.Value!, step.Source.Recipients.Select(
+                    r => requests.TryGetValue(r, out var value) ? value : null)))
+                    step.Refusal = "shared source has a recipient outside this apply or conflicting values";
+            }
+        }
+
+        internal static void RecordChanges(WiringPlan plan, Grasshopper.Kernel.Undo.GH_UndoRecord undo,
+                                           HashSet<Guid> recorded)
+        {
+            if (recorded.Add(plan.Component.InstanceGuid))
+                undo.AddAction(new Grasshopper.Kernel.Undo.Actions.GH_GenericObjectAction(plan.Component));
+            foreach (var step in plan.Steps)
+                if (step.Refusal == null && step.Decision.Action == SettingsPlanAction.Update &&
+                    step.Source != null && recorded.Add(step.Source.InstanceGuid))
+                    undo.AddAction(new Grasshopper.Kernel.Undo.Actions.GH_GenericObjectAction(step.Source));
+        }
+
+        internal static WireResult Execute(WiringPlan plan, Grasshopper.Kernel.Undo.GH_UndoRecord undo,
+                                           HashSet<Guid> updatedSources)
         {
             var created = new List<string>();
             var updated = new List<string>();
             var skipped = new List<string>();
             var notes = new List<string>();
-
+            var comp = plan.Component;
             var doc = comp.OnPingDocument();
             if (doc == null) return new WireResult(created, updated, skipped, notes);
-
-            var specs = comp.SpecsForUi;
-            var valueLists = comp.ValueListsForUi;
-            float lastBottom = float.MinValue;
-
             var prms = comp.Params.Input.ToList();
             EnsureLaidOut(comp, prms);
-            var plan = SettingsPlan.Plan(prms.Select(p => Describe(p, specs, valueLists)), overrides);
-
-            for (int i = 0; i < prms.Count; i++)
+            float lastBottom = float.MinValue;
+            foreach (var step in plan.Steps)
             {
-                var prm = prms[i];
-                var decision = plan[i];
+                var decision = step.Decision;
                 if (decision.Note != null) notes.Add(decision.Note);
-
-                SettingsValue? over = null;
-                if (overrides != null && overrides.TryGetValue(prm.Name, out var found)) over = found;
-
-                if (decision.Action == SettingsPlanAction.Skip) { skipped.Add(prm.Name); continue; }
-                if (decision.Action == SettingsPlanAction.Update)
+                if (step.Refusal != null || decision.Action == SettingsPlanAction.Skip)
                 {
-                    SetSource(prm.Sources[0], over!, decision);
-                    updated.Add(prm.Name);
+                    skipped.Add(step.Name + ": " + (step.Refusal ?? decision.Reason));
                     continue;
                 }
-                if (decision.Action != SettingsPlanAction.Create) continue;
-                if (over == null && !comp.AutoWires(prm.Name)) { skipped.Add(prm.Name); continue; }
-
-                var spec = specs.FirstOrDefault(s => s.Name == prm.Name);
-                if (spec == null) continue;
-
-                float y = GripTop(comp, prm, i);
-                y = Math.Max(y, lastBottom + MinGapY);
-                float x = comp.Attributes.Bounds.Left - ColX;
-
-                IGH_DocumentObject? obj = Make(prm.NickName, spec, valueLists, over, decision);
-                if (obj == null) continue;
-
-                obj.Attributes.Pivot = new PointF(x, y);
-                doc.AddObject(obj, false);
-                prm.AddSource((IGH_Param)obj);
-                lastBottom = obj.Attributes.Bounds.Bottom;
-                created.Add(prm.Name);
-            }
-
-            if (created.Count + updated.Count > 0)
-            {
-                if (recompute) comp.ExpireSolution(true);
-                Grasshopper.Instances.RedrawCanvas();
+                var prm = prms.FirstOrDefault(p => p.Name == step.Name);
+                if (prm == null)
+                {
+                    if (step.Value != null) skipped.Add(step.Name + ": input is unavailable after activating groups");
+                    continue;
+                }
+                if (decision.Action == SettingsPlanAction.Update && step.Source != null)
+                {
+                    if (updatedSources.Add(step.Source.InstanceGuid)) SetSource(step.Source, step.Value!, decision);
+                    updated.Add(step.Name);
+                }
+                else if (decision.Action == SettingsPlanAction.Create && step.NewObject != null)
+                {
+                    var obj = step.NewObject;
+                    float y = Math.Max(GripTop(comp, prm, prms.IndexOf(prm)), lastBottom + MinGapY);
+                    obj.Attributes.Pivot = new PointF(comp.Attributes.Bounds.Left - ColX, y);
+                    doc.AddObject(obj, false);
+                    // Register the addition before any further mutation can fail.
+                    undo.AddAction(new Grasshopper.Kernel.Undo.Actions.GH_AddObjectAction(obj));
+                    prm.AddSource((IGH_Param)obj);
+                    lastBottom = obj.Attributes.Bounds.Bottom;
+                    created.Add(prm.Name);
+                }
             }
             return new WireResult(created, updated, skipped, notes);
         }
@@ -152,24 +226,6 @@ namespace Lugworm.Ui
 
         // ---- describing an input for the Core plan ----
 
-        /// <summary>One input and whatever feeds it, as the plain description
-        /// <see cref="SettingsPlan"/> decides over.</summary>
-        static SettingsInputSource Describe(IGH_Param prm, IReadOnlyList<ParamSpec> specs,
-            IReadOnlyList<(string param, string label, (string label, string val)[] items)> valueLists)
-        {
-            var spec = specs.FirstOrDefault(s => s.Name == prm.Name);
-            var vl = valueLists.FirstOrDefault(v => v.param == prm.Name);
-            var input = DescribeSources(prm);
-            input.HasSpec = spec != null;
-            if (spec != null)
-            {
-                input.Type = TypeOf(spec.Type);
-                input.IsList = spec.Access != GH_ParamAccess.item;
-            }
-            if (vl.items != null && vl.items.Length > 0) input.SpecItems = Items(vl.items);
-            return input;
-        }
-
         /// <summary>Only what is wired into an input - the half the capture side asks
         /// about (see <see cref="SettingsPlan.CaptureRefusal"/>).</summary>
         internal static SettingsInputSource DescribeSources(IGH_Param prm)
@@ -178,6 +234,7 @@ namespace Lugworm.Ui
             if (prm.SourceCount != 1) return input;
 
             var source = prm.Sources[0];
+            input.SourceHasInputs = source.SourceCount > 0;
             switch (source)
             {
                 case GH_NumberSlider sl:
@@ -260,9 +317,11 @@ namespace Lugworm.Ui
                         // a numbers panel is narrower than a text or value-list one, and a
                         // list input needs the room for one item per line
                         bool numeric = !hasItems && (spec.Type == PType.Number || spec.Type == PType.Integer);
-                        return MakePanel(nick, over != null ? PanelText(over) : spec.WireText ?? "",
-                                         numeric ? 110 : 140,
-                                         spec.Access == GH_ParamAccess.item ? 20 : 60);
+                        var panel = MakePanel(nick, over != null ? PanelText(over) : spec.WireText ?? "",
+                                              numeric ? 110 : 140,
+                                              spec.Access == GH_ParamAccess.item ? 20 : 60);
+                        panel.Properties.Multiline = over != null ? !over.IsList : spec.Access == GH_ParamAccess.item;
+                        return panel;
                     }
                 default:
                     return null;   // geometry / curves etc. cannot be auto-fed
@@ -346,6 +405,7 @@ namespace Lugworm.Ui
                     list.ExpireSolution(false);
                     break;
                 case SettingsObjectKind.Panel when source is GH_Panel panel:
+                    panel.Properties.Multiline = !value.IsList;
                     panel.SetUserText(Crlf(PanelText(value)));
                     panel.ExpireSolution(false);   // like the other sources: the caller's expire recollects it
                     break;

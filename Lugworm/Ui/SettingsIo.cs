@@ -255,25 +255,50 @@ namespace Lugworm.Ui
         /// event and one recompute. Reports what happened as a Remark.</summary>
         public static WireResult Apply(IamComponentBase comp, ComponentSettings settings, string? source = null)
         {
-            comp.RecordUndoEvent("Lugworm: load settings");
-            var result = ApplyCore(comp, settings, out var unknownGroups);
-            Report(comp, settings, result, unknownGroups, source);
+            var doc = comp.OnPingDocument();
+            if (doc == null) return default;
+            var applied = ApplyBatch(doc, new[] { (comp, settings) }, "Lugworm: load settings");
+            var result = applied[0].result;
+            Report(comp, settings, result, applied[0].unknown, source);
             comp.ExpireSolution(true);
+            Grasshopper.Instances.RedrawCanvas();
             return result;
         }
 
-        /// <summary>The shared part of "apply a settings file to this component": switch
-        /// its groups on, then wire/update its inputs. Records no undo event and starts
-        /// no solution - the caller owns both, so applying one file or a whole folder is
-        /// a single undoable step.</summary>
-        internal static WireResult ApplyCore(IamComponentBase comp, ComponentSettings settings,
-                                             out IReadOnlyList<string> unknownGroups)
+        /// <summary>Preflight all targets and shared sources before activating groups
+        /// or editing the document. Every mutation belongs to one undo record.</summary>
+        internal static IReadOnlyList<(IamComponentBase component, WireResult result, IReadOnlyList<string> unknown)>
+            ApplyBatch(GH_Document doc, IEnumerable<(IamComponentBase component, ComponentSettings settings)> targets,
+                       string undoName)
         {
-            var unknown = new List<string>();
-            foreach (string group in settings.Groups)
-                if (!comp.ActivateGroupForUi(group)) unknown.Add(group);
-            unknownGroups = unknown;
-            return InputWiringHelper.WireAll(comp, settings.Inputs, recompute: false);
+            var batch = targets.ToArray();
+            var plans = batch.Select(t => InputWiringHelper.Prepare(t.component, t.settings.Inputs, t.settings.Groups)).ToArray();
+            InputWiringHelper.ProtectSharedSources(plans);
+            var undo = new Grasshopper.Kernel.Undo.GH_UndoRecord(undoName);
+            var recorded = new HashSet<Guid>();
+            foreach (var plan in plans) InputWiringHelper.RecordChanges(plan, undo, recorded);
+            var results = new List<(IamComponentBase component, WireResult result, IReadOnlyList<string> unknown)>();
+            var updatedSources = new HashSet<Guid>();
+            try
+            {
+                for (int i = 0; i < batch.Length; i++)
+                {
+                    var (component, settings) = batch[i];
+                    var unknown = new List<string>();
+                    foreach (string group in settings.Groups)
+                        if (!component.ActivateGroupForUi(group)) unknown.Add(group);
+                    var result = InputWiringHelper.Execute(plans[i], undo, updatedSources);
+                    results.Add((component, result, unknown));
+                    Report(component, settings, result, unknown, null);
+                    component.ExpireSolution(false);
+                }
+            }
+            finally
+            {
+                // A failure after a mutation must still leave that mutation undoable.
+                if (undo.ActionCount > 0) doc.UndoUtil.RecordEvent(undo);
+            }
+            return results;
         }
 
         /// <summary>The "⇤ inputs" button and the "Wire inputs" menu item: use the
@@ -282,6 +307,10 @@ namespace Lugworm.Ui
         public static WireResult WireInputs(IamComponentBase comp)
         {
             Guid documentId = comp.OnPingDocument()?.DocumentID ?? Guid.Empty;
+            var doc = comp.OnPingDocument();
+            var owner = doc?.Objects.OfType<Lugworm.Components.LoadSettingsComponent>()
+                .FirstOrDefault(c => c.InstanceGuid == SettingsRegistry.OwnerFor(documentId));
+            if (owner != null && !owner.RefreshForApply()) return default;
             var settings = SettingsRegistry.SettingsFor(documentId, comp.SettingsKey);
             if (settings == null) return InputWiringHelper.WireAll(comp);
 
@@ -292,9 +321,10 @@ namespace Lugworm.Ui
         static void Report(IamComponentBase comp, ComponentSettings settings, WireResult result,
                            IReadOnlyList<string> unknownGroups, string? source)
         {
+            var report = new List<(GH_RuntimeMessageLevel level, string text)>();
             if (unknownGroups.Count > 0)
-                comp.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
-                    "Unknown feature group(s) in the settings file: " + string.Join(", ", unknownGroups));
+                report.Add((GH_RuntimeMessageLevel.Warning,
+                    "Unknown feature group(s) in the settings file: " + string.Join(", ", unknownGroups)));
 
             var parts = new List<string>
             {
@@ -308,9 +338,10 @@ namespace Lugworm.Ui
             int missing = settings.Inputs.Keys.Count(k => comp.Params.IndexOfInputParam(k) < 0);
             if (missing > 0)
                 message += ". " + Count(missing, "value") + " in the file has no matching input here";
-            comp.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, message);
+            report.Add((GH_RuntimeMessageLevel.Remark, message));
             foreach (string note in result.Notes)
-                comp.AddRuntimeMessage(GH_RuntimeMessageLevel.Remark, note);
+                report.Add((GH_RuntimeMessageLevel.Remark, note));
+            comp.SetSettingsReport(report);
         }
 
         internal static string Count(int n, string noun)

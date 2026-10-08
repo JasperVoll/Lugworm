@@ -9,7 +9,7 @@
     <RootNamespace>Lugworm.Core</RootNamespace>
     <!-- Ships beside Lugworm.gha: keep equal to <Version> in Lugworm/Lugworm.csproj.
          tools/release.ps1 and tests/tooling/test_version_sync.py refuse a mismatch. -->
-    <Version>0.1.0-beta</Version>
+    <Version>0.1.1-beta</Version>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
   </PropertyGroup>
   <!-- Release binaries must not embed local paths (PDB path in the PE debug
