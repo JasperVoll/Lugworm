@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using Lugworm.Core.Duet;
 using Lugworm.Core.Geometry;
@@ -20,12 +21,31 @@ namespace Lugworm.Ui.Console.Pages
             bool uploaded = s.Uploaded != null && s.Uploaded.Hash == s.GcodeHash;
 
             if (area.Width <= 0 || area.Height <= 0) return;
+            // ---- an armed scheduled start: countdown, the job it will start, Cancel ----
+            if (s.ScheduledStart != null && area.Height > t.ButtonHeight * 2)
+            {
+                var sched = s.ScheduledStart;
+                var strip = ConsoleLayout.Take(ref area, t.ButtonHeight, t.GapLarge);
+                TimeSpan remaining = sched.DueUtc - DateTime.UtcNow;
+                bool changed = s.PreparedJob != null && !string.Equals(s.PreparedJob.Sha256, sched.JobSha256, StringComparison.Ordinal);
+                string text = "Scheduled start " + sched.DueUtc.ToLocalTime().ToString("HH:mm", CultureInfo.InvariantCulture)
+                    + (remaining > TimeSpan.Zero ? "  in " + remaining.ToString(@"hh\:mm\:ss", CultureInfo.InvariantCulture) : "  due")
+                    + "  job " + sched.ShortHash + (sched.DryRun ? " (dry run)" : "")
+                    + (changed ? "  - canvas G-code changed: the uploaded version starts unless you Update" : "");
+                float cancelW2 = Math.Min(strip.Width * 0.3f, p.ButtonWidth(ConsoleIcon.Cancel, "Cancel schedule", t.Px(140f)));
+                p.Strip(new SKRect(strip.Left, strip.Top, strip.Right - cancelW2 - t.Gap, strip.Bottom), ConsoleIcon.Clock, text,
+                        changed ? t.Warning : t.Primary);
+                p.ButtonAuto(strip.Right - cancelW2, strip.Top, ConsoleIcon.Cancel, "Cancel schedule", ConsoleRole.Secondary,
+                             b.ScheduleCancel, "schedulecancel", minWidth: cancelW2, maxWidth: cancelW2);
+            }
             float pauseW = Math.Min(area.Width, p.ButtonWidth(ConsoleIcon.Pause, "Pause", t.Px(110f)));
             float resumeW = Math.Min(area.Width, p.ButtonWidth(ConsoleIcon.Resume, "Resume print", t.Px(140f)));
             float cancelW = Math.Min(area.Width, p.ButtonWidth(ConsoleIcon.Cancel, "Cancel job", t.Px(150f)));
+            bool canSchedulePause = s.MachineState == MachineStatus.Processing || s.MachineState == MachineStatus.Simulating
+                                 || s.MachineState == MachineStatus.Paused || s.Pauses.Count > 0;
             bool splitPauseResume = pauseW + t.Gap + resumeW > area.Width;
             bool splitCancel = splitPauseResume || pauseW + t.Gap + resumeW + t.GapLarge + cancelW > area.Width;
-            int controlRows = 1 + (splitPauseResume ? 1 : 0) + (splitCancel ? 1 : 0);
+            int controlRows = 1 + (splitPauseResume ? 1 : 0) + (splitCancel ? 1 : 0) + (canSchedulePause ? 1 : 0);
             // One extra row above the running controls: Go to print start and its caption.
             float startRowH = t.ButtonHeight + t.Gap;
             float controlsH = startRowH + t.ButtonHeight * controlRows + t.Gap * (controlRows - 1);
@@ -70,8 +90,13 @@ namespace Lugworm.Ui.Console.Pages
             {
                 var inner = p.Card(cells[1], "2  Upload", elevated: validated && !uploaded);
                 float y = inner.Top;
-                string status = s.Uploaded == null ? "nothing uploaded" : uploaded ? "uploaded" : "uploaded file is stale";
-                p.Lamp(inner.Left, y + t.FontBody, s.Uploaded == null ? t.TextMuted : uploaded ? t.Success : t.Warning, status, maxWidth: inner.Width);
+                // An out-of-date upstream result outranks the upload record: a green
+                // "uploaded" would vouch for a job the canvas no longer shows. The reason
+                // itself stays in the button's tooltip and the runtime message.
+                bool staleInput = s.StaleInput != null;
+                string status = staleInput ? "G-code out of date"
+                              : s.Uploaded == null ? "nothing uploaded" : uploaded ? "uploaded" : "uploaded file is stale";
+                p.Lamp(inner.Left, y + t.FontBody, staleInput ? t.Warning : s.Uploaded == null ? t.TextMuted : uploaded ? t.Success : t.Warning, status, maxWidth: inner.Width);
                 y += t.FontBody + t.Gap;
                 p.DrawClipped(s.Uploaded != null ? s.Uploaded.Path + " (" + s.Uploaded.Size.ToString(CultureInfo.InvariantCulture) + " bytes)" : "-",
                               inner.Left, y + t.FontSmall, inner.Width, t.FontSmall, t.TextSecondary);
@@ -98,8 +123,24 @@ namespace Lugworm.Ui.Console.Pages
                 else p.DrawClipped("-", inner.Left, y + t.FontSmall, inner.Width, t.FontSmall, t.TextSecondary);
                 y += detailH + t.GapLarge;
                 bool starting = pending && s.PendingAction != null && s.PendingAction.StartsWith("starting", StringComparison.Ordinal);
-                p.ButtonAuto(inner.Left, y, ConsoleIcon.Start, starting ? "Starting..." : s.StartLabel, ConsoleRole.Primary, b.Start, "start",
-                             minWidth: t.Px(130f), pending: starting, tall: true, maxWidth: inner.Width);
+                // Start and its deferred twin share the button row; the armed schedule's
+                // status and Cancel live in the strip above the stages, so nothing here
+                // draws outside the card's reserved height.
+                float startMax = (inner.Width - t.Gap) * 0.55f;
+                var startButton = p.ButtonAuto(inner.Left, y, ConsoleIcon.Start, starting ? "Starting..." : s.StartLabel, ConsoleRole.Primary, b.Start, "start",
+                             minWidth: Math.Min(t.Px(130f), startMax), pending: starting, tall: true, maxWidth: startMax);
+                float secondX = startButton.Right + t.Gap;
+                float secondMax = Math.Max(0f, inner.Right - secondX);
+                if (s.ScheduledStart != null)
+                {
+                    bool updating = s.ScheduledStart.Phase == ScheduledStartPhase.Updating;
+                    p.ButtonAuto(secondX, y, ConsoleIcon.Sync, updating ? "Updating..." : "Update", ConsoleRole.Secondary,
+                                 b.ScheduleUpdate, "scheduleupdate", minWidth: Math.Min(t.Px(110f), secondMax),
+                                 pending: updating, maxWidth: secondMax);
+                }
+                else
+                    p.ButtonAuto(secondX, y, ConsoleIcon.Clock, "Schedule...", ConsoleRole.Secondary,
+                                 b.Schedule, "schedule", minWidth: Math.Min(t.Px(130f), secondMax), maxWidth: secondMax);
             }
 
             // ---- Go to print start: between a validation and a Start, so the operator can
@@ -121,6 +162,74 @@ namespace Lugworm.Ui.Console.Pages
             float cancelY = splitCancel ? resume.Bottom + t.Gap : controls.Top;
             p.ButtonAuto(controls.Right - cancelW, cancelY, ConsoleIcon.Cancel, "Cancel job", ConsoleRole.Destructive,
                          b.Stop, "stop", minWidth: cancelW, maxWidth: cancelW);
+            if (canSchedulePause)
+            {
+                float pauseScheduleY = Math.Max(cancelY, resume.Bottom) + t.Gap;
+                p.ButtonAuto(controls.Left, pauseScheduleY, ConsoleIcon.Clock, "Schedule pause...", ConsoleRole.Secondary,
+                             b.PauseSchedule, "pauseschedule", minWidth: Math.Min(controls.Width, t.Px(180f)), maxWidth: controls.Width);
+            }
+
+            // ---- pending scheduled pauses: before Recent prints, which yields first. As many
+            // rows as fit, soonest first, each removable; the rest are counted, never dropped
+            // silently (PauseSchedulePolicy.MaxPending bounds the list).
+            if (s.Pauses.Count > 0)
+            {
+                float rowH = t.ButtonHeight + t.Gap;
+                float headH = t.Pad * 2 + t.FontHeader + t.Gap;
+                int fit = (int)Math.Floor((area.Height - headH) / rowH);
+                if (fit >= 1)
+                {
+                    int rows = Math.Min(s.Pauses.Count, fit);
+                    bool overflow = s.Pauses.Count > rows;
+                    var pauseCard = ConsoleLayout.Take(ref area, headH + rows * rowH, t.GapLarge);
+                    var pin = p.Card(pauseCard, "Scheduled pauses");
+                    float py = pin.Top;
+                    int pauseShown = 0;
+                    var orderedPauses = new List<ScheduledPause>(s.Pauses);
+                    orderedPauses.Sort((left, right) => PauseSortTime(s, left).CompareTo(PauseSortTime(s, right)));
+                    foreach (var scheduled in orderedPauses)
+                    {
+                        if (overflow && pauseShown == rows - 1)
+                        {
+                            int hidden = s.Pauses.Count - pauseShown;
+                            p.DrawClipped("+" + hidden.ToString(CultureInfo.InvariantCulture)
+                                          + " later pause(s). Enlarge the window or remove one above to see them",
+                                          pin.Left, py + t.FontSmall, pin.Width, t.FontSmall, t.TextMuted);
+                            break;
+                        }
+                        pauseShown++;
+                        string text = scheduled.Kind == PauseKind.AtLayer
+                            ? "Layer " + (scheduled.Layer ?? 0).ToString(CultureInfo.InvariantCulture) + " of "
+                              + (s.ActiveJob?.LayerMarkers.Total ?? 0).ToString(CultureInfo.InvariantCulture)
+                            : "At " + scheduled.DueUtc!.Value.ToLocalTime().ToString("HH:mm", CultureInfo.InvariantCulture);
+                        if (scheduled.Kind == PauseKind.AtLayer && scheduled.Layer.HasValue && s.ActiveEstimate != null)
+                        {
+                            double? seconds = s.ActiveEstimate.TimeToLayer(scheduled.Layer.Value, s.JobFilePosition,
+                                                                           s.ActiveEstimate.CorrectionFactor);
+                            if (seconds.HasValue) text += "  (about " + Duration(seconds.Value) + ", "
+                                + DateTime.UtcNow.AddSeconds(seconds.Value).ToLocalTime().ToString("HH:mm", CultureInfo.InvariantCulture) + ")";
+                        }
+                        else if (scheduled.Kind == PauseKind.AtTime && scheduled.DueUtc.HasValue)
+                        {
+                            TimeSpan remaining = scheduled.DueUtc.Value - DateTime.UtcNow;
+                            if (remaining > TimeSpan.Zero)
+                            {
+                                text += "  (in " + Duration(remaining.TotalSeconds);
+                                int? targetLayer = s.ActiveEstimate?.LayerAtTime(remaining.TotalSeconds, s.JobFilePosition,
+                                                                                   s.ActiveEstimate.CorrectionFactor);
+                                if (targetLayer.HasValue)
+                                    text += ", about layer " + targetLayer.Value.ToString(CultureInfo.InvariantCulture);
+                                text += ")";
+                            }
+                        }
+                        p.DrawClipped(text, pin.Left, py + t.FontSmall, pin.Width - t.ButtonHeight - t.Gap,
+                                      t.FontSmall, t.TextSecondary);
+                        p.IconButton(pin.Right - t.ButtonHeight, py, ConsoleIcon.Cancel, true,
+                                     "pause:remove:" + scheduled.Id.ToString(CultureInfo.InvariantCulture), t.ButtonHeight);
+                        py += t.ButtonHeight + t.Gap;
+                    }
+                }
+            }
 
             // ---- Recent prints: below the running controls, above the messages ----
             // It takes only what is left over a readable messages card, so the two never
@@ -161,6 +270,26 @@ namespace Lugworm.Ui.Console.Pages
                              ctx.View.ShowValidationMessages ? "Show fewer" : "Show all " + v.Messages.Count.ToString(CultureInfo.InvariantCulture) + " messages",
                              ConsoleRole.Secondary, true, "job:messages", maxWidth: inner2.Width);
             }
+        }
+
+        /// <summary>When a pending pause is expected: its own time, or now plus the
+        /// corrected estimate to its layer; never-known sorts last.</summary>
+        internal static DateTime PauseSortTime(PrintConsoleState state, ScheduledPause pause)
+        {
+            if (pause.Kind == PauseKind.AtTime && pause.DueUtc.HasValue) return pause.DueUtc.Value;
+            if (pause.Layer.HasValue && state.ActiveEstimate != null)
+            {
+                double? seconds = state.ActiveEstimate.TimeToLayer(pause.Layer.Value, state.JobFilePosition,
+                                                                   state.ActiveEstimate.CorrectionFactor);
+                if (seconds.HasValue) return DateTime.UtcNow.AddSeconds(seconds.Value);
+            }
+            return DateTime.MaxValue;
+        }
+
+        internal static string Duration(double seconds)
+        {
+            if (double.IsNaN(seconds) || double.IsInfinity(seconds) || seconds < 0) return "-";
+            return TimeSpan.FromSeconds(seconds).ToString(seconds >= 3600 ? @"h\:mm\:ss" : @"mm\:ss", CultureInfo.InvariantCulture);
         }
 
         /// <summary>Names the validated job's print start in both frames: the machine

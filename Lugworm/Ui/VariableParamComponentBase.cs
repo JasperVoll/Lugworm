@@ -582,6 +582,36 @@ namespace Lugworm.Ui
             return i >= 0 && Params.Input[i].SourceCount > 0;
         }
 
+        /// <summary>Nicknames of the manual components upstream of the named input whose
+        /// inputs changed since their last Compute (<see cref="CacheStale"/>). They replay
+        /// their last result, so whatever reaches this input describes an older canvas,
+        /// even through components that did recompute in between. Locked objects emit
+        /// nothing and end the walk.</summary>
+        protected List<string> StaleUpstream(string name)
+        {
+            var names = new List<string>();
+            int i = Params.IndexOfInputParam(name);
+            if (i < 0) return names;
+            var seen = new HashSet<Guid>();
+            var pending = new Stack<IGH_Param>();
+            pending.Push(Params.Input[i]);
+            while (pending.Count > 0)
+            {
+                foreach (var source in pending.Pop().Sources)
+                {
+                    var owner = source.Attributes?.GetTopLevel?.DocObject;
+                    if (owner == null || !seen.Add(owner.InstanceGuid)) continue;
+                    if (owner is IGH_ActiveObject active && active.Locked) continue;
+                    if (owner is IamComponentBase heavy && heavy.CacheStale) names.Add(heavy.NickName);
+                    if (owner is IGH_Component component)
+                        foreach (var input in component.Params.Input) pending.Push(input);
+                    else if (owner is IGH_Param free)
+                        pending.Push(free);
+                }
+            }
+            return names;
+        }
+
         protected double GetNumber(IGH_DataAccess DA, string name, double def)
         {
             int i = Params.IndexOfInputParam(name);

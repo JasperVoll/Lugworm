@@ -70,6 +70,9 @@ namespace Lugworm.Duet
     {
         public string Key { get; }
         public string Sha256 { get; }
+        /// <summary>The parser result used to build this path. Keeping it with the
+        /// cache entry lets the console's estimate use the same parse as Live View.</summary>
+        public ParsedProgram? Program { get; }
         /// <summary>Sampled positions in the MACHINE frame - what observed telemetry is
         /// compared against, because telemetry is machine coordinates.</summary>
         public IReadOnlyList<Vec3> Machine { get; }
@@ -107,9 +110,10 @@ namespace Lugworm.Duet
                              IReadOnlyList<Point3d[]> contextRuns, LivePathDeviation? deviation,
                              BoundingBox bounds, int moveCount, int sampleCount,
                              string lineIdentity, string? error,
-                             IReadOnlyList<Point3d[]>? travelRuns = null, string? detailNote = null)
+                             IReadOnlyList<Point3d[]>? travelRuns = null, string? detailNote = null,
+                             ParsedProgram? program = null)
         {
-            Key = key; Sha256 = sha256; Machine = machine; ContextRuns = contextRuns;
+            Key = key; Sha256 = sha256; Program = program; Machine = machine; ContextRuns = contextRuns;
             TravelRuns = travelRuns ?? Array.Empty<Point3d[]>();
             Deviation = deviation; Bounds = bounds; MoveCount = moveCount;
             SampleCount = sampleCount; LineIdentity = lineIdentity ?? ""; Error = error;
@@ -296,9 +300,10 @@ namespace Lugworm.Duet
             List<bool> breaks;
             ToolpathRunSet built;
             int moves;
+            ParsedProgram program;
             try
             {
-                var program = GcodeParser.Parse(lines, home, allowPerAxisHome: cartesian);
+                program = GcodeParser.Parse(lines, home, allowPerAxisHome: cartesian);
                 moves = program.Moves.Count;
                 if (moves == 0)
                     return new ParsedJobPath(key, sha, Array.Empty<Vec3>(), Array.Empty<Point3d[]>(),
@@ -325,7 +330,7 @@ namespace Lugworm.Duet
             // the deviation overlay must never build one while a solve or a poll waits.
             var deviation = machine.Count > 1 ? LivePathDeviation.FromPolyline(machine, breaks) : null;
             return new ParsedJobPath(key, sha, machine, print, deviation, bounds, moves,
-                                     machine.Count, identity, null, travel, drawn.DetailNote);
+                                     machine.Count, identity, null, travel, drawn.DetailNote, program);
         }
 
         /// <summary>The runs of one kind, converted to the Rhino frame. Context, not

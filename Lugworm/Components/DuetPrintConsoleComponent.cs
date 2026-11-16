@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,6 +17,7 @@ using Lugworm.Core.Geometry;
 using Lugworm.Core.Robot;
 using Lugworm.Duet;
 using Lugworm.Ui;
+using Lugworm.Ui.Console;
 using Rhino.Geometry;
 
 namespace Lugworm.Components
@@ -159,6 +162,110 @@ namespace Lugworm.Components
         Ui.Console.DuetConsoleForm? _form;
         bool _solving;
 
+        // ---- deferred console actions ------------------------------------------------
+        System.Threading.Timer? _scheduleTimer;
+        System.Threading.Timer? _pauseTimer;
+        System.Windows.Forms.Timer? _scheduleRepaintTimer;
+        StartBundle? _scheduledBundle;
+        LayerCrossings? _layerCrossings;
+        string _crossingRunId = "";
+        long _lastConnectionGeneration = -1;
+        DateTime? _pauseAcceptedUtc;
+        string _activeEstimateKey = "";
+        string _scheduledEstimateKey = "";
+        bool _keepAwake;
+        // The job-log summary of a fired schedule, written once the run its start created
+        // is observed printing; dropped on a failed start or after 2 min.
+        string? _scheduledRunSummary;
+        string _scheduledRunId = "";
+        DateTime _scheduledRunFiredUtc;
+
+        const uint EsContinuous = 0x80000000;
+        const uint EsSystemRequired = 0x00000001;
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern uint SetThreadExecutionState(uint flags);
+
+        sealed class UploadBundle
+        {
+            public MachineSession Session { get; }
+            public PrintConsoleProjector Projector { get; }
+            public IReadOnlyList<string> Lines { get; }
+            public byte[] Bytes { get; }
+            public ulong Hash { get; }
+            public JobGateResult Gate { get; }
+            public JobSnapshot Prepared { get; }
+            public bool DryRun { get; }
+            public RobotLimits Limits { get; }
+            public RobotMechanism Mechanism { get; }
+            public string? ProfileError { get; }
+            public string PolicyKey { get; }
+            public ReprintContext ArchiveContext { get; }
+            public string RemotePath { get; }
+
+            public UploadBundle(MachineSession session, PrintConsoleProjector projector,
+                                IReadOnlyList<string> lines, byte[] bytes, ulong hash,
+                                JobGateResult gate, JobSnapshot prepared, bool dryRun,
+                                RobotLimits limits, RobotMechanism mechanism, string? profileError,
+                                string policyKey, ReprintContext archiveContext, string remotePath)
+            {
+                Session = session; Projector = projector; Lines = lines; Bytes = bytes; Hash = hash;
+                Gate = gate; Prepared = prepared; DryRun = dryRun; Limits = limits;
+                Mechanism = mechanism; ProfileError = profileError; PolicyKey = policyKey ?? "";
+                ArchiveContext = archiveContext;
+                RemotePath = remotePath;
+            }
+
+            public StartBundle WithUpload(UploadRecord upload)
+                => new StartBundle(Session, Projector, Lines, Bytes, Hash, Gate, upload, Prepared,
+                                   DryRun, Limits, Mechanism, ProfileError, ArchiveContext);
+        }
+
+        sealed class UploadOutcome
+        {
+            public UploadBundle Bundle { get; }
+            public UploadRecord? Record { get; }
+            public string? Error { get; }
+            public bool Succeeded => Record != null && Error == null;
+
+            public UploadOutcome(UploadBundle bundle, UploadRecord? record, string? error)
+            { Bundle = bundle; Record = record; Error = error; }
+        }
+
+        sealed class StartBundle
+        {
+            public MachineSession Session { get; }
+            public PrintConsoleProjector Projector { get; }
+            public IReadOnlyList<string> Lines { get; }
+            public byte[] Bytes { get; }
+            public ulong Hash { get; }
+            public JobGateResult Gate { get; }
+            public UploadRecord Upload { get; }
+            public JobSnapshot Prepared { get; }
+            public bool DryRun { get; }
+            public RobotLimits Limits { get; }
+            public RobotMechanism Mechanism { get; }
+            public string? ProfileError { get; }
+            public ReprintContext ArchiveContext { get; }
+
+            public StartBundle(MachineSession session, PrintConsoleProjector projector,
+                               IReadOnlyList<string> lines, byte[] bytes, ulong hash,
+                               JobGateResult gate, UploadRecord upload, JobSnapshot prepared,
+                               bool dryRun, RobotLimits limits, RobotMechanism mechanism,
+                               string? profileError, ReprintContext archiveContext)
+            {
+                Session = session; Projector = projector; Lines = lines; Bytes = bytes; Hash = hash;
+                Gate = gate; Upload = upload; Prepared = prepared; DryRun = dryRun; Limits = limits;
+                Mechanism = mechanism; ProfileError = profileError; ArchiveContext = archiveContext;
+            }
+
+            public StartBundle WithGate(JobGateResult gate, RobotLimits limits,
+                                        RobotMechanism mechanism, string? profileError,
+                                        ReprintContext archiveContext)
+                => new StartBundle(Session, Projector, Lines, Bytes, Hash, gate, Upload, Prepared,
+                                   DryRun, limits, mechanism, profileError, archiveContext);
+        }
+
         protected override IReadOnlyList<ParamSpec> InputSpecs => new[]
         {
             new ParamSpec("gcode", "G", "G-code job as text or a list of lines, overridden by a job loaded from Recent prints until cleared", "core", PType.Text, GH_ParamAccess.list),
@@ -180,11 +287,11 @@ namespace Lugworm.Components
             new ParamSpec("reachMax", "Rx", "Maximum SCARA reach in mm (0 = L1 + L2)", "limits", PType.Number).Hint(0, 1200, 0, 0),
             new ParamSpec("reachMin", "Rn", "Minimum SCARA reach in mm (0 = the absolute difference between L1 and L2)", "limits", PType.Number).Hint(0, 500, 235, 0),
             new ParamSpec("zMax", "Zx", "Maximum machine Z in mm, corresponding to the firmware M208 limit", "limits", PType.Number).Hint(100, 2000, 400, 0),
-            new ParamSpec("xMin", "Xn", "Minimum machine X in mm, corresponding to the firmware M208 limit", "limits", PType.Number).Hint(-2000, 2000, -300, 0),
-            new ParamSpec("xMax", "Xx", "Maximum machine X in mm, corresponding to the firmware M208 limit", "limits", PType.Number).Hint(-2000, 12000, 10000, 0),
-            new ParamSpec("yMin", "Yn", "Minimum machine Y in mm, corresponding to the firmware M208 limit", "limits", PType.Number).Hint(-12000, 2000, -10000, 0),
-            new ParamSpec("yMax", "Yx", "Maximum machine Y in mm, corresponding to the firmware M208 limit", "limits", PType.Number).Hint(-2000, 2000, 0, 0),
-            new ParamSpec("checkEnvelope", "cE", "Check targets against the machine's Cartesian axis limits when true", "limits", PType.Boolean).HintBool(true),
+            new ParamSpec("xMin", "Xn", "Minimum machine X in mm, corresponding to the firmware M208 limit. Used by Cartesian machines only, a SCARA leaves the X/Y box to the operator", "limits", PType.Number).Hint(-2000, 2000, -300, 0),
+            new ParamSpec("xMax", "Xx", "Maximum machine X in mm, corresponding to the firmware M208 limit. Used by Cartesian machines only, a SCARA leaves the X/Y box to the operator", "limits", PType.Number).Hint(-2000, 12000, 10000, 0),
+            new ParamSpec("yMin", "Yn", "Minimum machine Y in mm, corresponding to the firmware M208 limit. Used by Cartesian machines only, a SCARA leaves the X/Y box to the operator", "limits", PType.Number).Hint(-12000, 2000, -10000, 0),
+            new ParamSpec("yMax", "Yx", "Maximum machine Y in mm, corresponding to the firmware M208 limit. Used by Cartesian machines only, a SCARA leaves the X/Y box to the operator", "limits", PType.Number).Hint(-2000, 2000, 0, 0),
+            new ParamSpec("checkEnvelope", "cE", "Check targets against the machine's Cartesian axis limits when true. Used by Cartesian machines only", "limits", PType.Boolean).HintBool(true),
             new ParamSpec("elbow", "E", "Fallback arm mode, 0 up or 1 down, for planning before a verified home exists. A verified home's endstop mode takes precedence", "limits", PType.Integer).Hint(0, 1, 1, 0),
             new ParamSpec("feed", "F", "Jog feedrate, mm/s (capped at " +
                 JogFeedCeiling.ToString("0", CultureInfo.InvariantCulture) + ")", "jog", PType.Number)
@@ -343,6 +450,7 @@ namespace Lugworm.Components
                 string canonical = MachineSessionManager.CanonicalHost(host);
                 if (!string.Equals(canonical, _projectedKey, StringComparison.Ordinal))
                 {
+                    CancelDeferredActions("connection host changed");
                     CancelJogHold();   // a held jog must not resume on the newly bound machine
                     _projector.Session?.ClearFocusOwner(this);
                     ReleaseLease();
@@ -366,6 +474,13 @@ namespace Lugworm.Components
                     tracker.Jobs.Prepare(_preparedJob);
                 RefreshRunSelection();
                 _projector.Refresh(solveStep);
+                var projected = _projector.State;
+                // Two slots: the running job's estimate (pause dialog, pause rows) and the
+                // estimate the Schedule dialog shows - the armed bundle's job, or before
+                // arming the prepared job that Schedule would cache.
+                if (projected.ActiveJob != null) RequestEstimate(projected.ActiveJob, scheduled: false);
+                if (projected.ScheduledStart == null && _scheduledBundle == null)
+                    RequestEstimate(_preparedJob, scheduled: true);
 
                 var session = _projector.Session;
                 if (session != null)
@@ -387,7 +502,11 @@ namespace Lugworm.Components
                 // and the Start label must name the mode Start will really use.
                 string? profileErr = _profileError;
                 var envelopeUnknown = _envelopeUnknown;
-                _projector.Apply(st => st.WithPlanningFacts(profileErr, envelopeUnknown).WithDryRun(_dryRun));
+                string? staleInput = StaleInputNames();
+                if (staleInput != null)
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Warning,
+                        "The G-code input is out of date. Press Compute on " + staleInput + " before you upload or start");
+                _projector.Apply(st => st.WithPlanningFacts(profileErr, envelopeUnknown).WithStaleInput(staleInput).WithDryRun(_dryRun));
                 // The archive of the next run records the machine and profile it ran on.
                 _projector.Session?.SetJobArchiveContext(CurrentMachineContext(), _dryRun);
 
@@ -607,6 +726,8 @@ namespace Lugworm.Components
         /// focus change.</summary>
         void AttachSession(MachineSession session)
         {
+            if (_projector.Session != null && !ReferenceEquals(_projector.Session, session))
+                CancelDeferredActions("connection session changed");
             session.PollIntervalMs = _pollMs;
             _projector.Attach(session);
             if (_form != null && !_form.IsDisposed && _form.ContainsFocus) session.RegisterFocusOwner(this);
@@ -680,6 +801,7 @@ namespace Lugworm.Components
 
         void PostToForm(PrintConsoleState state)
         {
+            Rhino.RhinoApp.InvokeOnUiThread((Action)(() => SyncDeferredRuntime(state)));
             var attached = _projector.Session;
             if (attached != null) AdoptSessionFingerprint(attached);
             var form = _form;
@@ -693,6 +815,23 @@ namespace Lugworm.Components
             // axis moves in the document. An unresolved profile means the frame is NOT
             // known - the pages then claim no mapping rather than assume the identity.
             form.Post(state, buttons, _pointLabels, Cartesian, frameKnown: _profileError == null);
+        }
+
+        void SyncDeferredRuntime(PrintConsoleState state)
+        {
+            if (_tornDown) return;
+            if (state.ScheduledStart == null && _scheduledBundle != null)
+            {
+                string note = state.ScheduleNote ?? "scheduled start cancelled";
+                _projector.Session?.AppendLog("console: " + note);
+                _scheduledBundle = null;
+                _scheduledEstimateKey = "";
+                DisposeScheduleTimer();
+                SetKeepAwake(false);
+            }
+            if (state.ScheduledStart != null && _scheduleTimer == null)
+                ArmScheduleTimer(state.ScheduledStart);
+            if (state.Pauses.Count > 0) ArmPauseTimer();
         }
 
         public override void RemovedFromDocument(GH_Document document)
@@ -710,6 +849,7 @@ namespace Lugworm.Components
         void TearDown()
         {
             _tornDown = true;
+            CancelDeferredActions("console closed");
             if (_loggingSubscribed)
             {
                 LogRetentionService.Instance.StatusChanged -= OnLoggingStatus;
@@ -908,6 +1048,34 @@ namespace Lugworm.Components
                 SelectRun(id.Substring(15));
                 return;
             }
+            if (id.StartsWith("schedule:set:", StringComparison.Ordinal))
+            {
+                if (long.TryParse(id.Substring("schedule:set:".Length), NumberStyles.Integer,
+                                  CultureInfo.InvariantCulture, out long ticks))
+                    ArmScheduledStart(new DateTime(ticks, DateTimeKind.Utc));
+                return;
+            }
+            if (id.StartsWith("pause:add:time:", StringComparison.Ordinal))
+            {
+                if (long.TryParse(id.Substring("pause:add:time:".Length), NumberStyles.Integer,
+                                  CultureInfo.InvariantCulture, out long ticks))
+                    AddScheduledPause(PauseKind.AtTime, new DateTime(ticks, DateTimeKind.Utc), null);
+                return;
+            }
+            if (id.StartsWith("pause:add:layer:", StringComparison.Ordinal))
+            {
+                if (int.TryParse(id.Substring("pause:add:layer:".Length), NumberStyles.Integer,
+                                 CultureInfo.InvariantCulture, out int layer))
+                    AddScheduledPause(PauseKind.AtLayer, null, layer);
+                return;
+            }
+            if (id.StartsWith("pause:remove:", StringComparison.Ordinal))
+            {
+                if (long.TryParse(id.Substring("pause:remove:".Length), NumberStyles.Integer,
+                                  CultureInfo.InvariantCulture, out long idToRemove))
+                    RemoveScheduledPause(idToRemove);
+                return;
+            }
             if (id == "history:clear")
             {
                 ClearRunSelection();
@@ -924,6 +1092,10 @@ namespace Lugworm.Components
                 case "validate": Validate(); return;
                 case "upload": Upload(); return;
                 case "start": Start(); return;
+                // "schedule", "pauseschedule" open their dialogs in the form, which forwards
+                // the dialog's result id (schedule:set:, pause:add:) handled above.
+                case "schedule:cancel": CancelScheduledStart("scheduled start cancelled by operator"); return;
+                case "schedule:update": UpdateScheduledStart(); return;
                 case "pause":
                     JobControl("pausing", "pause", snap => snap.Status == MachineStatus.Processing || snap.Status == MachineStatus.Simulating,
                                async (session, client, ct) =>
@@ -1078,10 +1250,14 @@ namespace Lugworm.Components
         /// (succeeded, error). Used by the jog repeat, whose policy must see refusals.</param>
         void Dispatch(string label, bool includeJob,
                       Func<ObjectModelSnapshot, IMachineClient, CancellationToken, Task<string>> body,
-                      Func<bool>? warned = null, Action<bool, string?>? onOutcome = null)
+                      Func<bool>? warned = null, Action<bool, string?>? onOutcome = null,
+                      MachineSession? sessionOverride = null,
+                      PrintConsoleProjector? projectorOverride = null)
         {
-            if (!TryGetSession(out var session)) return;
-            var projector = _projector;
+            MachineSession session;
+            if (sessionOverride != null) session = sessionOverride;
+            else if (!TryGetSession(out session)) return;
+            var projector = projectorOverride ?? _projector;
             // Keep the epoch this action started under: an emergency stop opens a new one,
             // and a completion carrying the old epoch is then recognised as superseded.
             long epoch = projector.Apply(s => PrintConsoleReducer.ActionStarted(s, label)).ActionEpoch;
@@ -1100,6 +1276,329 @@ namespace Lugworm.Components
                     Finish(projector, null, msg, false, epoch);
                     Outcome(onOutcome, false, msg);
                 }
+            });
+        }
+
+        void SetKeepAwake(bool enabled)
+        {
+            if (_keepAwake == enabled) return;
+            try
+            {
+                uint result = SetThreadExecutionState(enabled ? EsContinuous | EsSystemRequired : EsContinuous);
+                if (result == 0) throw new InvalidOperationException("SetThreadExecutionState failed");
+                _keepAwake = enabled;
+            }
+            catch (Exception ex)
+            {
+                _projector.Session?.AppendLog("console: keep-awake request failed: " + MachineSession.Flatten(ex));
+            }
+        }
+
+        void DisposeScheduleTimer()
+        {
+            _scheduleTimer?.Dispose();
+            _scheduleTimer = null;
+            if (_scheduleRepaintTimer != null)
+            {
+                _scheduleRepaintTimer.Stop();
+                _scheduleRepaintTimer.Dispose();
+                _scheduleRepaintTimer = null;
+            }
+        }
+
+        void DisposePauseTimer()
+        {
+            _pauseTimer?.Dispose();
+            _pauseTimer = null;
+        }
+
+        void CancelDeferredActions(string reason)
+        {
+            CancelScheduledStart(reason);
+            DisposePauseTimer();
+            _layerCrossings = null;
+            _crossingRunId = "";
+            _pauseAcceptedUtc = null;
+            _scheduledRunSummary = null;
+            _projector.Apply(s => PrintConsoleReducer.PausesCleared(s));
+            _projector.Session?.AppendLog("console: " + reason);
+        }
+
+        void CancelScheduledStart(string reason)
+        {
+            var schedule = _projector.State.ScheduledStart;
+            if (schedule == null && _scheduledBundle == null) return;
+            DisposeScheduleTimer();
+            SetKeepAwake(false);
+            _scheduledBundle = null;
+            _scheduledEstimateKey = "";
+            _projector.Apply(s => s.ScheduledStart == null
+                ? s.WithScheduleNote(reason)
+                : PrintConsoleReducer.ScheduleCancelled(s, reason));
+            _projector.Session?.AppendLog("console: " + reason);
+        }
+
+        UploadBundle? CaptureUploadBundle(JobGateResult gate)
+        {
+            if (!TryGetSession(out var session)) return null;
+            byte[] bytes = JobBytes();
+            var lines = JobLines;
+            // The snapshot must be of exactly these bytes. A capture never rewrites the
+            // component's prepared job; PrepareJob owns that.
+            var prepared = _preparedJob;
+            if (prepared == null || !string.Equals(prepared.Sha256, Sha256(bytes), StringComparison.Ordinal))
+                prepared = JobSnapshot.FromBytes(bytes, JobSafety.RemotePath(_jobName),
+                    _historyRun != null ? JobSource.MachineFile : JobSource.ConsoleInput, DateTime.UtcNow);
+            string remote = JobSafety.RemotePath(_jobName);
+            return new UploadBundle(session, _projector, lines, bytes, JobHash, gate, prepared,
+                                    _dryRun, _lim, Mechanism, _profileError,
+                                    CurrentGatePolicy(Mechanism, session.ArmConfiguration),
+                                    CurrentMachineContext(), remote);
+        }
+
+        StartBundle? CaptureStartBundle(JobGateResult gate, UploadRecord? uploadOverride = null)
+        {
+            var state = _projector.State;
+            var upload = uploadOverride ?? state.Uploaded;
+            if (upload == null) return null;
+            var bundle = CaptureUploadBundle(gate);
+            return bundle?.WithUpload(upload);
+        }
+
+        static string Sha256(byte[] bytes)
+        {
+            using (var sha = System.Security.Cryptography.SHA256.Create())
+                return BitConverter.ToString(sha.ComputeHash(bytes)).Replace("-", "").ToLowerInvariant();
+        }
+
+        void ArmScheduledStart(DateTime dueUtc)
+        {
+            var state = _projector.State;
+            string? refusal = PrintSchedulePolicy.RefuseArm(DateTime.UtcNow, dueUtc, state);
+            if (refusal != null) { Fail(refusal); return; }
+            if (_gate == null || !_gate.Allowed) { Fail("validate the job first"); return; }
+            string? stale = StaleInputNames();
+            if (stale != null) { Fail(PrintConsoleState.StaleInputReason(stale)); return; }
+            var bundle = CaptureStartBundle(_gate);
+            if (bundle == null) { Fail("schedule refused: no verified upload"); return; }
+            var session = bundle.Session;
+            var schedule = ScheduledStart.Create(dueUtc, DateTime.UtcNow, bundle.Prepared.Sha256,
+                bundle.Upload.Path, bundle.DryRun, state.Host, state.SessionId,
+                session.ConnectionGeneration, state.ExpectedFingerprint);
+            _scheduledBundle = bundle;
+            _projector.Apply(s => PrintConsoleReducer.StartScheduled(s, schedule));
+            RequestEstimate(bundle.Prepared, scheduled: true);
+            ArmScheduleTimer(schedule);
+            SetKeepAwake(true);
+            session.AppendLog("console: scheduled start armed for " + dueUtc.ToLocalTime().ToString("g", CultureInfo.InvariantCulture)
+                              + " (" + schedule.ShortHash + ")");
+        }
+
+        void UpdateScheduledStart()
+        {
+            var existing = _projector.State.ScheduledStart;
+            if (existing == null) { Fail("no scheduled start"); return; }
+            if (existing.Phase == ScheduledStartPhase.Firing) { Fail("scheduled start is firing"); return; }
+            bool claimed = false;
+            _projector.Apply(s =>
+            {
+                bool accepted = PrintConsoleReducer.TryClaimUpdate(s, existing.Id, out var next);
+                claimed = accepted;
+                return next;
+            });
+            if (!claimed) return;
+            DisposeScheduleTimer();
+            EnsureGateAsync(gate =>
+            {
+                if (!gate.Allowed) { CancelScheduledStart("schedule update refused: " + gate.Summary); return; }
+                string? stale = StaleInputNames();
+                if (stale != null) { CancelScheduledStart(PrintConsoleState.StaleInputReason(stale)); return; }
+                var upload = CaptureUploadBundle(gate);
+                if (upload == null) { CancelScheduledStart("schedule update refused: no session"); return; }
+                UploadJob(upload, outcome =>
+                {
+                    var state = _projector.State;
+                    var current = state.ScheduledStart;
+                    if (current == null || current.Id != existing.Id || current.Phase != ScheduledStartPhase.Updating)
+                        return;
+                    if (!outcome.Succeeded)
+                    {
+                        CancelScheduledStart("schedule update failed: " + (outcome.Error ?? "upload failed"));
+                        return;
+                    }
+                    string? identity = PrintSchedulePolicy.CancelReason(current.WithPhase(ScheduledStartPhase.Armed), state);
+                    string? refusal = identity ?? PrintSchedulePolicy.RefuseUpdate(DateTime.UtcNow, current, state);
+                    if (refusal != null)
+                    {
+                        CancelScheduledStart("schedule update cancelled: " + refusal);
+                        return;
+                    }
+                    var replacementBundle = outcome.Bundle.WithUpload(outcome.Record!);
+                    var replacement = ScheduledStart.Create(current.DueUtc, DateTime.UtcNow,
+                        replacementBundle.Prepared.Sha256, outcome.Record!.Path, replacementBundle.DryRun,
+                        state.Host, state.SessionId, replacementBundle.Session.ConnectionGeneration,
+                        state.ExpectedFingerprint);
+                    _scheduledBundle = replacementBundle;
+                    _projector.Apply(s => PrintConsoleReducer.ScheduleRearmed(s, replacement));
+                    RequestEstimate(replacementBundle.Prepared, scheduled: true);
+                    ArmScheduleTimer(replacement);
+                    SetKeepAwake(true);
+                    replacementBundle.Session.AppendLog("console: scheduled start updated for "
+                        + replacement.DueUtc.ToLocalTime().ToString("g", CultureInfo.InvariantCulture));
+                });
+            }, error => CancelScheduledStart("schedule update refused: " + error));
+        }
+
+        void ArmScheduleTimer(ScheduledStart schedule)
+        {
+            DisposeScheduleTimer();
+            if (schedule.Phase != ScheduledStartPhase.Armed) return;
+            TimeSpan wait = schedule.DueUtc - DateTime.UtcNow;
+            int milliseconds = wait <= TimeSpan.Zero ? 0 : (int)Math.Min(int.MaxValue, Math.Max(1, wait.TotalMilliseconds));
+            long id = schedule.Id;
+            ArmDueTimer(id, milliseconds);
+            _scheduleRepaintTimer = new System.Windows.Forms.Timer { Interval = 1000 };
+            _scheduleRepaintTimer.Tick += (s, e) =>
+            {
+                EvaluateScheduledStart(id, fromDueTimer: false);
+                PostToForm(_projector.State);
+            };
+            _scheduleRepaintTimer.Start();
+        }
+
+        void ArmDueTimer(long id, int milliseconds)
+        {
+            _scheduleTimer?.Dispose();
+            _scheduleTimer = new System.Threading.Timer(_ =>
+                Rhino.RhinoApp.InvokeOnUiThread((Action)(() => EvaluateScheduledStart(id, fromDueTimer: true))),
+                null, milliseconds, Timeout.Infinite);
+        }
+
+        /// <param name="fromDueTimer">True for the one-shot: a Wait there means it fired a
+        /// hair early (clock resolution), so only the one-shot is re-armed. The 1 s tick
+        /// re-checks without touching either timer.</param>
+        void EvaluateScheduledStart(long id, bool fromDueTimer)
+        {
+            var schedule = _projector.State.ScheduledStart;
+            if (schedule == null || schedule.Id != id) return;
+            var decision = PrintSchedulePolicy.Decide(DateTime.UtcNow, schedule, _projector.State);
+            if (decision.Kind == ScheduleDecisionKind.Wait)
+            {
+                if (fromDueTimer && schedule.Phase == ScheduledStartPhase.Armed)
+                {
+                    TimeSpan wait = schedule.DueUtc - DateTime.UtcNow;
+                    ArmDueTimer(id, wait <= TimeSpan.Zero ? 0 : (int)Math.Min(int.MaxValue, Math.Max(1, wait.TotalMilliseconds)));
+                }
+                return;
+            }
+            if (decision.Kind == ScheduleDecisionKind.Cancel || decision.Kind == ScheduleDecisionKind.Missed)
+            {
+                CancelScheduledStart(decision.Reason);
+                return;
+            }
+            bool claimed = false;
+            _projector.Apply(s =>
+            {
+                bool accepted = PrintConsoleReducer.TryClaimStart(s, id, out var next);
+                claimed = accepted;
+                return next;
+            });
+            if (!claimed) return;
+            var bundle = _scheduledBundle;
+            DisposeScheduleTimer();
+            SetKeepAwake(false);
+            if (bundle == null)
+            {
+                CancelScheduledStart("scheduled start cancelled: cached job is unavailable");
+                return;
+            }
+            bundle.Session.AppendLog("console: scheduled start fired for " + bundle.Upload.Path);
+            EnsureScheduledGateAsync(schedule, bundle);
+        }
+
+        void EnsureScheduledGateAsync(ScheduledStart schedule, StartBundle bundle)
+        {
+            var session = bundle.Session;
+            var projector = bundle.Projector;
+            var limits = _lim;
+            var mechanism = Mechanism;
+            string? profileError = _profileError;
+            var configuration = session.ArmConfiguration;
+            string policy = CurrentGatePolicy(mechanism, configuration);
+            int elbow = _elbow;
+            bool arcSupport = _arcSupport;
+            bool blockWarnings = _blockWarnings;
+            ReprintContext archiveContext = CurrentMachineContext();
+            Task.Run(() =>
+            {
+                JobGateResult? gate = null;
+                string? error = null;
+                try
+                {
+                    gate = JobGate.Validate(bundle.Lines, limits, elbow, arcSupport: arcSupport,
+                                            blockOnWarnings: blockWarnings, mastAsError: true,
+                                            initialConfiguration: configuration, mechanism: mechanism);
+                }
+                catch (Exception ex) { error = MachineSession.Flatten(ex); }
+                Rhino.RhinoApp.InvokeOnUiThread((Action)(() =>
+                {
+                    var current = projector.State;
+                    if (current.ScheduledStart == null
+                        || current.ScheduledStart.Id != schedule.Id
+                        || current.ScheduledStart.Phase != ScheduledStartPhase.Firing)
+                    {
+                        session.AppendLog("console: scheduled start abandoned: state changed");
+                        return;
+                    }
+                    // Still ours and Firing: every exit below must clear it, because the
+                    // fold never cancels a Firing schedule on its own.
+                    string? identity = PrintSchedulePolicy.CancelReason(schedule.WithPhase(ScheduledStartPhase.Armed), current);
+                    if (identity != null)
+                    {
+                        projector.Apply(s => PrintConsoleReducer.ScheduleCancelled(s, identity));
+                        session.AppendLog("console: scheduled start cancelled: " + identity);
+                        return;
+                    }
+                    if (gate == null || error != null)
+                    {
+                        string why = error == null ? "scheduled start validation failed" : "scheduled start validation failed: " + error;
+                        projector.Apply(s => PrintConsoleReducer.ScheduleCancelled(s, why));
+                        session.AppendLog("console: " + why);
+                        return;
+                    }
+                    if (!gate.Allowed)
+                    {
+                        projector.Apply(s => PrintConsoleReducer.ScheduleCancelled(s, "scheduled start refused: " + gate.Summary));
+                        session.AppendLog("console: scheduled start refused: " + gate.Summary);
+                        return;
+                    }
+                    if (!string.Equals(CurrentGatePolicy(Mechanism, session.ArmConfiguration), policy, StringComparison.Ordinal))
+                    {
+                        const string why = "scheduled start cancelled: validation policy changed";
+                        projector.Apply(s => PrintConsoleReducer.ScheduleCancelled(s, why));
+                        session.AppendLog("console: " + why);
+                        return;
+                    }
+                    _scheduledBundle = null;
+                    _scheduledEstimateKey = "";
+                    // Pre-run events stay in the session log; the run's own job log gets one
+                    // summary line once retention has opened it (OnPollCompleted).
+                    var inv = CultureInfo.InvariantCulture;
+                    _scheduledRunSummary = "console: started by schedule armed at "
+                        + schedule.CreatedUtc.ToLocalTime().ToString("HH:mm", inv) + ", due "
+                        + schedule.DueUtc.ToLocalTime().ToString("HH:mm", inv) + ", fired "
+                        + DateTime.Now.ToString("HH:mm:ss", inv);
+                    _scheduledRunId = "";
+                    _scheduledRunFiredUtc = DateTime.UtcNow;
+                    projector.Apply(PrintConsoleReducer.ScheduleFired);
+                    StartJob(bundle.WithGate(gate, limits, mechanism, profileError, archiveContext),
+                             bundle.DryRun ? "starting scheduled dry run (M37)" : "starting scheduled print",
+                             runId =>
+                             {
+                                 if (runId == null) _scheduledRunSummary = null;
+                                 else _scheduledRunId = runId;
+                             });
+                }));
             });
         }
 
@@ -1154,132 +1653,340 @@ namespace Lugworm.Components
             EnsureGateAsync(gate =>
             {
                 if (!gate.Allowed) { Fail(gate.Summary + ". Upload refused"); return; }
-                if (!TryGetSession(out var session)) return;
-                string remote = JobSafety.RemotePath(_jobName);
-                byte[] bytes = JobBytes();
-                ulong contentHash = JobHash;
-                var lines = JobLines;
-                var lim = _lim;
-                var mechanism = Mechanism;
-                string? profileError = _profileError;
-                var projector = _projector;   // the upload record belongs to this host's state
-                bool warned = false;
-                Dispatch("uploading " + remote, false, async (snap, client, ct) =>
+                string? stale = StaleInputNames();
+                if (stale != null) { Fail(PrintConsoleState.StaleInputReason(stale)); return; }
+                var armed = _projector.State.ScheduledStart;
+                if (armed != null && armed.JobSha256.Length > 0
+                    && !string.Equals(armed.JobSha256, Sha256(JobBytes()), StringComparison.Ordinal))
                 {
-                    JobSafety.EnsureFirmwareSafe(snap, client, lim, mechanism,
-                        session.ArmConfiguration, gate.InitialConfiguration, profileError,
-                        jobHomesFirst: gate.HomesFirst);
-                    var (notice, motionWarned) = await JobSafety.CheckMotionAtGateAsync(client, lines, false, ct).ConfigureAwait(false);
-                    if (motionWarned) warned = true;
-                    UploadVerification verification = await client.UploadAsync(remote, bytes, ct).ConfigureAwait(false);
-                    var record = new UploadRecord(remote, contentHash, verification.Size, client.ConnectionGeneration);
-                    projector.Apply(s => PrintConsoleReducer.Uploaded(s, record));
-                    return (notice.Length == 0 ? "" : notice + ". ")
-                        + $"uploaded {remote} ({verification.Size} bytes, {verification.Summary})";
-                }, () => warned);
+                    Fail("a print is scheduled from this file. Cancel or Update the schedule");
+                    return;
+                }
+                var bundle = CaptureUploadBundle(gate);
+                if (bundle == null) return;
+                UploadJob(bundle, outcome => { });
             });
         }
 
         void Start()
         {
+            if (_projector.State.ScheduledStart != null)
+                CancelScheduledStart("scheduled start cancelled by manual start");
             EnsureGateAsync(gate =>
             {
                 if (!gate.Allowed) { Fail("job not valid. Validate and upload first"); return; }
-                if (!TryGetSession(out var session)) return;
+                string? stale = StaleInputNames();
+                if (stale != null) { Fail(PrintConsoleState.StaleInputReason(stale)); return; }
                 var uploaded = _projector.State.Uploaded;
                 if (uploaded == null || uploaded.Hash != JobHash)
                 {
                     Fail("the G-code changed since the last upload. Upload again first");
                     return;
                 }
-                string path = uploaded.Path;
-                long expectSize = uploaded.Size;
-                byte[] expectedBytes = JobBytes();
-                var lines = JobLines;
-                // The snapshot a confirmed start promotes to ACTIVE. Prepared here as well
-                // as at solve time, because a session opened after the last solve has an
-                // empty tracker and a start must never run bytes nothing recorded.
-                var prepared = _preparedJob;
-                if (prepared != null) session.Jobs.Prepare(prepared);
-                session.SetJobArchiveContext(CurrentMachineContext(), _dryRun);
-                var lim = _lim;
-                var mechanism = Mechanism;
-                string? profileError = _profileError;
-                var projector = _projector;
-                bool dry = _dryRun;   // the mode the window labelled the button with
-                bool warned = false;
-                Dispatch(dry ? "starting dry run (M37)" : "starting print", true, async (snap, client, ct) =>
-                {
-                    JobSafety.EnsureFirmwareSafe(snap, client, lim, mechanism,
-                        session.ArmConfiguration, gate.InitialConfiguration, profileError,
-                        jobHomesFirst: gate.HomesFirst);
-                    // StateGate BEFORE the motion probe (three round-trips) so the probe
-                    // cannot age `snap` out of the 3 s freshness window
-                    string? stateGate = StateGate.Refuse(snap, requireIdle: true,
-                        requireHomed: !gate.HomesFirst, activity: "starting a job");
-                    if (stateGate != null) throw new DuetException("start refused: " + stateGate);
-                    var (notice, motionWarned) = await JobSafety.CheckMotionAtGateAsync(client, lines, false, ct).ConfigureAwait(false);
-                    if (motionWarned) warned = true;
-                    await client.VerifyRemoteContentAsync(path, expectedBytes, ct).ConfigureAwait(false);
-                    long stored;
-                    try { stored = await client.GetFileSizeAsync(path, ct).ConfigureAwait(false); }
-                    catch (DuetException ex)
-                    {
-                        projector.Apply(s => s.WithUploaded(null));
-                        throw new DuetException($"SD file missing since the last verified upload ({path}). Upload again", ex);
-                    }
-                    if (expectSize > 0 && stored != expectSize)
-                    {
-                        projector.Apply(s => s.WithUploaded(null));
-                        throw new DuetException($"SD file changed since the last verified upload ({path}: "
-                            + $"{stored} bytes, expected {expectSize}). Upload again");
-                    }
-                    // re-gate on a FRESH snapshot immediately before committing motion:
-                    // the round trips above can outlive the gate window, and a DWC pause,
-                    // cancel or E-stop meanwhile invalidates the tracked arm configuration
-                    var commitSnap = await client.GetSnapshotAsync(true, ct).ConfigureAwait(false);
-                    JobSafety.EnsureFirmwareSafe(commitSnap, client, lim, mechanism,
-                        session.ArmConfiguration, gate.InitialConfiguration, profileError,
-                        jobHomesFirst: gate.HomesFirst);
-                    string? commitGate = StateGate.Refuse(commitSnap, requireIdle: true,
-                        requireHomed: !gate.HomesFirst, activity: "starting a job");
-                    if (commitGate != null) throw new DuetException("start refused: " + commitGate);
-                    session.MarkInitiatedJob(path);
-                    // The prepared snapshot becomes the ACTIVE run BEFORE the send: the poll
-                    // loop can observe the job start before the M32 reply returns, and the
-                    // job log that opens on that poll must archive exactly these bytes
-                    // rather than record an external run (the 2026-09-09 13:17 console
-                    // start was logged as "g-code bytes unknown"). A repeat of identical
-                    // content is a new run, not the old one; a failed send rolls it back.
-                    var active = session.Jobs.StartPrepared(DateTime.UtcNow);
-                    try
-                    {
-                        session.MarkInitiatedMotion();
-                        // Print-component parity: M37 plans the whole job without moving.
-                        if (dry) await client.SimulatePrintAsync(path, ct).ConfigureAwait(false);
-                        else await client.StartPrintAsync(path, ct).ConfigureAwait(false);
-                        if (active != null) projector.Apply(s => s.WithActiveJob(active));
-                        if (gate.Checks.FinalConfiguration.Known)
-                            session.SetArmConfiguration(gate.Checks.FinalConfiguration);
-                    }
-                    // Fail-closed cleanup, then rethrow: whatever stopped M32/M37 - a
-                    // refusal, a transport fault, a cancellation - the session must not be
-                    // left believing it initiated a job. The caller still sees the original
-                    // exception and reports it through Finish().
-                    catch (Exception)
-                    {
-                        session.Jobs.AbortStart();
-                        session.ClearInitiatedJob();
-                        throw;
-                    }
-                    return (notice.Length == 0 ? "" : notice + ". ")
-                        + (dry ? "dry run started (M37): " : "print started (M32): ") + path;
-                }, () => warned);
+                var bundle = CaptureStartBundle(gate, uploaded);
+                if (bundle == null) { Fail("start refused: the prepared job is unavailable"); return; }
+                // Prepared here as well as at solve time, because a session opened after
+                // the last solve has an empty tracker.
+                bundle.Session.Jobs.Prepare(bundle.Prepared);
+                StartJob(bundle, bundle.DryRun ? "starting dry run (M37)" : "starting print");
             });
         }
 
+        void UploadJob(UploadBundle bundle, Action<UploadOutcome> done)
+        {
+            UploadRecord? uploaded = null;
+            bool warned = false;
+            Dispatch("uploading " + bundle.RemotePath, false, async (snap, client, ct) =>
+            {
+                // This transaction body is shared with the scheduler. Keep its order in sync
+                // with the existing Upload action and review every gate before merging.
+                JobSafety.EnsureFirmwareSafe(snap, client, bundle.Limits, bundle.Mechanism,
+                    bundle.Session.ArmConfiguration, bundle.Gate.InitialConfiguration, bundle.ProfileError,
+                    jobHomesFirst: bundle.Gate.HomesFirst);
+                var (notice, motionWarned) = await JobSafety.CheckMotionAtGateAsync(client, bundle.Lines, false, ct).ConfigureAwait(false);
+                if (motionWarned) warned = true;
+                UploadVerification verification = await client.UploadAsync(bundle.RemotePath, bundle.Bytes, ct).ConfigureAwait(false);
+                uploaded = new UploadRecord(bundle.RemotePath, bundle.Hash, verification.Size, client.ConnectionGeneration);
+                bundle.Projector.Apply(s => PrintConsoleReducer.Uploaded(s, uploaded));
+                return (notice.Length == 0 ? "" : notice + ". ")
+                    + $"uploaded {bundle.RemotePath} ({verification.Size} bytes, {verification.Summary})";
+            }, () => warned,
+               (ok, error) => done(new UploadOutcome(bundle, ok ? uploaded : null, error)),
+               bundle.Session, bundle.Projector);
+        }
+
+        /// <summary>The Start transaction, shared by the Start button and the scheduler. It
+        /// promotes the bundle's own snapshot (<see cref="JobIdentityTracker.StartPrepared(JobSnapshot, DateTime)"/>)
+        /// and leaves the tracker's prepared slot alone: for a scheduled start that slot holds
+        /// the canvas job, which may no longer be the cached one. <paramref name="started"/>
+        /// receives, on the UI thread, the run id the send created, or null when it failed.</summary>
+        void StartJob(StartBundle bundle, string label, Action<string?>? started = null)
+        {
+            bundle.Session.SetJobArchiveContext(bundle.ArchiveContext, bundle.DryRun);
+            bool warned = false;
+            string? startedRunId = null;
+            Dispatch(label, true, async (snap, client, ct) =>
+            {
+                // This transaction body is shared with the scheduler. Keep its order in sync
+                // with the existing Start action and review every gate before merging.
+                JobSafety.EnsureFirmwareSafe(snap, client, bundle.Limits, bundle.Mechanism,
+                    bundle.Session.ArmConfiguration, bundle.Gate.InitialConfiguration, bundle.ProfileError,
+                    jobHomesFirst: bundle.Gate.HomesFirst);
+                // StateGate BEFORE the motion probe (three round-trips) so the probe
+                // cannot age `snap` out of the 3 s freshness window
+                string? stateGate = StateGate.Refuse(snap, requireIdle: true,
+                    requireHomed: !bundle.Gate.HomesFirst, activity: "starting a job");
+                if (stateGate != null) throw new DuetException("start refused: " + stateGate);
+                var (notice, motionWarned) = await JobSafety.CheckMotionAtGateAsync(client, bundle.Lines, false, ct).ConfigureAwait(false);
+                if (motionWarned) warned = true;
+                await client.VerifyRemoteContentAsync(bundle.Upload.Path, bundle.Bytes, ct).ConfigureAwait(false);
+                long stored;
+                try { stored = await client.GetFileSizeAsync(bundle.Upload.Path, ct).ConfigureAwait(false); }
+                catch (DuetException ex)
+                {
+                    bundle.Projector.Apply(s => s.WithUploaded(null));
+                    throw new DuetException($"SD file missing since the last verified upload ({bundle.Upload.Path}). Upload again", ex);
+                }
+                if (bundle.Upload.Size > 0 && stored != bundle.Upload.Size)
+                {
+                    bundle.Projector.Apply(s => s.WithUploaded(null));
+                    throw new DuetException($"SD file changed since the last verified upload ({bundle.Upload.Path}: "
+                        + $"{stored} bytes, expected {bundle.Upload.Size}). Upload again");
+                }
+                // re-gate on a FRESH snapshot immediately before committing motion:
+                // the round trips above can outlive the gate window, and a DWC pause,
+                // cancel or E-stop meanwhile invalidates the tracked arm configuration
+                var commitSnap = await client.GetSnapshotAsync(true, ct).ConfigureAwait(false);
+                JobSafety.EnsureFirmwareSafe(commitSnap, client, bundle.Limits, bundle.Mechanism,
+                    bundle.Session.ArmConfiguration, bundle.Gate.InitialConfiguration, bundle.ProfileError,
+                    jobHomesFirst: bundle.Gate.HomesFirst);
+                string? commitGate = StateGate.Refuse(commitSnap, requireIdle: true,
+                    requireHomed: !bundle.Gate.HomesFirst, activity: "starting a job");
+                if (commitGate != null) throw new DuetException("start refused: " + commitGate);
+                bundle.Session.MarkInitiatedJob(bundle.Upload.Path);
+                // The prepared snapshot becomes the ACTIVE run BEFORE the send: the poll
+                // loop can observe the job start before the M32 reply returns, and the
+                // job log that opens on that poll must archive exactly these bytes
+                // rather than record an external run. A repeat of identical content is a
+                // new run, not the old one; a failed send rolls it back.
+                var active = bundle.Session.Jobs.StartPrepared(bundle.Prepared, DateTime.UtcNow);
+                try
+                {
+                    bundle.Session.MarkInitiatedMotion();
+                    // Print-component parity: M37 plans the whole job without moving.
+                    if (bundle.DryRun) await client.SimulatePrintAsync(bundle.Upload.Path, ct).ConfigureAwait(false);
+                    else await client.StartPrintAsync(bundle.Upload.Path, ct).ConfigureAwait(false);
+                    if (active != null) bundle.Projector.Apply(s => s.WithActiveJob(active));
+                    startedRunId = active?.RunId;
+                    if (bundle.Gate.Checks.FinalConfiguration.Known)
+                        bundle.Session.BeginJobConfiguration(bundle.Gate.Checks.FinalConfiguration);
+                }
+                // Fail-closed cleanup, then rethrow: whatever stopped M32/M37, a refusal,
+                // a transport fault or a cancellation, the session must not be left believing
+                // it initiated a job. The caller still sees the original exception.
+                catch (Exception)
+                {
+                    bundle.Session.Jobs.AbortStart();
+                    bundle.Session.ClearInitiatedJob();
+                    throw;
+                }
+                return (notice.Length == 0 ? "" : notice + ". ")
+                    + (bundle.DryRun ? "dry run started (M37): " : "print started (M32): ") + bundle.Upload.Path;
+            }, () => warned,
+               started == null ? null : (Action<bool, string?>)((ok, error) => started(ok ? startedRunId : null)),
+               bundle.Session, bundle.Projector);
+        }
+
+        void AddScheduledPause(PauseKind kind, DateTime? dueUtc, int? layer)
+        {
+            var state = _projector.State;
+            string? refusal = PauseSchedulePolicy.RefuseAdd(kind, dueUtc, layer, DateTime.UtcNow, state);
+            if (refusal != null) { Fail(refusal); return; }
+            string runId = state.ActiveJob!.RunId;
+            var pause = kind == PauseKind.AtTime
+                ? ScheduledPause.CreateAtTime(dueUtc!.Value, runId, DateTime.UtcNow)
+                : ScheduledPause.CreateAtLayer(layer!.Value, runId, DateTime.UtcNow);
+            _projector.Apply(s => PrintConsoleReducer.PauseAdded(s, pause));
+            _projector.Session?.AppendLog("console: scheduled pause added " + PauseLabel(pause));
+            ArmPauseTimer();
+        }
+
+        void RemoveScheduledPause(long id)
+        {
+            if (!_projector.State.Pauses.Any(p => p.Id == id)) return;
+            _projector.Apply(s => PrintConsoleReducer.PauseRemoved(s, id));
+            _projector.Session?.AppendLog("console: scheduled pause removed " + id.ToString(CultureInfo.InvariantCulture));
+            ArmPauseTimer();
+        }
+
+        static string PauseLabel(ScheduledPause pause)
+            => pause.Kind == PauseKind.AtLayer
+                ? "at layer " + (pause.Layer ?? 0).ToString(CultureInfo.InvariantCulture)
+                : "at " + pause.DueUtc!.Value.ToLocalTime().ToString("g", CultureInfo.InvariantCulture);
+
+        void ArmPauseTimer()
+        {
+            DisposePauseTimer();
+            var state = _projector.State;
+            DateTime? next = null;
+            foreach (var pause in state.Pauses)
+                if (pause.Phase == ScheduledPausePhase.Pending && pause.Kind == PauseKind.AtTime
+                    && pause.DueUtc.HasValue && (next == null || pause.DueUtc.Value < next.Value)) next = pause.DueUtc;
+            if (!next.HasValue) return;
+            TimeSpan wait = next.Value - DateTime.UtcNow;
+            int milliseconds = wait <= TimeSpan.Zero ? 0 : (int)Math.Min(int.MaxValue, Math.Max(1, wait.TotalMilliseconds));
+            _pauseTimer = new System.Threading.Timer(_ =>
+                Rhino.RhinoApp.InvokeOnUiThread((Action)EvaluatePauseTimer), null,
+                milliseconds, Timeout.Infinite);
+        }
+
+        void EvaluatePauseTimer()
+        {
+            var state = _projector.State;
+            // While the link is down the machine status in the state is stale: leave the
+            // item pending. The first poll after the reconnect evaluates it (OnPollCompleted)
+            // and DispatchScheduledPause records how late it went out.
+            if (state.Connection != ConsoleConnection.Connected) return;
+            var run = state.ActiveJob;
+            var evaluation = PauseSchedulePolicy.Evaluate(state.Pauses, run?.RunId ?? "", run,
+                state.MachineState, state.JobFilePosition, DateTime.UtcNow,
+                state.PausePhase, _pauseAcceptedUtc);
+            ApplyPauseEvaluation(evaluation);
+            if (evaluation.ToSend != null) DispatchScheduledPause(evaluation.ToSend);
+            ArmPauseTimer();
+        }
+
+        void ApplyPauseEvaluation(PauseEvaluation evaluation)
+        {
+            if (evaluation.ConsumedWithoutSend != null)
+            {
+                _projector.Apply(s => PrintConsoleReducer.PausesConsumed(s, evaluation.ConsumedWithoutSend.Id)
+                    .WithPausePhase(evaluation.Phase).WithScheduleNote(evaluation.Notes));
+                _projector.Session?.AppendLog("console: scheduled pause " + evaluation.ConsumedWithoutSend.Id
+                    + " " + evaluation.Notes);
+            }
+            else if (evaluation.Phase != _projector.State.PausePhase || evaluation.Notes.Length > 0)
+            {
+                _projector.Apply(s => s.WithPausePhase(evaluation.Phase)
+                    .WithScheduleNote(evaluation.Notes.Length == 0 ? s.ScheduleNote : evaluation.Notes));
+                if (evaluation.Notes.Length > 0) _projector.Session?.AppendLog("console: " + evaluation.Notes);
+            }
+            if (evaluation.Phase == PauseSchedulerPhase.Ready) _pauseAcceptedUtc = null;
+        }
+
+        void DispatchScheduledPause(ScheduledPause pause)
+        {
+            bool claimed = false;
+            _projector.Apply(s =>
+            {
+                bool accepted = PrintConsoleReducer.TryClaimPause(s, pause.Id, out var next);
+                claimed = accepted;
+                return next;
+            });
+            if (!claimed) return;
+            if (pause.Kind == PauseKind.AtTime && pause.DueUtc.HasValue)
+            {
+                double late = (DateTime.UtcNow - pause.DueUtc.Value).TotalSeconds;
+                if (late > 2.0)
+                    _projector.Session?.AppendLog("console: scheduled pause " + PauseLabel(pause) + " sent "
+                        + late.ToString("0", CultureInfo.InvariantCulture) + " s late");
+            }
+            string label = "pausing (scheduled " + PauseLabel(pause) + ")";
+            JobControl(label, "pause", snap => snap.Status == MachineStatus.Processing || snap.Status == MachineStatus.Simulating,
+                async (session, client, ct) =>
+                {
+                    session.MarkInitiatedMotion();
+                    await client.PauseAsync(ct).ConfigureAwait(false);
+                    return "scheduled pause accepted (M25)";
+                },
+                (ok, error) =>
+                {
+                    if (ok)
+                    {
+                        _pauseAcceptedUtc = DateTime.UtcNow;
+                        // The accepted M25 is this item's one stop: it leaves the list now,
+                        // and the barrier phase holds the next one until pause and resume.
+                        _projector.Apply(s => PrintConsoleReducer.PausesConsumed(s, pause.Id)
+                                                                 .WithPausePhase(PauseSchedulerPhase.AwaitingPause));
+                        _projector.Session?.AppendLog("console: scheduled pause accepted " + PauseLabel(pause));
+                    }
+                    else if (_projector.State.Connection != ConsoleConnection.Connected)
+                    {
+                        // The link dropped under the send: the stop did not happen, so the
+                        // item goes back to Pending for the first poll after the reconnect,
+                        // unless the operator removed it meanwhile or its run has ended.
+                        bool kept = false;
+                        _projector.Apply(s =>
+                        {
+                            kept = s.ActiveJob?.RunId == pause.RunId
+                                && s.Pauses.Any(p => p.Id == pause.Id && p.Phase == ScheduledPausePhase.Sending);
+                            var next = kept
+                                ? PrintConsoleReducer.PauseAdded(PrintConsoleReducer.PauseRemoved(s, pause.Id), pause)
+                                : s;
+                            return next.WithPausePhase(PauseSchedulerPhase.Ready);
+                        });
+                        _projector.Session?.AppendLog("console: scheduled pause " + PauseLabel(pause)
+                            + (kept ? " kept for the reconnect: " : " not sent and not kept: ")
+                            + (error ?? "connection lost"));
+                    }
+                    else
+                    {
+                        _projector.Apply(s => PrintConsoleReducer.PausesConsumed(s, pause.Id)
+                            .WithPausePhase(PauseSchedulerPhase.Ready)
+                            .WithScheduleNote(error ?? "scheduled pause refused"));
+                        _projector.Session?.AppendLog("console: scheduled pause failed: " + (error ?? "unknown error"));
+                    }
+                    ArmPauseTimer();
+                });
+        }
+
+        void RequestEstimate(JobSnapshot? snapshot, bool scheduled)
+        {
+            if (snapshot == null || !snapshot.IntendedPathAvailable)
+            {
+                if (scheduled) { _scheduledEstimateKey = ""; _projector.Apply(s => s.WithScheduledEstimate(null)); }
+                else { _activeEstimateKey = ""; _projector.Apply(s => s.WithActiveEstimate(null)); }
+                return;
+            }
+            bool cartesian = Cartesian;
+            string key = (scheduled ? "scheduled|" : "active|") + snapshot.RunId + "|" + snapshot.Sha256 + "|" + cartesian;
+            if (scheduled ? key == _scheduledEstimateKey : key == _activeEstimateKey) return;
+            if (scheduled) _scheduledEstimateKey = key; else _activeEstimateKey = key;
+            byte[] bytes = snapshot.GcodeBytes();
+            IReadOnlyList<string> lines = ParsedJobCache.LinesFromBytes(bytes);
+            string parseKey = ParsedJobCache.KeyFor("sha:" + snapshot.Sha256, cartesian);
+            var request = new IntendedPathRequest(parseKey, IntendedPathOrigin.SessionJob,
+                snapshot.Sha256, cartesian, () => lines, "estimate");
+            ParsedJobCache.Request(request, parsed => Task.Run(() =>
+            {
+                try
+                {
+                    var program = parsed.Program ?? GcodeParser.Parse(lines, allowPerAxisHome: cartesian);
+                    var estimate = JobTimeEstimate.FromMoves(program.Moves, lines, bytes);
+                    Rhino.RhinoApp.InvokeOnUiThread((Action)(() =>
+                    {
+                        if (scheduled)
+                        {
+                            var current = _projector.State.ScheduledStart;
+                            bool forArmed = current != null && current.JobSha256 == snapshot.Sha256;
+                            bool forPrepared = current == null && _preparedJob != null && _preparedJob.Sha256 == snapshot.Sha256;
+                            if (forArmed || forPrepared)
+                                _projector.Apply(s => s.WithScheduledEstimate(estimate));
+                        }
+                        else if (_projector.State.ActiveJob?.RunId == snapshot.RunId)
+                            _projector.Apply(s => s.WithActiveEstimate(estimate));
+                    }));
+                }
+                catch (Exception ex)
+                {
+                    _projector.Session?.AppendLog("console: estimate unavailable: " + MachineSession.Flatten(ex));
+                }
+            }));
+        }
+
         void JobControl(string label, string verb, Func<ObjectModelSnapshot, bool> allowed,
-                        Func<MachineSession, IMachineClient, CancellationToken, Task<string>> send)
+                        Func<MachineSession, IMachineClient, CancellationToken, Task<string>> send,
+                        Action<bool, string?>? onOutcome = null)
         {
             if (!TryGetSession(out var session)) return;
             Dispatch(label, true, async (snap, client, ct) =>
@@ -1287,11 +1994,12 @@ namespace Lugworm.Components
                 string? refusal = StateGate.RefuseJobControl(snap, label, allowed(snap));
                 if (refusal != null) throw new DuetException(verb + " refused: " + refusal);
                 return await send(session, client, ct).ConfigureAwait(false);
-            });
+            }, onOutcome: onOutcome);
         }
 
         void EmergencyStop()
         {
+            CancelDeferredActions("scheduled actions cancelled by E-STOP");
             var session = _projector.Session;
             if (session == null)
             {
@@ -1330,6 +2038,7 @@ namespace Lugworm.Components
         /// for it.</summary>
         void Reset()
         {
+            CancelDeferredActions("scheduled actions cancelled by reset");
             if (!TryGetSession(out var session)) return;
             var projector = _projector;
             var state = projector.State;
@@ -1477,10 +2186,65 @@ namespace Lugworm.Components
         /// SessionChangeKind.None and so cannot prove an acknowledgement poll happened.</summary>
         void OnPollCompleted(long generation, ObjectModelSnapshot snapshot)
         {
+            var projected = _projector.State;
+            var run = projected.ActiveJob;
+            string runId = run?.RunId ?? "";
+            long filePosition = snapshot.Job?.FilePosition ?? -1;
+            long connectionGeneration = snapshot.ConnectionGeneration;
+            bool reconnected = _lastConnectionGeneration >= 0
+                               && connectionGeneration != _lastConnectionGeneration;
+            _lastConnectionGeneration = connectionGeneration;
+            if (!string.Equals(_crossingRunId, runId, StringComparison.Ordinal))
+            {
+                _crossingRunId = runId;
+                _layerCrossings = runId.Length == 0 ? null : new LayerCrossings(runId);
+                if (run != null) RequestEstimate(run, scheduled: false);
+            }
+            if (_layerCrossings != null && run != null)
+            {
+                int markerLayer = filePosition >= 0 ? run.LayerMarkers.LayerAt(filePosition) : 0;
+                _layerCrossings.Observe(markerLayer, snapshot.Status, reconnected, snapshot.TakenUtc);
+            }
+            IReadOnlyList<(int layer, double observedS)> cleanIntervals = _layerCrossings == null
+                ? Array.Empty<(int layer, double observedS)>()
+                : _layerCrossings.CleanIntervals.ToArray();
+            var status = snapshot.Status;
             var readiness = JogRepeatPolicy.ReadinessOf(snapshot.Status,
                 maintenanceOverrideActive: DateTime.UtcNow < _maintenanceArmedUntil);
             Rhino.RhinoApp.InvokeOnUiThread((Action)(() =>
             {
+                // Evaluated HERE, on the UI thread, against the state as it is now: the
+                // barrier phase can have moved (a claim, an accepted M25) between the
+                // poll and this marshal, and a phase read on the poll thread would write
+                // a stale Ready over it.
+                var current = _projector.State;
+                if (_scheduledRunSummary != null)
+                {
+                    if (_scheduledRunId.Length > 0 && current.ActiveJob != null
+                        && current.ActiveJob.RunId == _scheduledRunId
+                        && (status == MachineStatus.Processing || status == MachineStatus.Simulating))
+                    {
+                        _projector.Session?.AppendLog(_scheduledRunSummary);
+                        _scheduledRunSummary = null;
+                    }
+                    else if (DateTime.UtcNow - _scheduledRunFiredUtc > TimeSpan.FromMinutes(2))
+                        _scheduledRunSummary = null;
+                }
+                var evaluation = PauseSchedulePolicy.Evaluate(current.Pauses, current.ActiveJob?.RunId ?? "",
+                    current.ActiveJob, status, filePosition, DateTime.UtcNow, current.PausePhase, _pauseAcceptedUtc);
+                ApplyPauseEvaluation(evaluation);
+                if (run != null && cleanIntervals.Count > 0)
+                {
+                    var currentEstimate = _projector.State.ActiveEstimate;
+                    if (currentEstimate != null)
+                    {
+                        double correction = currentEstimate.Correction(cleanIntervals);
+                        if (Math.Abs(correction - currentEstimate.CorrectionFactor) > 1e-9)
+                            _projector.Apply(s => s.WithActiveEstimate(currentEstimate.WithCorrection(correction)));
+                    }
+                }
+                if (evaluation.ToSend != null) DispatchScheduledPause(evaluation.ToSend);
+                ArmPauseTimer();
                 _jogRepeat = JogRepeatPolicy.PollObserved(_jogRepeat, generation, readiness);
                 if (_jogPressUtc.HasValue && readiness == JogReadiness.Busy)
                 {
@@ -1611,6 +2375,7 @@ namespace Lugworm.Components
         /// this is deliberate and differs from releasing a lease.</summary>
         void Disconnect()
         {
+            CancelDeferredActions("scheduled actions cancelled by disconnect");
             var projector = _projector;
             projector.Apply(s => PrintConsoleReducer.ActionStarted(s, "disconnecting"));
             try
@@ -1720,13 +2485,14 @@ namespace Lugworm.Components
         /// inside the pending window (cache hit by quick hash completes synchronously),
         /// then <paramref name="onReady"/> on the UI thread. Fails closed before any work
         /// on an unresolved profile or an unknown Cartesian envelope.</summary>
-        void EnsureGateAsync(Action<JobGateResult> onReady)
+        void EnsureGateAsync(Action<JobGateResult> onReady, Action<string>? onFailure = null)
         {
-            if (JobLines.Count == 0) { Fail("upload refused: the gcode input is empty"); return; }
-            if (_profileError != null) { Fail("refused: " + _profileError); return; }
+            void Refuse(string error) { Fail(error); onFailure?.Invoke(error); }
+            if (JobLines.Count == 0) { Refuse("upload refused: the gcode input is empty"); return; }
+            if (_profileError != null) { Refuse("refused: " + _profileError); return; }
             if (Cartesian && _envelopeUnknown.Count > 0)
             {
-                Fail("refused: machine envelope unknown (" + string.Join(", ", _envelopeUnknown)
+                Refuse("refused: machine envelope unknown (" + string.Join(", ", _envelopeUnknown)
                     + "). Wait for the firmware's M208 report");
                 return;
             }
@@ -1775,9 +2541,14 @@ namespace Lugworm.Components
                         projector.Apply(s => PrintConsoleReducer.ActionFinished(s, gate.Summary, null));
                         onReady(gate);
                     }
-                    else Finish(projector, null, err != null ? "validation failed: " + err
-                        : sameHost ? "inputs changed during validation. Press again"
-                        : "host changed during validation. Press again");
+                    else
+                    {
+                        string why = err != null ? "validation failed: " + err
+                            : sameHost ? "inputs changed during validation. Press again"
+                            : "host changed during validation. Press again";
+                        Finish(projector, null, why);
+                        onFailure?.Invoke(why);
+                    }
                 }));
             });
         }
@@ -1878,6 +2649,18 @@ namespace Lugworm.Components
         /// Recent prints while one is selected, otherwise the wired G-code.</summary>
         IReadOnlyList<string> JobLines => _historyLines ?? (IReadOnlyList<string>)_gcode;
         ulong JobHash => _historyLines != null ? _historyHash : _gcodeHash;
+
+        /// <summary>The manual components upstream of the wired G-code that show
+        /// "Compute *", joined for a message; null when the wired G-code is current or a
+        /// run from Recent prints is what Upload and Start would use. Read on every solve
+        /// and again inside Upload and Start, because a replayed result looks exactly like
+        /// a fresh one from here (2026-10-14: four prints of the previous orientation).</summary>
+        string? StaleInputNames()
+        {
+            if (_historyRun != null) return null;
+            var stale = StaleUpstream("gcode");
+            return stale.Count == 0 ? null : string.Join(", ", stale);
+        }
 
         byte[] JobBytes()
         {

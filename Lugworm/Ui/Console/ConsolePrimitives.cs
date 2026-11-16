@@ -127,35 +127,6 @@ namespace Lugworm.Ui.Console
             return paint.MeasureText("...") <= maxWidth ? "..." : "";
         }
 
-        /// <summary>Word-wraps text into at most <paramref name="maxLines"/> lines; returns the height used.</summary>
-        public float DrawWrapped(string text, float x, float top, float maxWidth, float size, SKColor color, int maxLines = 3)
-        {
-            var p = Text(size);
-            p.Color = color;
-            float lineH = size * 1.35f;
-            var words = (text ?? "").Split(' ');
-            string line = "";
-            int lines = 0;
-            foreach (var word in words)
-            {
-                string candidate = line.Length == 0 ? word : line + " " + word;
-                if (p.MeasureText(candidate) <= maxWidth || line.Length == 0) { line = candidate; continue; }
-                Canvas.DrawText(line, x, top + lineH * lines + size, p);
-                lines++;
-                line = word;
-                if (lines == maxLines - 1) break;
-            }
-            if (line.Length > 0 && lines < maxLines)
-            {
-                Canvas.DrawText(Clip(line, maxWidth, p), x, top + lineH * lines + size, p);
-                lines++;
-            }
-            return lineH * lines;
-        }
-
-        public void Heading(string text, float x, float baseline)
-            => Draw(text, x, baseline, T.FontHeader, T.Text, true);
-
         public void Label(string text, float x, float baseline)
             => Draw(text, x, baseline, T.FontSmall, T.TextMuted);
 

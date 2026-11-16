@@ -349,7 +349,7 @@ public class PrintConsoleStateTests
         Assert.False(b.Stop); Assert.False(b.EStop); Assert.False(b.Reset); Assert.False(b.GoTo);
         // 3.0.0 ids absorbed from the five consolidated components.
         Assert.False(b.Jog); Assert.False(b.Capture); Assert.False(b.Send); Assert.False(b.Disconnect);
-        Assert.Equal(18, b.Reasons.Count);   // 17 + gotostart (2026-09-16)
+        Assert.Equal(22, b.Reasons.Count);   // 17 + gotostart + scheduling actions
         Assert.False(string.IsNullOrEmpty(b.Reasons["estop"]));
         foreach (string id in new[] { "jog", "capture", "send", "disconnect", "gotostart" })
             Assert.False(string.IsNullOrEmpty(b.Reasons[id]));
@@ -792,6 +792,33 @@ public class PrintConsoleStateTests
         var noEnvelope = PrintConsoleButtons.Enabled(Ready().WithPlanningFacts(null, new[] { "xMin" }), true, true, true, true);
         Assert.False(noEnvelope.Validate);
         Assert.Contains("envelope unknown", noEnvelope.Reasons["validate"]);
+    }
+
+    [Fact]
+    public void Upload_and_start_refuse_while_the_wired_gcode_is_out_of_date_upstream()
+    {
+        // 2026-10-14: a manual G-code component replays its last result after its inputs
+        // changed ("Compute *"). The console uploaded and started that old job four times
+        // while the canvas showed the object turned by 90 degrees.
+        var ready = Ready();
+        Assert.True(PrintConsoleButtons.Enabled(ready, true, true, true, true).Start);
+
+        var stale = ready.WithStaleInput("G-code");
+        const string why = "the G-code input is out of date. Press Compute on G-code first";
+        Assert.Equal(why, PrintConsoleState.StaleInputReason("G-code"));
+        var b = PrintConsoleButtons.Enabled(stale, true, true, true, true);
+        Assert.False(b.Upload);
+        Assert.False(b.Start);
+        Assert.Equal(why, b.Reasons["upload"]);
+        Assert.Equal(why, b.Reasons["start"]);
+        // Validation sends nothing and stays available.
+        Assert.True(b.Validate);
+        // A poll fold must not clear it: only the next solve knows whether it still holds.
+        Assert.Equal("G-code", PrintConsoleReducer.Reduce(stale, Facts(ConsoleConnection.Connected, Snap())).StaleInput);
+        // It clears once the upstream component has computed again.
+        var fresh = PrintConsoleButtons.Enabled(stale.WithStaleInput(null), true, true, true, true);
+        Assert.True(fresh.Upload);
+        Assert.True(fresh.Start);
     }
 
     [Fact]

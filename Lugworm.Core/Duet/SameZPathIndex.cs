@@ -44,7 +44,6 @@ namespace Lugworm.Core.Duet
         readonly int _count;
 
         public int SegmentCount => _count;
-        public double ZWindowMm => _window;
         /// <summary>False when no usable reference segment was supplied; every query then
         /// reports unavailable.</summary>
         public bool Valid => _count > 0;

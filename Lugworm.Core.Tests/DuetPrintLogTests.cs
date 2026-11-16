@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Lugworm.Core.Tests;
 
-/// <summary>Print-log recorder, CSV formatting and streaming writer. The recorder is
+/// <summary>Print-log recorder and CSV formatting. The recorder is
 /// driven by synthetic snapshot sequences - the same shape the poll loop produces.</summary>
 public class DuetPrintLogTests
 {
@@ -506,13 +506,9 @@ public class DuetPrintLogTests
                                              "printlog_" + Guid.NewGuid().ToString("N") + ".csv");
         try
         {
-            using (var writer = new PrintLogCsvWriter(path))
-            {
-                writer.Append(recorder.Snapshot());
-                writer.Flush();
-                Assert.False(writer.Disabled);
-                Assert.Equal(recorder.RecordCount, writer.RowsWritten);
-            }
+            // the lines the job log stages: one header, then one row per record
+            File.WriteAllLines(path, new[] { PrintLogCsv.Header() }
+                .Concat(recorder.Snapshot().Select(PrintLogCsv.Row)));
 
             var table = TableIo.ReadCsv(path);
             Assert.Equal(recorder.RecordCount, table.Rows.Length);
@@ -572,65 +568,6 @@ public class DuetPrintLogTests
         };
 
         Assert.Contains("\"0:/gcodes/vase,v2.gcode\"", PrintLogCsv.Row(record));
-    }
-
-    // ---- writer -----------------------------------------------------------
-
-    [Fact]
-    public void Writer_WritesTheHeaderOnceAndAppendsToAnExistingFile()
-    {
-        string path = System.IO.Path.Combine(System.IO.Path.GetTempPath(),
-                                             "printlog_" + Guid.NewGuid().ToString("N") + ".csv");
-        var record = new PrintLogRecord { Seq = 1, Kind = PrintLogEventKind.Interval, Status = "Processing" };
-        try
-        {
-            using (var first = new PrintLogCsvWriter(path)) first.Append(new[] { record });
-            using (var second = new PrintLogCsvWriter(path)) second.Append(new[] { record });
-
-            var lines = File.ReadAllLines(path);
-            Assert.Equal(3, lines.Length);
-            Assert.Equal(PrintLogCsv.Header(), lines[0]);
-            Assert.Single(lines.Where(l => l == PrintLogCsv.Header()));
-        }
-        finally { if (File.Exists(path)) File.Delete(path); }
-    }
-
-    [Fact]
-    public void Writer_GoesInertInsteadOfThrowingOnAnUnusablePath()
-    {
-        // a directory path can never be opened as a file
-        string path = System.IO.Path.GetTempPath();
-
-        using var writer = new PrintLogCsvWriter(path);
-        var exception = Record.Exception(() =>
-        {
-            writer.Append(new[] { new PrintLogRecord { Seq = 1, Kind = PrintLogEventKind.Interval } });
-            writer.Flush();
-        });
-
-        Assert.Null(exception);
-        Assert.True(writer.Disabled);
-        Assert.False(string.IsNullOrEmpty(writer.LastError));
-        Assert.Equal(0, writer.RowsWritten);
-    }
-
-    [Fact]
-    public void Writer_KeepsTheFileReadableWhileItIsOpen()
-    {
-        string path = System.IO.Path.Combine(System.IO.Path.GetTempPath(),
-                                             "printlog_" + Guid.NewGuid().ToString("N") + ".csv");
-        try
-        {
-            using var writer = new PrintLogCsvWriter(path);
-            writer.Append(new[] { new PrintLogRecord { Seq = 1, Kind = PrintLogEventKind.LayerEnd } });
-
-            // LayerEnd forces a flush, so an inspector must see the row mid-print
-            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-            using var reader = new StreamReader(stream);
-            string text = reader.ReadToEnd();
-            Assert.Contains("LayerEnd", text);
-        }
-        finally { if (File.Exists(path)) File.Delete(path); }
     }
 
     // ---- readable projections (final test round 5.20) ----------------------

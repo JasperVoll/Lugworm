@@ -34,16 +34,6 @@ namespace Lugworm.Convert
         /// geometry outputs).</summary>
         public static Transform FromMmTransform(double s) => Transform.Scale(Point3d.Origin, 1.0 / s);
 
-        /// <summary>Duplicated, mm-scaled copy of any geometry; the caller's object is
-        /// never touched. Returns the original reference unchanged for mm documents.</summary>
-        public static T ToMmCopy<T>(T geo, double s) where T : GeometryBase
-        {
-            if (IsUnity(s)) return geo;
-            var dup = (T)geo.Duplicate();
-            dup.Transform(ToMmTransform(s));
-            return dup;
-        }
-
         /// <summary>Scale a caller-owned (already duplicated) geometry to mm in place.</summary>
         public static void ToMmInPlace(GeometryBase geo, double s)
         {

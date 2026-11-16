@@ -314,7 +314,6 @@ namespace Lugworm.Duet
         long _parseBase, _cacheHitBase, _redrawBase, _callbackBase;
 
         // pump + statistics (UI thread)
-        int _pumpIntervalMs;
         bool _pumpRunning;
         int _settled;
         double _lastOverlayMs = double.NegativeInfinity;
@@ -338,7 +337,6 @@ namespace Lugworm.Duet
             _conduit = new LiveRobotConduit(visible, scaleToMm);
             _conduit.Enabled = true;
             _timer = new Timer(OnTimer, null, Timeout.Infinite, Timeout.Infinite);
-            _pumpIntervalMs = FrameIntervalMs;
             // An unfilled percentile slot is UNKNOWN, not zero: a half-filled window of
             // zeroes would report a 0 ms cadence and be believed.
             Blank(_coordIntervals); Blank(_coordRoundTrips); Blank(_fullPollMs);
@@ -1201,7 +1199,6 @@ namespace Lugworm.Duet
         {
             if (!command.Changed) return;
             _pumpRunning = command.Running;
-            if (command.Running) _pumpIntervalMs = command.PeriodMs;
             try
             {
                 if (command.Running) _timer.Change(command.DueMs, command.PeriodMs);

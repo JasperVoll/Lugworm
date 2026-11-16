@@ -126,20 +126,8 @@ namespace Lugworm.Components
                                                          string activity = "this action")
             => new ActionGate(ActionGatePolicy.ArmConfigurationGate(GateState(), actions, activity));
 
-        // Kept as a named helper so capsule state and the transaction-side gate
-        // describe the same refusal, while the transaction still re-checks it
-        // under the session command lock.
-        protected string? ActionRefusal(bool requireIdle = true, bool allowPaused = false,
-                                        bool requireHomed = true, DateTime? notBeforeUtc = null,
-                                        string activity = "this action")
-            => StateActionGate("", requireIdle, allowPaused, requireHomed,
-                               notBeforeUtc, activity).Reason;
-
         protected string? ConnectedRefusal()
             => ConnectedActionGate("").Reason;
-
-        protected string? ArmConfigurationRefusal(string activity = "this action")
-            => ArmConfigurationActionGate("", activity).Reason;
 
         protected void SetActionLifecycle(string operation, string phase)
         {
@@ -516,7 +504,7 @@ namespace Lugworm.Components
                     + ". Reconnect to retry.");
             var snap = session.Latest;
             if (snap == null) return;
-            foreach (var finding in FirmwareLimitCheck.CompareFindings(snap, lim))
+            foreach (var finding in FirmwareLimitCheck.CompareFindings(snap, lim, mechanism))
             {
                 var level = finding.Severity == Severity.Error ? GH_RuntimeMessageLevel.Error
                     : finding.Severity == Severity.Info ? GH_RuntimeMessageLevel.Remark

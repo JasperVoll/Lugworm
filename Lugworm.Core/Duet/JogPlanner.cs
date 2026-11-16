@@ -93,8 +93,10 @@ namespace Lugworm.Core.Duet
                 var seed = sessionConfiguration.HasValue
                     ? sessionConfiguration.Value
                     : ArmConfiguration.Seed(elbow);
+                // the X/Y box is the operator's on the SCARA (WithoutXYEnvelope)
                 var check = RobotChecks.RunPoints(
-                    new[] { current, new Vec3(plan.TargetX, plan.TargetY, plan.TargetZ) }, lim, seed);
+                    new[] { current, new Vec3(plan.TargetX, plan.TargetY, plan.TargetZ) },
+                    lim.WithoutXYEnvelope(), seed);
                 plan.FinalConfiguration = check.FinalConfiguration;
                 foreach (var p in check.Problems)
                 {
@@ -193,7 +195,7 @@ namespace Lugworm.Core.Duet
             var prev = new Vec3(axP.MachinePosition, ayP.MachinePosition, azP.MachinePosition);
             var walk = new List<Vec3>(waypoints.Count + 1) { prev };
             for (int i = 0; i < waypoints.Count; i++) walk.Add(waypoints[i]);
-            var check = RobotChecks.RunPoints(walk, lim, seed);
+            var check = RobotChecks.RunPoints(walk, lim.WithoutXYEnvelope(), seed);
             plan.FinalConfiguration = check.FinalConfiguration;
 
             foreach (var p in check.Problems)

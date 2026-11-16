@@ -279,10 +279,8 @@ namespace Lugworm.Core.Clipping
             foreach (var piece in ClipperCompat.ClipOpenLines(subj, clip, ClipperConvert.Precision))
             {
                 if (piece.Count < 2) continue;
-                // every point of row k lies within amp < spacing/2 of y_k, so its own y
-                // names its row unambiguously
-                int r = (int)Math.Round((piece[0].y - y0) / spacing);
-                if (r < 0 || r >= rowPieces.Length) continue;
+                int r = RowOfPiece(piece, y0, spacing, amp, profile, wave.Wavelength, rowPieces.Length);
+                if (r < 0) continue;
                 var pts = new List<Vec3>(piece.Count);
                 foreach (var pt in piece) pts.Add(new Vec3(pt.x, pt.y, z));
                 rowPieces[r].Add(pts);
@@ -322,6 +320,40 @@ namespace Lugworm.Core.Clipping
 
             FinishSpans(spansOut, ang, boundary, anchor, spacing);
             return spansOut;
+        }
+
+        /// <summary>The row a clipped wave piece belongs to, or -1 when it fits none.
+        /// Every point of row k lies within amp &lt; spacing/2 of y_k, so a point's own y
+        /// names its row - except on a crest of a tangent wave, which sits on the band
+        /// edge once Clipper has rounded it and would round to either neighbour. The
+        /// piece is therefore read at its point nearest a centre-line, and the two rows
+        /// around that point are compared against the curve each would trace at its x.
+        /// Reading the first point alone dropped a whole row that started on a crest.</summary>
+        static int RowOfPiece(PathD piece, double y0, double spacing, double amp,
+                              IWaveProfile profile, double wavelength, int rowCount)
+        {
+            int at = 0;
+            double nearest = double.MaxValue;
+            for (int i = 0; i < piece.Count; i++)
+            {
+                double f = (piece[i].y - y0) / spacing;
+                double off = Math.Abs(f - Math.Round(f));
+                if (off < nearest) { nearest = off; at = i; }
+            }
+            double x = piece[at].x, y = piece[at].y;
+            double shape = amp * profile.At(x / wavelength);
+            int lo = (int)Math.Floor((y - y0) / spacing);
+            int best = -1;
+            double bestError = double.MaxValue;
+            for (int r = lo; r <= lo + 1; r++)
+            {
+                if (r < 0 || r >= rowCount) continue;
+                double sign = (r & 1) == 0 ? 1.0 : -1.0;
+                double error = Math.Abs(y - (y0 + r * spacing + sign * shape));
+                if (error < bestError) { bestError = error; best = r; }
+            }
+            // a piece more than half a pitch from every existing row belongs to none
+            return bestError < spacing * 0.5 ? best : -1;
         }
 
         /// <summary>Shared tail of <see cref="ZigzagSpans"/> and <see cref="WaveSpans"/>: rotates

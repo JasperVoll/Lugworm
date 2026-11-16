@@ -96,6 +96,10 @@ namespace Lugworm.Core.Duet
         /// <summary>0..1.</summary>
         public double Progress { get; private set; }
         public int? Layer { get; private set; }
+        /// <summary>The running job's byte position (<c>job.filePosition</c>), -1 when none.
+        /// With the run's marker index it names the layer independently of the firmware's
+        /// own layer detection, which non-planar jobs defeat.</summary>
+        public long JobFilePosition { get; private set; } = -1;
         /// <summary>Total layers of the running job: its own <c>; layer N/M</c> markers, else the
         /// firmware's count, else null. Assigned on every poll, so a new or ended job clears it.</summary>
         public int? LayerCount { get; private set; }
@@ -121,6 +125,7 @@ namespace Lugworm.Core.Duet
         public ulong GcodeHash { get; private set; }
         public DateTime? SnapshotUtc { get; private set; }
         public bool ArmConfigurationKnown { get; private set; }
+        public long ConnectionGeneration { get; private set; }
 
         // ---- 3.0.0: fields absorbed from the five consolidated components ----------
 
@@ -162,6 +167,17 @@ namespace Lugworm.Core.Duet
         /// <summary>Cartesian axes whose envelope is neither wired nor reported by the
         /// firmware. Non-empty means motion planning fails closed.</summary>
         public IReadOnlyList<string> EnvelopeUnknown { get; private set; }
+        /// <summary>The manual components upstream of the wired G-code that show
+        /// "Compute *", joined for display, or null when the wired G-code is current. They
+        /// replay their last result after their inputs changed, so Upload and Start would
+        /// run an older job than the one on screen. Set by the component on every solve:
+        /// component-side like the planning facts, but kept out of <see cref="ConsoleFacts"/>
+        /// so a poll fold cannot clear it between solves.</summary>
+        public string? StaleInput { get; private set; }
+        /// <summary>The refusal Upload and Start give while <see cref="StaleInput"/> is set.
+        /// One wording for the buttons and the transaction.</summary>
+        public static string StaleInputReason(string names)
+            => "the G-code input is out of date. Press Compute on " + names + " first";
         /// <summary>True when Start runs the job as an M37 firmware simulation rather than
         /// M32. Projected from the component's <c>dryRun</c> input so the window shows the
         /// mode the action will really use; the renderer never infers it.</summary>
@@ -179,6 +195,15 @@ namespace Lugworm.Core.Duet
         public MachineOverrides? Overrides { get; private set; }
         public string Transport { get; private set; }
         public bool CanSimulate { get; private set; }
+
+        // ---- 0.2.0: session-only deferred actions ---------------------------------
+
+        public ScheduledStart? ScheduledStart { get; private set; }
+        public IReadOnlyList<ScheduledPause> Pauses { get; private set; }
+        public string? ScheduleNote { get; private set; }
+        public JobTimeEstimate? ActiveEstimate { get; private set; }
+        public JobTimeEstimate? ScheduledEstimate { get; private set; }
+        public PauseSchedulerPhase PausePhase { get; private set; }
 
         // ---- E-Stop recovery (2026-09-09) -------------------------------------------
 
@@ -279,6 +304,9 @@ namespace Lugworm.Core.Duet
             Recovery = RecoveryState.None;
             SessionId = "";
             ExpectedFingerprint = "";
+            ConnectionGeneration = -1;
+            Pauses = Array.Empty<ScheduledPause>();
+            PausePhase = PauseSchedulerPhase.Ready;
         }
 
         PrintConsoleState(PrintConsoleState src)
@@ -291,6 +319,7 @@ namespace Lugworm.Core.Duet
             JobFile = src.JobFile;
             Progress = src.Progress;
             Layer = src.Layer;
+            JobFilePosition = src.JobFilePosition;
             LayerCount = src.LayerCount;
             Position = src.Position;
             LastReply = src.LastReply;
@@ -323,6 +352,7 @@ namespace Lugworm.Core.Duet
             Validation = src.Validation;
             ProfileError = src.ProfileError;
             EnvelopeUnknown = src.EnvelopeUnknown;
+            StaleInput = src.StaleInput;
             DryRun = src.DryRun;
             Logging = src.Logging;
             TerminalArmedText = src.TerminalArmedText;
@@ -334,6 +364,14 @@ namespace Lugworm.Core.Duet
             SessionId = src.SessionId;
             ExpectedFingerprint = src.ExpectedFingerprint;
             ExpectationConflict = src.ExpectationConflict;
+            ConnectionGeneration = src.ConnectionGeneration;
+
+            ScheduledStart = src.ScheduledStart;
+            Pauses = src.Pauses;
+            ScheduleNote = src.ScheduleNote;
+            ActiveEstimate = src.ActiveEstimate;
+            ScheduledEstimate = src.ScheduledEstimate;
+            PausePhase = src.PausePhase;
 
             PreparedJob = src.PreparedJob;
             ActiveJob = src.ActiveJob;
@@ -356,6 +394,15 @@ namespace Lugworm.Core.Duet
             n.MachineState = state; n.RawStatus = rawStatus ?? "";
             return n;
         }
+        public PrintConsoleState WithJobFilePosition(long filePosition)
+        { var n = new PrintConsoleState(this); n.JobFilePosition = filePosition; return n; }
+
+        /// <summary>The layer the run's own markers place the file position in, or the
+        /// firmware's layer when the run's bytes are unknown (an external job).</summary>
+        public int CurrentMarkerLayer
+            => ActiveJob != null && JobFilePosition >= 0 && ActiveJob.LayerMarkers.CanPauseAtLayer
+                ? ActiveJob.LayerMarkers.LayerAt(JobFilePosition) : Layer ?? 0;
+
         public PrintConsoleState WithJob(string jobFile, double progress, int? layer, int? layerCount = null)
         {
             var n = new PrintConsoleState(this);
@@ -397,6 +444,8 @@ namespace Lugworm.Core.Duet
             n.ExpectationConflict = expectationConflict;
             return n;
         }
+        public PrintConsoleState WithConnectionGeneration(long generation)
+        { var n = new PrintConsoleState(this); n.ConnectionGeneration = generation; return n; }
         public PrintConsoleState WithLastResult(string result) { var n = new PrintConsoleState(this); n.LastResult = result ?? ""; return n; }
         public PrintConsoleState WithLastError(string? error) { var n = new PrintConsoleState(this); n.LastError = error; return n; }
         public PrintConsoleState WithUploaded(UploadRecord? uploaded) { var n = new PrintConsoleState(this); n.Uploaded = uploaded; return n; }
@@ -436,6 +485,7 @@ namespace Lugworm.Core.Duet
             n.EnvelopeUnknown = envelopeUnknown ?? Array.Empty<string>();
             return n;
         }
+        public PrintConsoleState WithStaleInput(string? names) { var n = new PrintConsoleState(this); n.StaleInput = names; return n; }
         public PrintConsoleState WithDryRun(bool dryRun) { var n = new PrintConsoleState(this); n.DryRun = dryRun; return n; }
         public PrintConsoleState WithLogging(LogRetentionStatus? logging) { var n = new PrintConsoleState(this); n.Logging = logging ?? LogRetentionStatus.None; return n; }
         public PrintConsoleState WithTerminalArmedText(string text) { var n = new PrintConsoleState(this); n.TerminalArmedText = text ?? ""; return n; }
@@ -461,6 +511,20 @@ namespace Lugworm.Core.Duet
         /// <summary>The job the machine is running; null when the run ended.</summary>
         public PrintConsoleState WithActiveJob(JobSnapshot? job)
         { var n = new PrintConsoleState(this); n.ActiveJob = job; return n; }
+        public PrintConsoleState WithScheduledStart(ScheduledStart? schedule)
+        { var n = new PrintConsoleState(this); n.ScheduledStart = schedule; return n; }
+        public PrintConsoleState WithPauses(IReadOnlyList<ScheduledPause>? pauses)
+        { var n = new PrintConsoleState(this); n.Pauses = pauses ?? Array.Empty<ScheduledPause>(); return n; }
+        public PrintConsoleState WithScheduleNote(string? note)
+        { var n = new PrintConsoleState(this); n.ScheduleNote = note; return n; }
+        public PrintConsoleState WithEstimates(JobTimeEstimate? active, JobTimeEstimate? scheduled)
+        { var n = new PrintConsoleState(this); n.ActiveEstimate = active; n.ScheduledEstimate = scheduled; return n; }
+        public PrintConsoleState WithActiveEstimate(JobTimeEstimate? estimate)
+        { var n = new PrintConsoleState(this); n.ActiveEstimate = estimate; return n; }
+        public PrintConsoleState WithScheduledEstimate(JobTimeEstimate? estimate)
+        { var n = new PrintConsoleState(this); n.ScheduledEstimate = estimate; return n; }
+        public PrintConsoleState WithPausePhase(PauseSchedulerPhase phase)
+        { var n = new PrintConsoleState(this); n.PausePhase = phase; return n; }
 
         /// <summary>Home macro availability for one axis, using the same predicate as
         /// <c>DuetHoming.PreflightRefusal</c>: unknown availability never refuses.</summary>
@@ -494,6 +558,7 @@ namespace Lugworm.Core.Duet
         /// of <see cref="Log"/> has sequence <c>LogSequence - Log.Count</c>.</summary>
         public long LogSequence { get; set; }
         public bool ArmConfigurationKnown { get; set; }
+        public long ConnectionGeneration { get; set; } = -1;
 
         // ---- 3.0.0: session facts the window's buttons must agree with ------------
 
@@ -556,6 +621,7 @@ namespace Lugworm.Core.Duet
             if (facts == null) throw new ArgumentNullException(nameof(facts));
 
             var s = state.WithConnection(facts.Connection)
+                         .WithConnectionGeneration(facts.ConnectionGeneration)
                          .WithArmConfigurationKnown(facts.ArmConfigurationKnown)
                          .WithTrustReason(facts.TrustReason)
                          .WithHomeAvailability(facts.HomeProbeComplete, facts.HomeAvailableAll,
@@ -569,7 +635,13 @@ namespace Lugworm.Core.Duet
             // The session's job tracker owns the ACTIVE run: a run that ended must clear
             // here too, which a "null keeps the previous" rule could never express - hence
             // the explicit observed flag rather than a nullable field alone.
-            if (facts.JobsObserved) s = s.WithActiveJob(facts.ActiveJob);
+            if (facts.JobsObserved)
+            {
+                bool runChanged = !string.Equals(s.ActiveJob?.RunId ?? "", facts.ActiveJob?.RunId ?? "",
+                                                 StringComparison.Ordinal);
+                s = s.WithActiveJob(facts.ActiveJob);
+                if (runChanged) s = s.WithPauses(Array.Empty<ScheduledPause>()).WithPausePhase(PauseSchedulerPhase.Ready);
+            }
             // The identity block travels together: a conflict that resolves has to clear,
             // which a per-field "null keeps the previous" rule could never do.
             if (facts.SessionId != null)
@@ -590,6 +662,7 @@ namespace Lugworm.Core.Duet
                     ? s.WithJob(job.FileName ?? "", double.IsNaN(job.FractionPrinted) ? 0.0 : Num.Clamp01(job.FractionPrinted), job.Layer,
                                 s.ActiveJob?.LayerTotal() ?? job.FileLayerCount)
                     : s.WithJob("", 0.0, null, null);
+                s = s.WithJobFilePosition(job != null ? job.FilePosition : -1L);
 
                 Vec3? pos = ax != null && ay != null && az != null
                     ? new Vec3(ax.MachinePosition, ay.MachinePosition, az.MachinePosition)
@@ -603,6 +676,11 @@ namespace Lugworm.Core.Duet
 
             var log = facts.Log ?? Array.Empty<string>();
             s = s.WithLog(Tail(log, facts.LogSequence, s.LogSkip), s.LogSkip);
+            if (s.ScheduledStart != null)
+            {
+                string? cancel = PrintSchedulePolicy.CancelReason(s.ScheduledStart, s);
+                if (cancel != null) s = ScheduleCancelled(s, cancel);
+            }
             return s;
         }
 
@@ -726,6 +804,130 @@ namespace Lugworm.Core.Duet
             return state.WithValidation(null);
         }
 
+        public static PrintConsoleState StartScheduled(PrintConsoleState state, ScheduledStart schedule)
+        {
+            if (state == null) throw new ArgumentNullException(nameof(state));
+            if (schedule == null) throw new ArgumentNullException(nameof(schedule));
+            return state.WithScheduledStart(schedule).WithScheduleNote(null);
+        }
+
+        public static PrintConsoleState ScheduleCancelled(PrintConsoleState state, string reason)
+        {
+            if (state == null) throw new ArgumentNullException(nameof(state));
+            return state.WithScheduledStart(null).WithScheduleNote(reason ?? "scheduled start cancelled");
+        }
+
+        public static PrintConsoleState ScheduleFired(PrintConsoleState state)
+        {
+            if (state == null) throw new ArgumentNullException(nameof(state));
+            return state.WithScheduledStart(null).WithScheduleNote("scheduled start fired");
+        }
+
+        public static PrintConsoleState ScheduleUpdating(PrintConsoleState state)
+        {
+            if (state == null) throw new ArgumentNullException(nameof(state));
+            return state.ScheduledStart == null ? state
+                : state.WithScheduledStart(state.ScheduledStart.WithPhase(ScheduledStartPhase.Updating));
+        }
+
+        public static PrintConsoleState ScheduleRearmed(PrintConsoleState state, ScheduledStart schedule)
+        {
+            if (state == null) throw new ArgumentNullException(nameof(state));
+            if (schedule == null) throw new ArgumentNullException(nameof(schedule));
+            return state.WithScheduledStart(schedule.WithPhase(ScheduledStartPhase.Armed))
+                        .WithScheduleNote(null);
+        }
+
+        public static PrintConsoleState ScheduleUpdateFailed(PrintConsoleState state, string reason)
+            => ScheduleCancelled(state, reason);
+
+        public static bool TryClaimStart(PrintConsoleState state, long id, out PrintConsoleState claimed)
+        {
+            if (state == null) throw new ArgumentNullException(nameof(state));
+            if (state.ScheduledStart == null || state.ScheduledStart.Id != id
+                || state.ScheduledStart.Phase != ScheduledStartPhase.Armed)
+            {
+                claimed = state;
+                return false;
+            }
+            claimed = state.WithScheduledStart(state.ScheduledStart.WithPhase(ScheduledStartPhase.Firing));
+            return true;
+        }
+
+        public static PrintConsoleState TryClaimStart(PrintConsoleState state, long id)
+        {
+            TryClaimStart(state, id, out var claimed);
+            return claimed;
+        }
+
+        public static bool TryClaimUpdate(PrintConsoleState state, long id, out PrintConsoleState claimed)
+        {
+            if (state == null) throw new ArgumentNullException(nameof(state));
+            if (state.ScheduledStart == null || state.ScheduledStart.Id != id
+                || state.ScheduledStart.Phase != ScheduledStartPhase.Armed)
+            {
+                claimed = state;
+                return false;
+            }
+            claimed = ScheduleUpdating(state);
+            return true;
+        }
+
+        public static PrintConsoleState PauseAdded(PrintConsoleState state, ScheduledPause pause)
+        {
+            if (state == null) throw new ArgumentNullException(nameof(state));
+            if (pause == null) throw new ArgumentNullException(nameof(pause));
+            var list = new List<ScheduledPause>(state.Pauses);
+            foreach (var existing in list) if (existing.Id == pause.Id) return state;
+            list.Add(pause);
+            return state.WithPauses(list);
+        }
+
+        public static PrintConsoleState PauseRemoved(PrintConsoleState state, long id)
+        {
+            if (state == null) throw new ArgumentNullException(nameof(state));
+            var list = new List<ScheduledPause>();
+            foreach (var pause in state.Pauses) if (pause.Id != id) list.Add(pause);
+            return state.WithPauses(list);
+        }
+
+        public static PrintConsoleState PausesConsumed(PrintConsoleState state, IReadOnlyList<long> ids)
+        {
+            if (state == null) throw new ArgumentNullException(nameof(state));
+            if (ids == null) throw new ArgumentNullException(nameof(ids));
+            var remove = new HashSet<long>(ids);
+            var list = new List<ScheduledPause>();
+            foreach (var pause in state.Pauses) if (!remove.Contains(pause.Id)) list.Add(pause);
+            return state.WithPauses(list);
+        }
+
+        public static PrintConsoleState PausesConsumed(PrintConsoleState state, long id)
+            => PausesConsumed(state, new[] { id });
+
+        public static PrintConsoleState PausesCleared(PrintConsoleState state)
+        {
+            if (state == null) throw new ArgumentNullException(nameof(state));
+            return state.WithPauses(Array.Empty<ScheduledPause>()).WithPausePhase(PauseSchedulerPhase.Ready);
+        }
+
+        public static bool TryClaimPause(PrintConsoleState state, long id, out PrintConsoleState claimed)
+        {
+            if (state == null) throw new ArgumentNullException(nameof(state));
+            if (!PauseSchedulePolicy.TryClaimPause(state.Pauses, id, out var pauses))
+            {
+                claimed = state;
+                return false;
+            }
+            claimed = state.WithPauses(pauses).WithPausePhase(PauseSchedulerPhase.Sending);
+            return true;
+        }
+
+        public static PrintConsoleState TryClaimPause(PrintConsoleState state, long id)
+        {
+            TryClaimPause(state, id, out var claimed);
+            return claimed;
+        }
+
         /// <summary>Hides everything logged so far: the tail restarts at the
         /// session log's current sequence number (total lines ever appended).</summary>
         public static PrintConsoleState ClearLog(PrintConsoleState state, long logSequence)
@@ -783,6 +985,10 @@ namespace Lugworm.Core.Duet
         /// <summary>Local job validation. Runs <c>JobGate</c> on the wired gcode and needs
         /// neither a session nor machine trust, so it is not behind upload's gate.</summary>
         public bool Validate { get; }
+        public bool Schedule { get; }
+        public bool ScheduleCancel { get; }
+        public bool ScheduleUpdate { get; }
+        public bool PauseSchedule { get; }
         /// <summary>Pick a past run out of Recent prints, or clear the picked one. Loading
         /// bytes is not running them, so this gate is deliberately narrow: no command may
         /// be in flight, and nothing else. Whether those bytes may then be uploaded and
@@ -796,12 +1002,16 @@ namespace Lugworm.Core.Duet
                          bool jog = false, bool capture = false, bool send = false, bool disconnect = false,
                          bool canValidate = false,
                          bool history = false,
-                         bool goToStart = false)
+                         bool goToStart = false,
+                         bool schedule = false, bool scheduleCancel = false,
+                         bool scheduleUpdate = false, bool pauseSchedule = false)
         {
             Connect = connect; Home = home; HomeX = homeX; HomeY = homeY; HomeZ = homeZ; Upload = upload;
             Start = start; Pause = pause; Resume = resume; Stop = stop; EStop = eStop; Reset = reset; GoTo = goTo;
             Jog = jog; Capture = capture; Send = send; Disconnect = disconnect; Validate = canValidate;
             History = history; GoToStart = goToStart;
+            Schedule = schedule; ScheduleCancel = scheduleCancel;
+            ScheduleUpdate = scheduleUpdate; PauseSchedule = pauseSchedule;
             Reasons = reasons ?? new Dictionary<string, string>();
         }
     }
@@ -869,10 +1079,27 @@ namespace Lugworm.Core.Duet
             bool homeY = HomeGate("homey", "Y");
             bool homeZ = HomeGate("homez", "Z");
 
+            // A job the canvas no longer shows must not reach the machine: the upstream
+            // replay is invisible from here, so the component reports it on every solve.
+            string? stale = s.StaleInput == null ? null : PrintConsoleState.StaleInputReason(s.StaleInput);
+            bool Current(string id) => Req(id, stale == null, stale ?? "");
+
             bool upload = Req("upload", !pending, pendingWhy)
                        && Req("upload", connected, notConnected)
                        && Req("upload", hasGcode, "no gcode")
+                       && Current("upload")
                        && Trusted("upload");
+            bool uploadGate = upload;
+
+            bool scheduledJobMatches = s.ScheduledStart == null || s.ScheduledStart.JobSha256.Length == 0
+                || (s.PreparedJob != null && string.Equals(s.PreparedJob.Sha256, s.ScheduledStart.JobSha256,
+                                                            StringComparison.Ordinal));
+            bool uploadDifferentFromSchedule = s.ScheduledStart != null && !scheduledJobMatches;
+            if (uploadDifferentFromSchedule)
+            {
+                Req("upload", false, "a print is scheduled from this file. Cancel or Update the schedule");
+                upload = false;
+            }
 
             // Validation is local: JobGate is pure and runs on the wired gcode, so it must
             // not inherit upload's connection and trust gates - an operator can check a job
@@ -912,13 +1139,38 @@ namespace Lugworm.Core.Duet
                       && Req("start", !armConfigurationRequired || s.ArmConfigurationKnown || homesFirst, "arm configuration unknown")
                       && Req("start", s.Uploaded != null, "nothing uploaded")
                       && Req("start", uploadMatches, "uploaded file does not match the current gcode")
+                      && Current("start")
                       && Trusted("start");
+
+            bool schedule = Req("schedule", !pending, pendingWhy)
+                         && Req("schedule", connected, notConnected)
+                         && Req("schedule", startRecoveryBlock == null, startRecoveryBlock ?? "")
+                         && Req("schedule", idle, notIdle)
+                         && Req("schedule", s.ScheduledStart == null, "a scheduled start is already armed")
+                         && Req("schedule", hasGcode, "no gcode")
+                         && Req("schedule", s.Validation != null && !s.Validation.Danger, "validate the job first")
+                         && Req("schedule", s.Uploaded != null, "nothing uploaded")
+                         && Req("schedule", uploadMatches, "uploaded file does not match the current gcode")
+                         && Current("schedule")
+                         && Trusted("schedule");
+            bool scheduleCancel = Req("schedulecancel", s.ScheduledStart != null, "no scheduled start");
+            bool scheduleUpdate = Req("scheduleupdate", s.ScheduledStart != null, "no scheduled start")
+                               && Req("scheduleupdate", s.ScheduledStart == null
+                                   || s.ScheduledStart.Phase != ScheduledStartPhase.Firing, "scheduled start is firing")
+                               && Req("scheduleupdate", uploadDifferentFromSchedule, "canvas G-code has not changed")
+                               && uploadGate
+                               && validate;
 
             bool printing = st == MachineStatus.Processing || st == MachineStatus.Simulating;
             bool pause = Req("pause", !pending, pendingWhy)
                       && Req("pause", connected, notConnected)
                       && Req("pause", printing, "not printing (" + machine + ")")
                       && Trusted("pause");
+            bool pauseSchedule = Req("pauseschedule", !pending, pendingWhy)
+                              && Req("pauseschedule", connected, notConnected)
+                              && Req("pauseschedule", printing || st == MachineStatus.Paused,
+                                     "not printing (" + machine + ")")
+                              && Trusted("pauseschedule");
 
             bool resume = Req("resume", !pending, pendingWhy)
                        && Req("resume", connected, notConnected)
@@ -1010,7 +1262,9 @@ namespace Lugworm.Core.Duet
             bool history = Req("history", !pending, pendingWhy);
 
             return new ButtonSet(connect, home, homeX, homeY, homeZ, upload, start, pause, resume, stop, eStop, reset, goTo, reasons,
-                                 jog, capture, send, disconnect, validate, history: history, goToStart: goToStart);
+                                 jog, capture, send, disconnect, validate, history: history, goToStart: goToStart,
+                                 schedule: schedule, scheduleCancel: scheduleCancel,
+                                 scheduleUpdate: scheduleUpdate, pauseSchedule: pauseSchedule);
         }
 
         public static string Lower(ConsoleConnection c) => c.ToString().ToLowerInvariant();
@@ -1382,6 +1636,8 @@ namespace Lugworm.Core.Duet
             if (st == MachineStatus.Paused) return ("resume", "Resume print", b.Resume);
             if (st == MachineStatus.Processing || st == MachineStatus.Simulating) return ("tab:2", "Open Job", true);
             if (st == MachineStatus.Halted || st == MachineStatus.Off) return ("reset", "Reset (M999)", b.Reset);
+            if (s.ScheduledStart != null && st == MachineStatus.Idle)
+                return ("schedule", "Starts at " + s.ScheduledStart.DueUtc.ToLocalTime().ToString("HH:mm", CultureInfo.InvariantCulture), false);
             if (!s.AllHomed) return ("home", "Home all", b.Home);
             if (s.GcodeLines == 0) return ("tab:1", "Open Control", true);
             if (s.Validation == null || s.Validation.Danger) return ("validate", "Validate", b.Validate);

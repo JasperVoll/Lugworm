@@ -151,4 +151,21 @@ public class JobIdentityTests
         Assert.Equal(job.Sha256, reparsed.Sha256);
         Assert.Equal(7, reparsed.PathRevision);
     }
+
+    [Fact]
+    public void StartPreparedExpectedPromotesTheCachedBytesAfterThePreparedSlotChanges()
+    {
+        var tracker = new JobIdentityTracker();
+        var expected = JobSnapshot.FromBytes(Gcode("G1 X1\n"), "0:/gcodes/print.gcode",
+                                             JobSource.ConsoleInput, T0);
+        var newer = JobSnapshot.FromBytes(Gcode("G1 X2\n"), "0:/gcodes/print.gcode",
+                                          JobSource.ConsoleInput, T0);
+        tracker.Prepare(expected);
+        tracker.Prepare(newer);
+
+        var active = tracker.StartPrepared(expected, T0.AddMinutes(1));
+        Assert.Same(expected, active);
+        Assert.Same(newer, tracker.Prepared);
+        Assert.Equal(expected.Sha256, tracker.Active!.Sha256);
+    }
 }

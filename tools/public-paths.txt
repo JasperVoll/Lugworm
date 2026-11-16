@@ -20,7 +20,9 @@
 # left out of the export, and because the import replaces the whole directory, it is
 # removed from the public checkout on the next import. It may name a path that is not
 # committed (yet). Icon and logo sources and the scripts that draw them stay private:
-# the release carries only the rendered icons the build embeds and package-icon.png.
+# the release carries only the rendered icons the build embeds. The plug-in's tab icon
+# (ClaySlicer_24.png) and the Yak package icon (package-icon.png) stay private too
+# (maintainer decision of 2026-11-16, after removing them from GitHub on 2026-10-12).
 Lugworm.sln
 LICENSE
 THIRD-PARTY-NOTICES.md
@@ -44,3 +46,5 @@ tests/grasshopper
 !tools/gen_lugworm_logo.py
 !tools/make_food4rhino_logo.ps1
 !tools/make_package_icon.ps1
+!Lugworm/Resources/ClaySlicer_24.png
+!Lugworm/Resources/package-icon.png

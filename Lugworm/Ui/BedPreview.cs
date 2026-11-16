@@ -58,8 +58,6 @@ namespace Lugworm.Ui
 
         public bool OnBed(double x, double y) => _def != null && _def.Contains(x, y);
 
-        public bool Printable(double x, double y) => OnBed(x, y) && Reachable(x, y);
-
         public void Clear()
         {
             _topMesh = null; _plateMesh = null;

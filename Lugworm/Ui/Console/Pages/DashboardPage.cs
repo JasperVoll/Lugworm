@@ -38,6 +38,37 @@ namespace Lugworm.Ui.Console.Pages
             }
             else p.Draw(label, row.Left, y + t.PrimaryButtonHeight / 2 + t.FontButton * 0.36f, t.FontButton, t.TextSecondary, true);
 
+            if (s.ScheduledStart != null)
+            {
+                var strip = ConsoleLayout.Take(ref area, t.ButtonHeight + t.Gap, t.GapLarge);
+                TimeSpan remaining = s.ScheduledStart.DueUtc - DateTime.UtcNow;
+                string countdown = remaining > TimeSpan.Zero ? remaining.ToString(@"d\.hh\:mm\:ss", CultureInfo.InvariantCulture) : "due";
+                p.Strip(strip, ConsoleIcon.Clock, "Scheduled start " + s.ScheduledStart.DueUtc.ToLocalTime().ToString("HH:mm", CultureInfo.InvariantCulture)
+                    + "  in " + countdown + "  " + s.ScheduledStart.ShortHash, t.Warning);
+                float cancelWidth = Math.Min(strip.Width * 0.32f, t.Px(150f));
+                p.ButtonAuto(strip.Right - cancelWidth - t.Gap, strip.Top, ConsoleIcon.Cancel,
+                             "Cancel schedule", ConsoleRole.Secondary, b.ScheduleCancel, "schedulecancel",
+                             minWidth: cancelWidth, maxWidth: cancelWidth);
+            }
+            else if (NextPause(s) is ScheduledPause next)
+            {
+                var strip = ConsoleLayout.Take(ref area, t.ButtonHeight + t.Gap, t.GapLarge);
+                string text = next.Kind == PauseKind.AtLayer
+                    ? "Next scheduled pause: layer " + (next.Layer ?? 0).ToString(CultureInfo.InvariantCulture)
+                    : "Next scheduled pause: " + next.DueUtc!.Value.ToLocalTime().ToString("HH:mm", CultureInfo.InvariantCulture);
+                if (next.Kind == PauseKind.AtTime && next.DueUtc.HasValue)
+                {
+                    TimeSpan remaining = next.DueUtc.Value - DateTime.UtcNow;
+                    if (remaining > TimeSpan.Zero) text += " in " + Duration(remaining.TotalSeconds);
+                }
+                p.Strip(strip, ConsoleIcon.Clock, text, t.TextSecondary);
+            }
+            if (!string.IsNullOrEmpty(s.ScheduleNote))
+            {
+                var note = ConsoleLayout.Take(ref area, t.FontSmall + t.Unit, t.Gap);
+                p.DrawClipped(s.ScheduleNote!, note.Left, note.Top + t.FontSmall, note.Width, t.FontSmall, t.TextSecondary);
+            }
+
             // ---- four cards ----
             float cardH = t.Px(150f);
             var grid = ConsoleLayout.Take(ref area, narrow ? cardH * 4 + t.GapLarge * 3 : cardH * 2 + t.GapLarge, t.GapLarge);
@@ -161,6 +192,9 @@ namespace Lugworm.Ui.Console.Pages
                 case "validate": return ConsoleIcon.Validate;
                 case "upload": return ConsoleIcon.Upload;
                 case "start": return ConsoleIcon.Start;
+                case "schedule": return ConsoleIcon.Clock;
+                case "schedulecancel": return ConsoleIcon.Cancel;
+                case "pauseschedule": return ConsoleIcon.Clock;
                 case "resume": return ConsoleIcon.Resume;
                 case "reset": return ConsoleIcon.Reset;
                 case "tab:1": return ConsoleIcon.Control;
@@ -196,5 +230,26 @@ namespace Lugworm.Ui.Console.Pages
 #endif
 
         static string YesNo(bool v) => v ? "yes" : "no";
+
+        static ScheduledPause? NextPause(PrintConsoleState state)
+        {
+            ScheduledPause? answer = null;
+            DateTime answerTime = DateTime.MaxValue;
+            foreach (var pause in state.Pauses)
+            {
+                if (pause.Phase != ScheduledPausePhase.Pending) continue;
+                DateTime time = PauseSortTime(state, pause);
+                if (answer == null || time < answerTime)
+                {
+                    answer = pause;
+                    answerTime = time;
+                }
+            }
+            return answer;
+        }
+
+        static DateTime PauseSortTime(PrintConsoleState state, ScheduledPause pause) => JobPage.PauseSortTime(state, pause);
+
+        static string Duration(double seconds) => JobPage.Duration(seconds);
     }
 }

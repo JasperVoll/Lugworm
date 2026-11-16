@@ -13,8 +13,9 @@ using Lugworm.Ui;
 namespace Lugworm.Components
 {
     /// <summary>Places a contour tree at the global print centre (one point: the part's
-    /// bottom-centre lands there) and sets the seam per layer. Light + live (no compute
-    /// button). Port of ClayMover2.py.</summary>
+    /// bottom-centre lands there), optionally turned about its own vertical axis first,
+    /// and sets the seam per layer. Light + live (no compute button). Port of
+    /// ClayMover2.py.</summary>
     public class MoverComponent : IamComponentBase
     {
         public MoverComponent()
@@ -40,6 +41,8 @@ namespace Lugworm.Components
             // appended last: promoting 'bed' out of its old toggle group must not move
             // the sockets a saved document already wired (Grasshopper restores by index)
             new ParamSpec("bed", "B", "Print Bed definition text supplying the default printCenter", "core", PType.Text),
+            // appended last (2026-10-14) for the same reason
+            new ParamSpec("rotate", "R", "Turn about the part's own vertical axis before placement, counterclockwise seen from above, deg", "core", PType.Number).Hint(0, 360, 0, 0),
         };
 
         protected override IReadOnlyList<(string, string)> ToggleGroups => new[]
@@ -50,7 +53,9 @@ namespace Lugworm.Components
         // 1: 'bed' left its toggle group for the always-visible end of the input list.
         // Nothing was removed, so a saved document only needs its sockets put back in
         // declaration order - no bed settings to migrate.
-        protected override int InputContractVersion => 1;
+        // 2: 'rotate' appended. Name-based normalization adds the socket to a saved
+        // document; unwired it turns nothing.
+        protected override int InputContractVersion => 2;
 
         protected override IReadOnlyList<(string, string, (string, string)[])> ValueLists => new[]
         {
@@ -101,6 +106,15 @@ namespace Lugworm.Components
             if (bed != null) printCenter = DocUnits.FromMm(GhConvert.ToPt(bed.PrintCenter), unitScale);
             if (IsWired("printCenter")) printCenter = GetPoint(DA, "printCenter", printCenter);
             double zOffset = GetNumber(DA, "zOffset", 0.0) / unitScale;
+            double rotate = GetNumber(DA, "rotate", 0.0);
+            if (double.IsNaN(rotate) || double.IsInfinity(rotate))
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error,
+                    "Invalid rotation. Use a finite angle in degrees");
+                res.Info = "invalid rotation";
+                Message = "invalid rotation";
+                return res;
+            }
             int seamMode = GetInt(DA, "seamMode", 1);   // Align - the lab default
             if (seamMode < 0 || seamMode > 5)
             {
@@ -125,6 +139,21 @@ namespace Lugworm.Components
                     if (goo?.Value != null) bb.Union(goo.Value.GetBoundingBox(true));
             if (!bb.IsValid) { res.Info = "no valid curves"; return res; }
 
+            // rotate turns the whole tree as one rigid body about the vertical axis
+            // through its bounding-box centre, before anything is placed or seamed. The
+            // turned part is measured again, so its own bottom-centre is what lands on
+            // printCenter, and the seam inputs stay world-space at the placed part.
+            var turn = Transform.Identity;
+            if (rotate != 0.0)
+            {
+                turn = Transform.Rotation(Rhino.RhinoMath.ToRadians(rotate), Vector3d.ZAxis, bb.Center);
+                bb = BoundingBox.Empty;
+                foreach (var branch in tree.Branches)
+                    foreach (var goo in branch)
+                        if (goo?.Value != null) bb.Union(goo.Value.GetBoundingBox(turn));
+                if (!bb.IsValid) { res.Info = "no valid curves"; return res; }
+            }
+
             double cx = 0.5 * (bb.Min.X + bb.Max.X);
             double cy = 0.5 * (bb.Min.Y + bb.Max.Y);
             var move = GetVector(DA, "move", Vector3d.Zero) / unitScale;   // labelled mm
@@ -135,7 +164,7 @@ namespace Lugworm.Components
                 new Vec3(cx, cy, 0.0), bb.Min.Z,
                 new Vec3(printCenter.X, printCenter.Y, printCenter.Z),
                 zOffset, new Vec3(move.X, move.Y, move.Z));
-            var xform = Transform.Translation(off.X, off.Y, off.Z);
+            var xform = Transform.Translation(off.X, off.Y, off.Z) * turn;
 
             // mode 5 (track): each closed contour's seam lands at the closest point to
             // the SAME contour's seam on the previous layer - per (object, contour)
@@ -304,7 +333,8 @@ namespace Lugworm.Components
             }
 
             string[] modes = { "keep", "align", "stagger", "nearest", "guide", "track" };
-            res.Info = $"curves: {n} ({nOpen} open/non-planar)  dx={off.X:0.00} dy={off.Y:0.00} dz={off.Z:0.00}  " +
+            string turned = rotate != 0.0 ? $"  rotate={rotate:0.##} deg" : "";
+            res.Info = $"curves: {n} ({nOpen} open/non-planar)  dx={off.X:0.00} dy={off.Y:0.00} dz={off.Z:0.00}{turned}  " +
                        $"seam={modes[seamMode]}  closed:{closed}  applied:{seamApplied}  " +
                        $"open flipped: {openFlipped}/{nOpen}";
             Message = seamMode == 0

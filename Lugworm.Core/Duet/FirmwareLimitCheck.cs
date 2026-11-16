@@ -18,7 +18,11 @@ namespace Lugworm.Core.Duet
     {
         const double Tolerance = 0.5;
 
-        public static List<FirmwareLimitFinding> CompareFindings(ObjectModelSnapshot snap, RobotLimits lim)
+        /// <summary>Z is compared on every mechanism. The X/Y box only on a Cartesian
+        /// machine, where it is the whole geometric guard: on the SCARA it is set by the
+        /// operator and never compared (maintainer decision of 2026-11-04).</summary>
+        public static List<FirmwareLimitFinding> CompareFindings(ObjectModelSnapshot snap, RobotLimits lim,
+                                                                 RobotMechanism mechanism)
         {
             var findings = new List<FirmwareLimitFinding>();
             if (snap == null || lim == null) return findings;
@@ -40,6 +44,7 @@ namespace Lugworm.Core.Duet
                     });
             }
 
+            if (mechanism != RobotMechanism.Cartesian) return findings;
             foreach (var axis in new[] { "X", "Y" })
             {
                 var firmware = snap.Axis(axis);
@@ -203,15 +208,6 @@ namespace Lugworm.Core.Duet
                 Severity = Severity.Error,
                 Message = FormattableString.Invariant($"firmware M669 {name.Split('/')[0]} is {firmwareValue:0.###}{unit}, software {name.Split('/')[1]} is {softwareValue:0.###}{unit} - kinematics mismatch")
             });
-        }
-
-        /// <summary>Compatibility projection for existing UI callers. New code
-        /// should use <see cref="CompareFindings"/> to retain severity.</summary>
-        public static List<string> Compare(ObjectModelSnapshot snap, RobotLimits lim)
-        {
-            var result = new List<string>();
-            foreach (var finding in CompareFindings(snap, lim)) result.Add(finding.Message);
-            return result;
         }
     }
 }

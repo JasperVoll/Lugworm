@@ -57,9 +57,5 @@ namespace Lugworm.Core.Geometry
         /// clockwise in Rhino is counter-clockwise for the machine. Maps 2 &lt;-&gt; 3
         /// and leaves anything else alone.</summary>
         public static int FlipArcCode(int g) => g == 2 ? 3 : g == 3 ? 2 : g;
-
-        /// <summary>True when the map reverses orientation. Constant, but named so
-        /// call sites that depend on the property document why they flip.</summary>
-        public const bool ReversesOrientation = true;
     }
 }

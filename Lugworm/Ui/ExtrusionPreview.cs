@@ -38,11 +38,6 @@ namespace Lugworm.Ui
             BackSpecular = Color.Black,
         };
 
-        /// <summary>Faintly lit two-sided material - just enough light/shadow gradient
-        /// to keep the layers' roundness readable when everything in the scene is
-        /// white, with no specular highlight.</summary>
-        public static DisplayMaterial LayerMaterial() => _layerMaterial;
-
         /// <summary>Fixed world light the layer shading is baked against: high, from
         /// the front left, so the top of every layer is brightest and a wall's outer
         /// flank reads a shade darker whatever the viewport's own lights do.</summary>

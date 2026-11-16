@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,16 +22,7 @@ namespace Lugworm.Duet
         Status = 2,
         Job = 4,
         Reply = 8,
-        // All predates print-log updates and deliberately keeps its value at 15.
         All = 15,
-        PrintLog = 16,
-    }
-
-    public enum PrintLogOwnership
-    {
-        None,
-        Owner,
-        Secondary,
     }
 
     public sealed class SessionChange
@@ -59,18 +49,13 @@ namespace Lugworm.Duet
         readonly object _lifeLock = new object();
         readonly object _logLock = new object();
         readonly object _configurationLock = new object();
-        readonly object _printLogLock = new object();
         readonly List<string> _log = new List<string>();
         long _logSeq;   // total lines ever appended (the list itself is capped at LogCap)
-        readonly PrintLogRecorder _printLog = new PrintLogRecorder();
-        /// <summary>3.0.0 job-log retention: a second, always-on recorder whose records
-        /// feed the staging buffer of <see cref="LogRetentionService"/> for EVERY job,
-        /// independently of the Duet Live component's own configurable log.</summary>
+        /// <summary>3.0.0 job-log retention: an always-on recorder whose records feed the
+        /// staging buffer of <see cref="LogRetentionService"/> for EVERY job.</summary>
         readonly PrintLogRecorder _retentionLog = new PrintLogRecorder();
         readonly object _retentionLock = new object();
         string? _retentionJobName;
-        readonly List<PrintLogRegistration> _printLogOwners = new List<PrintLogRegistration>();
-        readonly List<PrintLogRecord> _printLogPending = new List<PrintLogRecord>();
         const int LogCap = 200;
         public const int PrintLogConnectionLossSeconds = 60;
         volatile ObjectModelSnapshot? _latest;
@@ -110,38 +95,20 @@ namespace Lugworm.Duet
         HomeMacroPlan? _pendingHomeMacro;
         bool _homeInProgress;
         string? _initiatedJob;
+        /// <summary>The validated final configuration of the print this session started,
+        /// held through the print's own G28 and handed back when it completes
+        /// (<see cref="ArmConfigurationCarry"/>). Unknown when there is none.</summary>
+        ArmConfiguration _jobFinalConfiguration = ArmConfiguration.Unknown;
+        /// <summary>The configuration held across a transport loss, checked against the
+        /// first poll after the reconnect.</summary>
+        ReconnectCarry? _reconnectCarry;
+        bool _reconnectCheckPending;
+        /// <summary>Counts every forget, so a poll that forgot the configuration on its own
+        /// account can never also restore it.</summary>
+        long _forgetCount;
         long _initiatedStatusTransitionUntilTicks;
-        PrintLogSink? _printLogSink;
-        bool _printLogFileOpen;
-        string? _printLogPath;
-        string? _printLogError;
-        string? _lastLoggedPrintLogError;
-        string? _printLogFolder;
-        string _printLogPrefix = "printlog";
-        string? _printLogPendingFolder;
-        string _printLogPendingPrefix = "printlog";
-        DateTime _printLogPendingStartUtc;
-        int _printLogPendingPolls;
-        int _printLogFailureCount;
         DateTime? _reconnectingSinceUtc;
-        bool _printLogConnectionLossFinished;
-
-        sealed class PrintLogRegistration
-        {
-            public readonly Guid Owner;
-            public PrintLogOptions Options;
-            public string? Folder;
-            public string Prefix;
-
-            public PrintLogRegistration(Guid owner, PrintLogOptions options,
-                                        string? folder, string prefix)
-            {
-                Owner = owner;
-                Options = options;
-                Folder = folder;
-                Prefix = prefix;
-            }
-        }
+        bool _connectionLossFinished;
 
         public MachineSession(string host, string password)
         {
@@ -400,25 +367,6 @@ namespace Lugworm.Duet
         public void SetJobArchiveContext(ReprintContext? machine, bool dryRun)
         { _jobContext = machine; _jobDryRun = dryRun; }
 
-        public PrintLogRecorder PrintLog => _printLog;
-        public string? PrintLogPath
-        {
-            get { lock (_printLogLock) return _printLogPath; }
-        }
-        public string? PrintLogError
-        {
-            get
-            {
-                lock (_printLogLock)
-                    return _printLogError ?? _printLogSink?.LastError;
-            }
-        }
-        /// <summary>Rows the sink discarded because its queue was full. Non-zero means
-        /// the CSV is NOT a complete record of the run.</summary>
-        public long PrintLogRowsDropped
-        {
-            get { lock (_printLogLock) return _printLogSink?.RowsDropped ?? 0; }
-        }
         public ArmConfiguration ArmConfiguration
         {
             get { lock (_configurationLock) return _armConfiguration; }
@@ -529,91 +477,46 @@ namespace Lugworm.Duet
                + MaxPollIntervalMs.ToString(CultureInfo.InvariantCulture) + " ms)";
         public void SetPassword(string password) => _password = password;
 
-        public PrintLogOwnership ConfigurePrintLog(Guid owner, PrintLogOptions options,
-                                                   string? folder, string prefix)
-        {
-            if (options == null) throw new ArgumentNullException(nameof(options));
-
-            bool notify = false;
-            string? message = null;
-            PrintLogOwnership ownership = PrintLogOwnership.None;
-            lock (_printLogLock)
-            {
-                int index = FindPrintLogOwnerLocked(owner);
-                if (!options.Enabled)
-                {
-                    if (index >= 0)
-                    {
-                        _printLogOwners.RemoveAt(index);
-                        if (_printLogOwners.Count == 0)
-                        {
-                            notify = FinishAndDisablePrintLogLocked(
-                                PrintLogFinishReason.LoggingDisabled, out message);
-                        }
-                        else
-                        {
-                            ApplyActivePrintLogLocked();
-                        }
-                    }
-                }
-                else
-                {
-                    var registration = new PrintLogRegistration(
-                        owner, CopyPrintLogOptions(options), NormalizeFolder(folder),
-                        NormalizePrintLogPrefix(prefix));
-                    if (index >= 0) _printLogOwners[index] = registration;
-                    else _printLogOwners.Add(registration);
-                    ApplyActivePrintLogLocked();
-                    ownership = _printLogOwners[0].Owner == owner
-                        ? PrintLogOwnership.Owner
-                        : PrintLogOwnership.Secondary;
-                }
-            }
-
-            PublishPrintLogMessage(message);
-            if (notify) RaiseChanged(SessionChangeKind.PrintLog);
-            return ownership;
-        }
-
-        public void ReleasePrintLog(Guid owner)
-        {
-            bool notify = false;
-            string? message = null;
-            lock (_printLogLock)
-            {
-                int index = FindPrintLogOwnerLocked(owner);
-                if (index < 0) return;
-                _printLogOwners.RemoveAt(index);
-                if (_printLogOwners.Count == 0)
-                {
-                    notify = FinishAndDisablePrintLogLocked(
-                        PrintLogFinishReason.LoggingDisabled, out message);
-                }
-                else
-                {
-                    ApplyActivePrintLogLocked();
-                }
-            }
-
-            PublishPrintLogMessage(message);
-            if (notify) RaiseChanged(SessionChangeKind.PrintLog);
-        }
-
         public void InvalidateArmConfiguration(string? reason = null, bool preservePendingHome = false)
+            => ForgetArmConfiguration(reason, preservePendingHome, keepJobCarry: false, keepReconnectCarry: false);
+
+        /// <summary>Forgets the tracked configuration. Only the two paths of
+        /// <see cref="ArmConfigurationCarry"/> keep a carry: the print's own G28
+        /// (<paramref name="keepJobCarry"/>) and the transport reconnect (both). Every
+        /// other caller drops both carries with the configuration.</summary>
+        void ForgetArmConfiguration(string? reason, bool preservePendingHome,
+                                    bool keepJobCarry, bool keepReconnectCarry)
         {
             bool changed;
             lock (_configurationLock)
             {
                 changed = _armConfiguration.Known || _pendingHomeMacro != null;
                 _armConfiguration = ArmConfiguration.Unknown;
+                _forgetCount++;
                 if (!preservePendingHome)
                 {
                     _pendingHomeMacro = null;
                     _homeInProgress = false;
                 }
+                if (!keepJobCarry) _jobFinalConfiguration = ArmConfiguration.Unknown;
+                if (!keepReconnectCarry)
+                {
+                    _reconnectCarry = null;
+                    _reconnectCheckPending = false;
+                }
             }
             if (reason != null) AppendLog("arm configuration unknown: " + reason);
             if (changed) RaiseChanged(SessionChangeKind.Status);
+        }
+
+        /// <summary>Right after a validated print start: the tracked configuration becomes
+        /// the print's validated final one, as before, and the session keeps that value to
+        /// hand back when the print completes, through the print's own G28.</summary>
+        public void BeginJobConfiguration(ArmConfiguration finalConfiguration)
+        {
+            lock (_configurationLock)
+                _jobFinalConfiguration = finalConfiguration.Known ? finalConfiguration : ArmConfiguration.Unknown;
+            SetArmConfiguration(finalConfiguration);
         }
 
         public void SetArmConfiguration(ArmConfiguration configuration)
@@ -753,7 +656,7 @@ namespace Lugworm.Duet
 
             var points = macro.Replay(verifiedTriggerPose);
             points.Insert(0, verifiedTriggerPose);
-            var check = RobotChecks.RunPoints(points, limits,
+            var check = RobotChecks.RunPoints(points, limits.WithoutXYEnvelope(),
                 ArmConfiguration.Seed(homedArmMode));
             if (!check.ReachOk || !check.FinalConfiguration.Known)
             {
@@ -796,7 +699,7 @@ namespace Lugworm.Duet
         {
             _reconnectingSinceUtc = null;
             _lastReconnectFailure = null;
-            _printLogConnectionLossFinished = false;
+            _connectionLossFinished = false;
             InvalidateArmConfiguration("connection started");
             _glitchFilter.Reset();
             SetState(DuetConnState.Connecting, null);
@@ -849,7 +752,7 @@ namespace Lugworm.Duet
                         Interlocked.Exchange(ref _lastPollRoundTripTicks,
                             System.Diagnostics.Stopwatch.GetTimestamp() - pollStarted);
                         _reconnectingSinceUtc = null;
-                        _printLogConnectionLossFinished = false;
+                        _connectionLossFinished = false;
                         string? reply = await client.FetchNewReplyAsync(ct).ConfigureAwait(false);
                         if (!string.IsNullOrEmpty(reply)) { _lastReply = reply; AppendLog(reply!); }
                         string? drained = client.TakeDrainedReply();
@@ -866,20 +769,17 @@ namespace Lugworm.Duet
                         // everything else passes at once (AxisGlitchFilter). The retention
                         // recorder goes first so the diagnostic record carries the poll's
                         // continuity verdict and a suspect one arms the capture.
-                        bool printLogChanged = false;
                         var released = _glitchFilter.Push(snap);
                         for (int r = 0; r < released.Count; r++)
                         {
                             var observed = released[r].Snapshot;
                             ObserveRetention(observed);
                             ObserveDiagnostics(observed);
-                            printLogChanged |= SafePrintLog(() => ObservePrintLog(observed));
                         }
                         if (!published)
                         {
-                            // Report the poll, but never as a position: publishing this
-                            // snapshot would move every consumer backwards in time.
-                            RaiseChanged(printLogChanged ? SessionChangeKind.PrintLog : SessionChangeKind.None);
+                            // Never reported as a position: publishing this snapshot
+                            // would move every consumer backwards in time.
                             SetState(DuetConnState.Connected, null);
                             RecordCompletedPollWork(generation, pollStarted);
                             int wait = PollCadencePolicy.WaitAfterWork(
@@ -892,7 +792,6 @@ namespace Lugworm.Duet
                             continue;
                         }
                         var change = Compare(previous, snap);
-                        if (printLogChanged) change |= SessionChangeKind.PrintLog;
                         // If the previous snapshot aged past the freshness window before
                         // this one replaced it, the UI may have latched a disabled button
                         // layout (StateGate refuses stale state). A fresh but content-
@@ -930,15 +829,21 @@ namespace Lugworm.Duet
                     catch (OperationCanceledException) { break; }
                     catch (Exception ex)
                     {
-                        bool printLogChanged = SafePrintLog(FinishPrintLogAfterConnectionLoss);
-                        if (printLogChanged) RaiseChanged(SessionChangeKind.PrintLog);
+                        FinishRetentionAfterConnectionLoss();
                         client.EndReplyPolling();
                         // The exact transport failure, and a capture of the polls around it.
                         // The 2026-09-09 capture recorded only "connection interrupted",
                         // which is why that reconnect could not be ruled in or out.
                         FlushGlitchFilter();
                         NoteDiagnostic("transport failure: " + ex.GetType().FullName + ": " + Flatten(ex), trigger: true);
-                        InvalidateArmConfiguration("connection interrupted");
+                        // Hold the configuration across the loss; the first poll after the
+                        // reconnect decides whether the machine is provably where it was
+                        // (ArmConfigurationCarry). A repeated failure finds the configuration
+                        // already forgotten and keeps the carry it captured the first time.
+                        var carry = ArmConfigurationCarry.CaptureAtLoss(ArmConfiguration, _latest);
+                        ForgetArmConfiguration("connection interrupted", preservePendingHome: false,
+                            keepJobCarry: true, keepReconnectCarry: true);
+                        if (carry != null) lock (_configurationLock) _reconnectCarry = carry;
                         // The machine's status is now unreadable. Record WHY, so the
                         // console can say what actually failed instead of leaving Reset
                         // greyed out with "not connected" (the 2026-09-09 incident).
@@ -949,10 +854,13 @@ namespace Lugworm.Duet
                         backoffMs = Math.Min(backoffMs * 2, 10000);
                         try
                         {
-                            InvalidateArmConfiguration("reconnecting");
+                            ForgetArmConfiguration("reconnecting", preservePendingHome: false,
+                                keepJobCarry: true, keepReconnectCarry: true);
                             await client.ConnectAsync(ct).ConfigureAwait(false);
                             await client.BeginReplyPollingAsync(ct).ConfigureAwait(false);
-                            InvalidateArmConfiguration("reconnected, home verification is required");
+                            ForgetArmConfiguration("reconnected, checking that the machine did not move",
+                                preservePendingHome: false, keepJobCarry: true, keepReconnectCarry: true);
+                            lock (_configurationLock) _reconnectCheckPending = true;
                             EvaluateTrust(client);
                             AppendLog("reconnected");
                             _lastReconnectFailure = null;
@@ -996,10 +904,6 @@ namespace Lugworm.Duet
             finally
             {
                 FinishRetention(PrintLogFinishReason.SessionStopped);
-                bool printLogChanged = SafePrintLog(
-                    () => FinishPrintLog(PrintLogFinishReason.SessionStopped));
-                if (printLogChanged) RaiseChanged(SessionChangeKind.PrintLog);
-                SafePrintLog(() => { DisposePrintLogWriter(); return false; });
                 FlushDiagnostics();
                 client.EndReplyPolling();
                 client.OpaqueMotionIssued -= OnOpaqueMotionIssued;
@@ -1228,7 +1132,6 @@ namespace Lugworm.Duet
                     var observed = released[r].Snapshot;
                     ObserveRetention(observed);
                     ObserveDiagnostics(observed);
-                    SafePrintLog(() => ObservePrintLog(observed));
                 }
             }
             // never into the poll loop's failure path, but not silently either: the held
@@ -1297,11 +1200,29 @@ namespace Lugworm.Duet
 
         void ObserveSnapshot(ObjectModelSnapshot? previous, ObjectModelSnapshot current)
         {
+            bool reconnectCheck;
+            ReconnectCarry? reconnectCarry;
+            long forgetsBefore;
+            lock (_configurationLock)
+            {
+                reconnectCheck = _reconnectCheckPending;
+                reconnectCarry = _reconnectCarry;
+                _reconnectCheckPending = false;
+                _reconnectCarry = null;
+                forgetsBefore = _forgetCount;
+            }
+
             if (!current.AllHomed)
             {
                 bool preserve;
-                lock (_configurationLock) preserve = _homeInProgress;
-                InvalidateArmConfiguration("an axis is unhomed", preservePendingHome: preserve);
+                string? ownJob;
+                lock (_configurationLock) { preserve = _homeInProgress; ownJob = _initiatedJob; }
+                // D9: a print this session started homes itself, and its G28 unhomes the
+                // axes for seconds. Its validated final configuration stays the one to
+                // hand back when it completes; any other forget below still drops it.
+                bool ownPrintHoming = ownJob != null && current.Status == MachineStatus.Processing;
+                ForgetArmConfiguration("an axis is unhomed", preserve,
+                    keepJobCarry: ownPrintHoming, keepReconnectCarry: false);
             }
 
             string? initiated;
@@ -1319,11 +1240,68 @@ namespace Lugworm.Duet
                 if (!InitiatedStatusTransitionAuthorized(previous, current))
                     InvalidateArmConfiguration("uninitiated firmware status transition");
             }
+
+            ObserveCarries(previous, current, reconnectCheck, reconnectCarry, forgetsBefore, initiated);
             // AFTER the transition check, so the completing Busy->Idle edge is still
             // authorised by the window it then closes.
             ObserveInitiatedMotion(current);
             ObserveRecovery(current);
         }
+
+        /// <summary>Hands a carried configuration back (ArmConfigurationCarry), after every
+        /// forget rule of this poll has run: a poll that forgot the configuration on its
+        /// own account never restores it.</summary>
+        void ObserveCarries(ObjectModelSnapshot? previous, ObjectModelSnapshot current,
+                            bool reconnectCheck, ReconnectCarry? reconnectCarry,
+                            long forgetsBefore, string? initiated)
+        {
+            if (reconnectCheck)
+            {
+                string? trust = TrustRefusalReason();
+                bool dropJob;
+                lock (_configurationLock)
+                    dropJob = _jobFinalConfiguration.Known
+                           && !ArmConfigurationCarry.JobStillRunning(current, initiated, trust);
+                if (dropJob)
+                {
+                    lock (_configurationLock) _jobFinalConfiguration = ArmConfiguration.Unknown;
+                    AppendLog("arm configuration of the running print not kept: the print is not running on after the reconnect");
+                }
+                if (reconnectCarry != null)
+                {
+                    bool forgotten;
+                    lock (_configurationLock) forgotten = _forgetCount != forgetsBefore;
+                    string? refusal = forgotten
+                        ? "the first poll after the reconnect forgot it"
+                        : ArmConfigurationCarry.ReconnectRefusal(reconnectCarry, current, trust);
+                    if (refusal == null)
+                    {
+                        SetArmConfiguration(reconnectCarry.Configuration);
+                        AppendLog("arm configuration kept across the reconnect: " + reconnectCarry.Configuration);
+                    }
+                    else AppendLog("arm configuration not kept across the reconnect: " + refusal);
+                }
+            }
+
+            if (previous == null || current.Status != MachineStatus.Idle) return;
+            if (!IsPrintStatus(previous.Status)) return;
+            ArmConfiguration final;
+            lock (_configurationLock)
+            {
+                final = _jobFinalConfiguration;
+                _jobFinalConfiguration = ArmConfiguration.Unknown;
+            }
+            if (final.Known && ArmConfigurationCarry.JobCompleted(previous.Status, current))
+            {
+                SetArmConfiguration(final);
+                AppendLog("arm configuration taken from the completed print: " + final);
+            }
+        }
+
+        static bool IsPrintStatus(MachineStatus status)
+            => status == MachineStatus.Processing || status == MachineStatus.Simulating
+            || status == MachineStatus.Paused || status == MachineStatus.Pausing
+            || status == MachineStatus.Resuming || status == MachineStatus.Cancelling;
 
         /// <summary>Folds one completed poll into the recovery facts: a real Halted/Off
         /// status is what turns "E-STOP acknowledged" into "halt observed", and a live
@@ -1344,158 +1322,24 @@ namespace Lugworm.Duet
             UpdateRecovery(r => RecoveryReducer.Observed(r, observation));
         }
 
-        int FindPrintLogOwnerLocked(Guid owner)
-        {
-            for (int i = 0; i < _printLogOwners.Count; i++)
-                if (_printLogOwners[i].Owner == owner) return i;
-            return -1;
-        }
-
-        void ApplyActivePrintLogLocked()
-        {
-            if (_printLogOwners.Count == 0)
-            {
-                _printLog.Configure(new PrintLogOptions { Enabled = false });
-                _printLogFolder = null;
-                _printLogPrefix = "printlog";
-                return;
-            }
-
-            var active = _printLogOwners[0];
-            _printLogFolder = active.Folder;
-            _printLogPrefix = active.Prefix;
-            _printLog.Configure(CopyPrintLogOptions(active.Options));
-        }
-
-        static PrintLogOptions CopyPrintLogOptions(PrintLogOptions options)
-            => new PrintLogOptions
-            {
-                Enabled = options.Enabled,
-                SampleEveryNPolls = options.SampleEveryNPolls,
-                MaxRecords = options.MaxRecords,
-                LayerHeightHint = options.LayerHeightHint,
-            };
-
-        static string? NormalizeFolder(string? folder)
-        {
-            if (string.IsNullOrWhiteSpace(folder)) return null;
-            return folder!.Trim();
-        }
-
-        static string NormalizePrintLogPrefix(string? prefix)
-        {
-            if (string.IsNullOrWhiteSpace(prefix)) return "printlog";
-            return prefix!.Trim();
-        }
-
-        bool ObservePrintLog(ObjectModelSnapshot snapshot)
-        {
-            bool emitted = false;
-            string? message = null;
-            lock (_printLogLock)
-            {
-                if (!_printLog.Active)
-                {
-                    // The sink is asynchronous, so an open/append/close failure can
-                    // surface after the run was finished or logging was switched off.
-                    // Returning early here would drop that error on the floor forever.
-                    message = CapturePrintLogErrorLocked();
-                    if (message != null)
-                    {
-                        PublishPrintLogMessage(message);
-                        return true;
-                    }
-                    return false;
-                }
-                try
-                {
-                    bool pendingAtStart = _printLogPending.Count > 0;
-                    if (pendingAtStart) _printLogPendingPolls++;
-                    var records = _printLog.Observe(snapshot);
-                    bool recordHasName = false;
-                    foreach (var record in records)
-                    {
-                        if (!string.IsNullOrWhiteSpace(record.JobFile))
-                        {
-                            recordHasName = true;
-                            break;
-                        }
-                    }
-                    if (pendingAtStart && _printLogPendingPolls >= 10 && !recordHasName)
-                        OpenPendingPrintLogWriterLocked(null);
-
-                    RoutePrintLogRecordsLocked(records);
-                    emitted = records.Count > 0;
-
-                    // File-name adoption may not itself emit a record when interval
-                    // sampling is disabled. The snapshot still supplies the trigger.
-                    if (_printLogPending.Count > 0 && records.Count == 0)
-                    {
-                        string? adopted = NonEmptyPrintLogFile(snapshot.Job?.FileName);
-                        if (adopted != null) OpenPendingPrintLogWriterLocked(adopted);
-                        else if (_printLogPendingPolls >= 10)
-                            OpenPendingPrintLogWriterLocked(null);
-                    }
-                    _printLogFailureCount = 0;
-                    message = CapturePrintLogErrorLocked();
-                }
-                catch (Exception ex)
-                {
-                    message = HandlePrintLogFailureLocked(ex);
-                }
-            }
-
-            PublishPrintLogMessage(message);
-            // A poll that emitted nothing can still have produced a NEW sink error, and
-            // the component only re-solves when a change is raised - otherwise the
-            // failure would sit unseen on logInfo until something else moved.
-            return emitted || message != null;
-        }
-
-        bool FinishPrintLog(PrintLogFinishReason reason)
-        {
-            bool emitted;
-            string? message;
-            lock (_printLogLock)
-            {
-                emitted = FinishPrintLogLocked(reason, out message);
-            }
-            PublishPrintLogMessage(message);
-            return emitted;
-        }
-
-        /// <summary>Last line of defence for the print log. The methods below already
-        /// guard their own bodies, but an escape from here would be caught by the poll
-        /// loop's generic handler, which invalidates the arm configuration and enters
-        /// reconnect backoff - a logging bug must never be able to do that.</summary>
-        bool SafePrintLog(Func<bool> action)
-        {
-            try { return action(); }
-            catch (Exception ex)
-            {
-                // best effort: this IS the reporting path - if the log sink itself throws
-                // there is nowhere left to say so, and rethrowing would defeat the guard.
-                try { AppendLog("print log suppressed: " + Flatten(ex)); } catch (Exception) { }
-                return false;
-            }
-        }
-
-        bool FinishPrintLogAfterConnectionLoss()
+        /// <summary>A connection lost for longer than <see cref="PrintLogConnectionLossSeconds"/>
+        /// closes the retained run once, so a print the session can no longer see is not
+        /// left open forever.</summary>
+        void FinishRetentionAfterConnectionLoss()
         {
             DateTime now = DateTime.UtcNow;
             if (!_reconnectingSinceUtc.HasValue)
             {
                 _reconnectingSinceUtc = now;
-                _printLogConnectionLossFinished = false;
-                return false;
+                _connectionLossFinished = false;
+                return;
             }
-            if (_printLogConnectionLossFinished
+            if (_connectionLossFinished
                 || (now - _reconnectingSinceUtc.Value).TotalSeconds < PrintLogConnectionLossSeconds)
-                return false;
+                return;
 
-            _printLogConnectionLossFinished = true;
+            _connectionLossFinished = true;
             FinishRetention(PrintLogFinishReason.ConnectionLost);
-            return FinishPrintLog(PrintLogFinishReason.ConnectionLost);
         }
 
         // ---- 3.0.0 job-log retention (every job, staged locally, kept on request) ----
@@ -1600,225 +1444,6 @@ namespace Lugworm.Duet
                 try { AppendLog("job log: the run could not be closed cleanly - " + Flatten(ex)); }
                 catch (Exception) { /* best effort: the log sink itself is gone */ }
             }
-        }
-
-        bool FinishPrintLogLocked(PrintLogFinishReason reason, out string? message)
-        {
-            message = null;
-            try
-            {
-                var records = _printLog.Finish(reason);
-                RoutePrintLogRecordsLocked(records);
-                message = CapturePrintLogErrorLocked();
-                return records.Count > 0 || message != null;
-            }
-            catch (Exception ex)
-            {
-                message = HandlePrintLogFailureLocked(ex);
-                return false;
-            }
-        }
-
-        bool FinishAndDisablePrintLogLocked(PrintLogFinishReason reason, out string? message)
-        {
-            bool emitted = FinishPrintLogLocked(reason, out message);
-            try { _printLog.Configure(new PrintLogOptions { Enabled = false }); }
-            catch (Exception ex)
-            {
-                string? extra = HandlePrintLogFailureLocked(ex);
-                if (message == null) message = extra;
-            }
-            ClosePrintLogWriterLocked();
-            _printLogPending.Clear();
-            _printLogPendingPolls = 0;
-            return emitted;
-        }
-
-        string? HandlePrintLogFailureLocked(Exception ex)
-        {
-            _printLogFailureCount++;
-            string detail = Flatten(ex);
-            string error = "print log failed: " + detail;
-            bool repeated = _printLogFailureCount >= 2;
-            if (repeated)
-            {
-                DisablePrintLogLocked();
-                error += " (logging disabled after repeated failure)";
-            }
-            return PublishPrintLogErrorLocked(error);
-        }
-
-        void DisablePrintLogLocked()
-        {
-            try { _printLog.Configure(new PrintLogOptions { Enabled = false }); }
-            // best effort: the writer is closed below either way, and the caller is
-            // already turning the print log off - there is nothing left to salvage.
-            catch (Exception) { }
-            ClosePrintLogWriterLocked();
-            _printLogPending.Clear();
-            _printLogPendingPolls = 0;
-        }
-
-        string? CapturePrintLogErrorLocked()
-        {
-            if (_printLogSink?.LastError != null)
-                _printLogError = _printLogSink.LastError;
-            return _printLogError == null ? null : PublishPrintLogErrorLocked(_printLogError);
-        }
-
-        string? PublishPrintLogErrorLocked(string error)
-        {
-            _printLogError = error;
-            if (string.Equals(_lastLoggedPrintLogError, error, StringComparison.Ordinal)) return null;
-            _lastLoggedPrintLogError = error;
-            return "print log: " + error;
-        }
-
-        void PublishPrintLogMessage(string? message)
-        {
-            if (!string.IsNullOrEmpty(message)) AppendLog(message!);
-        }
-
-        void RoutePrintLogRecordsLocked(IReadOnlyList<PrintLogRecord> records)
-        {
-            for (int i = 0; i < records.Count; i++)
-                RoutePrintLogRecordLocked(records[i]);
-        }
-
-        // Every method below only mutates in-memory state and enqueues sink commands.
-        // No file handle is touched on the poll thread and no disk I/O happens under
-        // _printLogLock - PrintLogSink owns both.
-        void RoutePrintLogRecordLocked(PrintLogRecord record)
-        {
-            if (record.Kind == PrintLogEventKind.JobStart)
-            {
-                // A correctly formed split is JobEnd followed by JobStart, but
-                // force-close any stale deferred state before starting the next run.
-                if (_printLogPending.Count > 0)
-                {
-                    OpenPendingPrintLogWriterLocked(null);
-                    ClosePrintLogWriterLocked();
-                }
-                if (_printLogFileOpen) ClosePrintLogWriterLocked();
-                if (_printLogFolder == null) return;
-
-                _printLogPendingFolder = _printLogFolder;
-                _printLogPendingPrefix = _printLogPrefix;
-                _printLogPendingStartUtc = record.TakenUtc;
-                _printLogPendingPolls = 0;
-                _printLogPending.Add(record);
-                string? name = NonEmptyPrintLogFile(record.JobFile);
-                if (name != null) OpenPendingPrintLogWriterLocked(name);
-                return;
-            }
-
-            if (_printLogPending.Count > 0)
-            {
-                if (!_printLogFileOpen)
-                {
-                    string? name = NonEmptyPrintLogFile(record.JobFile);
-                    if (name != null) OpenPendingPrintLogWriterLocked(name);
-                }
-                if (!_printLogFileOpen)
-                {
-                    _printLogPending.Add(record);
-                    if (record.Kind == PrintLogEventKind.JobEnd)
-                    {
-                        OpenPendingPrintLogWriterLocked(null);
-                        ClosePrintLogWriterLocked();
-                    }
-                    return;
-                }
-
-                AppendPrintLogRecordLocked(record);
-                if (record.Kind == PrintLogEventKind.JobEnd)
-                    ClosePrintLogWriterLocked();
-                return;
-            }
-
-            if (!_printLogFileOpen) return;
-            AppendPrintLogRecordLocked(record);
-            if (record.Kind == PrintLogEventKind.JobEnd)
-                ClosePrintLogWriterLocked();
-        }
-
-        void OpenPendingPrintLogWriterLocked(string? jobFile)
-        {
-            if (_printLogPending.Count == 0 || _printLogPendingFolder == null) return;
-            string path = BuildPrintLogPath(_printLogPendingFolder, _printLogPendingPrefix,
-                                            _printLogPendingStartUtc, jobFile);
-            var sink = EnsurePrintLogSinkLocked();
-            sink.Open(path);
-            sink.Append(_printLogPending);
-            _printLogFileOpen = true;
-            _printLogPath = path;
-            _printLogPending.Clear();
-            _printLogPendingFolder = null;
-            _printLogPendingPolls = 0;
-            // Deliberately no CapturePrintLogErrorLocked() here: it returns a one-shot
-            // message and swallowing it would mark the error as already reported while
-            // nothing ever reported it. The outward operation captures exactly once.
-        }
-
-        PrintLogSink EnsurePrintLogSinkLocked()
-            => _printLogSink ?? (_printLogSink = new PrintLogSink());
-
-        void AppendPrintLogRecordLocked(PrintLogRecord record)
-        {
-            if (!_printLogFileOpen || _printLogSink == null) return;
-            _printLogSink.Append(record);
-        }
-
-        void ClosePrintLogWriterLocked()
-        {
-            if (!_printLogFileOpen) return;
-            _printLogFileOpen = false;
-            _printLogSink?.Close();
-        }
-
-        static string? NonEmptyPrintLogFile(string? fileName)
-            => string.IsNullOrWhiteSpace(fileName) ? null : fileName;
-
-        static string BuildPrintLogPath(string folder, string prefix, DateTime startUtc,
-                                        string? jobFile)
-        {
-            string safePrefix = SanitizePrintLogPart(prefix, "printlog");
-            string safeJob = SanitizePrintLogPart(jobFile, "unknown-job");
-            string stamp = startUtc.ToLocalTime().ToString("yyyy-MM-dd_HH-mm-ss",
-                                                            CultureInfo.InvariantCulture);
-            return Path.Combine(folder, safePrefix + "_" + stamp + "_" + safeJob + ".csv");
-        }
-
-        static string SanitizePrintLogPart(string? value, string fallback)
-        {
-            if (string.IsNullOrWhiteSpace(value)) return fallback;
-            char[] invalid = Path.GetInvalidFileNameChars();
-            string text = value!.Trim();
-            var sb = new StringBuilder(text.Length);
-            foreach (char c in text)
-            {
-                if (char.IsControl(c) || Array.IndexOf(invalid, c) >= 0 || c == '/' || c == '\\')
-                    sb.Append('_');
-                else sb.Append(c);
-            }
-            string result = sb.ToString().Trim().TrimEnd('.');
-            return result.Length == 0 ? fallback : result;
-        }
-
-        void DisposePrintLogWriter()
-        {
-            PrintLogSink? sink;
-            lock (_printLogLock)
-            {
-                ClosePrintLogWriterLocked();
-                _printLogPending.Clear();
-                _printLogPendingPolls = 0;
-                sink = _printLogSink;
-                _printLogSink = null;
-            }
-            // Disposed outside the lock: it drains the queue and joins the pump thread
-            // (bounded), and nothing else may be made to wait on that behind the lock.
-            sink?.Dispose();
         }
 
         async Task CloseClientAsync(IMachineClient client)
@@ -2272,17 +1897,6 @@ namespace Lugworm.Duet
             // best effort: a second disposal path already disposed the semaphore
             // (ObjectDisposedException); disposal continues either way, as above.
             catch (ObjectDisposedException) { }
-            bool printLogChanged = SafePrintLog(
-                () => FinishPrintLog(PrintLogFinishReason.SessionStopped));
-            if (printLogChanged) RaiseChanged(SessionChangeKind.PrintLog);
-            SafePrintLog(() => { DisposePrintLogWriter(); return false; });
-            lock (_printLogLock)
-            {
-                _printLogOwners.Clear();
-                _printLog.Configure(new PrintLogOptions { Enabled = false });
-                _printLogFolder = null;
-                _printLogPrefix = "printlog";
-            }
             _cts?.Dispose();
             _state = DuetConnState.Disconnected;
             _client = null;

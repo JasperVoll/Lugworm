@@ -77,8 +77,10 @@ class SourceExportTests(unittest.TestCase):
             self.assertNotIn("\\", p, "private list uses forward slashes: " + p)
             self.assertTrue(any(p.startswith(e + "/") for e in paths),
                             "!" + p + " is not below an exported directory")
-        # The release carries the rendered icons the build embeds and the Yak package icon.
-        self.assertTrue(is_exported("Lugworm/Resources/package-icon.png"))
+        # The release carries the rendered component icons; the tab icon and the Yak package
+        # icon stay private (maintainer decision of 2026-11-16).
+        self.assertFalse(is_exported("Lugworm/Resources/package-icon.png"))
+        self.assertFalse(is_exported("Lugworm/Resources/ClaySlicer_24.png"))
         self.assertTrue(is_exported("Lugworm/Resources/IamSlicer_24.png"))
 
     def test_release_and_import_scripts_honour_the_private_list(self):

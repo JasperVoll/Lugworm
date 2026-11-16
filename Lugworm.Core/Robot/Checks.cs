@@ -31,13 +31,27 @@ namespace Lugworm.Core.Robot
         /// M208 Z minimum may legitimately be non-zero.</summary>
         public double ZMin = 0.0;
         // Cartesian envelope in machine coordinates - mirrors the firmware
-        // M208 X/Y box. The reach annulus alone is not the workspace.
+        // M208 X/Y box. The reach annulus alone is not the workspace. Machine actions
+        // on the SCARA leave it out (WithoutXYEnvelope): there the box is the operator's.
         public double XMin = -300.0, XMax = 10000.0;
         public double YMin = -10000.0, YMax = 0.0;
         public bool CheckEnvelope = true;
         public double MaxFeed = 150.0, MaxJointSpeed = 120.0, JerkThresh = 5.0;
         public double J1Min = -41.1, J1Max = 319.1, J3Min = -151.2, J3Max = 151.2;
         public double J2Min = 0.0, J2Max = 400.0;
+        /// <summary>Degrees a job keeps J1 away from both ends of [J1Min, J1Max] (0 = off).
+        /// The Potterbot's A-41.1:319.1 span is 360.2 degrees, so the firmware wraps an
+        /// angle just past one end to the other end instead of refusing it, and the arm
+        /// turns a full revolution. Applied by <see cref="RobotChecks.Run"/> only: the
+        /// homing replay starts at the endstop pose J1 = J1Min, and jogs are attended
+        /// single steps whose seam crossing the continuity check still refuses.</summary>
+        public double J1SeamMargin = 5.0;
+        /// <summary>Degrees a job keeps the elbow J3 away from 0, the straight arm (0 = off).
+        /// Near full extension J1 has to race to follow the tool, so a print job
+        /// stays at least this far from it (maintainer decision of 2026-11-04). Applied by
+        /// <see cref="RobotChecks.Run"/> only, like <see cref="J1SeamMargin"/>: jogs and
+        /// console moves are attended and keep the max-reach limit.</summary>
+        public double J3ExtensionMargin = 5.0;
         public bool CheckJointRanges = true;
         public double ArcChordTol = 0.5;
         public double MastClearance = 150.0;
@@ -52,6 +66,25 @@ namespace Lugworm.Core.Robot
         /// outside the repository).</summary>
         public int HomedArmMode = 1;
         public bool RequireCalibratedHomePose;
+
+        internal RobotLimits WithoutJobOnlyMargins()
+        {
+            var copy = (RobotLimits)MemberwiseClone();
+            copy.J1SeamMargin = 0.0;
+            copy.J3ExtensionMargin = 0.0;
+            return copy;
+        }
+
+        /// <summary>A copy with the X/Y envelope switched off. On the SCARA the X/Y box
+        /// (M208 in config.g, the xMin..yMax inputs) is set by the operator, so machine
+        /// actions never refuse over it (maintainer decision of 2026-11-04). Reach, joint
+        /// ranges, mast clearance, Z and the elbow margin still apply.</summary>
+        public RobotLimits WithoutXYEnvelope()
+        {
+            var copy = (RobotLimits)MemberwiseClone();
+            copy.CheckEnvelope = false;
+            return copy;
+        }
     }
 
     public sealed class CheckResult
@@ -201,11 +234,21 @@ namespace Lugworm.Core.Robot
         static double ReachMin(RobotLimits l) => l.ReachMin > 0 ? l.ReachMin : Math.Abs(l.L1 - l.L2);
         static double ReachMax(RobotLimits l) => l.ReachMax > 0 ? l.ReachMax : l.L1 + l.L2;
 
+        static void CheckExtension(CheckResult r, RobotLimits l, IkResult ik, Vec3 at, int idx)
+        {
+            if (l.J3ExtensionMargin <= 0 || !ik.Valid) return;
+            if (Math.Abs(ik.J3Resolved) < l.J3ExtensionMargin - 1e-6)
+            { r.ReachOk = false; r.Problems.Add(new RobotProblem(at, idx, Severity.Error, FormattableString.Invariant($"J3 {ik.J3Resolved:0.0}° within {l.J3ExtensionMargin:0.0}° of full extension (0°): J1 races near the straight arm"))); }
+        }
+
         static void CheckJoints(CheckResult r, RobotLimits l, IkResult ik, Vec3 at, int idx)
         {
             if (!l.CheckJointRanges || !ik.Valid) return;
             if (ik.J1Resolved < l.J1Min - 1e-6 || ik.J1Resolved > l.J1Max + 1e-6)
             { r.ReachOk = false; r.Problems.Add(new RobotProblem(at, idx, Severity.Error, FormattableString.Invariant($"J1 {ik.J1Resolved:0.0}° outside joint range [{l.J1Min:0.0}, {l.J1Max:0.0}]°"))); }
+            else if (l.J1SeamMargin > 0
+                     && (ik.J1Resolved < l.J1Min + l.J1SeamMargin - 1e-6 || ik.J1Resolved > l.J1Max - l.J1SeamMargin + 1e-6))
+            { r.ReachOk = false; r.Problems.Add(new RobotProblem(at, idx, Severity.Error, FormattableString.Invariant($"J1 {ik.J1Resolved:0.0}° within {l.J1SeamMargin:0.0}° of the joint range ends [{l.J1Min:0.0}, {l.J1Max:0.0}]°: the firmware wraps J1 there and turns the arm a full revolution"))); }
             if (ik.J3Resolved < l.J3Min - 1e-6 || ik.J3Resolved > l.J3Max + 1e-6)
             { r.ReachOk = false; r.Problems.Add(new RobotProblem(at, idx, Severity.Error, FormattableString.Invariant($"J3 {ik.J3Resolved:0.0}° outside joint range [{l.J3Min:0.0}, {l.J3Max:0.0}]°"))); }
             if (ik.J2 < l.J2Min - 1e-6 || ik.J2 > l.J2Max + 1e-6)
@@ -254,6 +297,7 @@ namespace Lugworm.Core.Robot
                 return;
             }
             CheckJoints(r, l, ik, p, idx);
+            CheckExtension(r, l, ik, p, idx);
             CheckMast(r, l, ik, p, idx);
         }
 
@@ -270,6 +314,7 @@ namespace Lugworm.Core.Robot
             if (message.Contains("J1 ") && message.Contains("joint range")) return "joint:J1";
             if (message.Contains("J3 ") && message.Contains("joint range")) return "joint:J3";
             if (message.Contains("J2 carriage")) return "joint:J2";
+            if (message.Contains("of full extension")) return "extension";
             if (message.Contains("Target ")) return "ik";
             return problem.Kind + ":" + message;
         }
@@ -478,6 +523,7 @@ namespace Lugworm.Core.Robot
         {
             var r = new CheckResult();
             if (pts == null || pts.Count == 0) return r;
+            l = l.WithoutJobOnlyMargins();
 
             ArmConfiguration state = seed.Known ? seed : ArmConfiguration.Seed(0);
             var first = EvaluatePoint(l, pts[0], 0, state, checkReach: true,
