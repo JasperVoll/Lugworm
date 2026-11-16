@@ -29,7 +29,9 @@ namespace Lugworm.Core.Duet
 
     /// <summary>The upload gate: parses the job and re-runs the machine's check set -
     /// the full SCARA validation by default, or the Cartesian envelope checks when the
-    /// robot definition selects a Cartesian Duet machine (mechanism parameter).
+    /// robot definition selects a Cartesian Duet machine (mechanism parameter). The
+    /// SCARA check set leaves out the X/Y envelope: that box is set by the operator
+    /// (<see cref="RobotLimits.WithoutXYEnvelope"/>).
     /// Lives in Core (not the UI) and is re-run inside the print component itself so
     /// the gate cannot be bypassed by leaving a wire unconnected. Allowed only when
     /// the program has moves and zero blocking problems. Mast-clearance findings
@@ -88,7 +90,7 @@ namespace Lugworm.Core.Duet
 
             res.Checks = mechanism == RobotMechanism.Cartesian
                 ? CartesianChecks.Run(prog, lim)
-                : RobotChecks.Run(prog, lim, GcodeFlavor.DuetRrf, arcSupport, elbow: elbow,
+                : RobotChecks.Run(prog, lim.WithoutXYEnvelope(), GcodeFlavor.DuetRrf, arcSupport, elbow: elbow,
                                   initialConfiguration: initialConfiguration);
             foreach (var p in res.Checks.Problems)
             {

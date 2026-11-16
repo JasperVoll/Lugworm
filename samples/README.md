@@ -1,6 +1,7 @@
 # Developer samples
 
-These are samples to show how to reuse Lugworm's canvas usability features. They are thin wrappers around public and protected members of
+These small Grasshopper components show external plug-in authors how to reuse Lugworm's
+canvas usability features. They are thin wrappers around public and protected members of
 `Lugworm.Ui.IamComponentBase`. They do not copy Lugworm's implementation. Each component
 lives in its own subcategory under **Lugworm Samples** and has a separate GUID.
 
@@ -36,7 +37,9 @@ load, the installed plug-in and your bundled copy. `Private=false` prevents that
 Lugworm's installation supplies its own runtime dependencies.
 
 **Stability warning:** Lugworm is 0.x, and `Lugworm.Ui` is not a stable API. Pin the exact
-Lugworm version and expect major changes between versions.
+Lugworm version and expect breaking changes between versions. These examples do not
+establish a compatibility promise. When adapting a sample, generate new component and
+assembly GUIDs for your plug-in.
 
 ## Build and verification limits
 
@@ -52,3 +55,8 @@ reference is the same Grasshopper SDK as Lugworm. The bare `net7.0` target uses 
 Windows Forms framework reference to compile its canvas UI without another package.
 These are Windows examples. The sample assembly stays out of release staging, the `.yak`
 and the send zip. Do not install the sample assembly as part of a Lugworm release.
+
+**UNVERIFIED:** Loading a third-party `.gha` that references `Lugworm.gha` inside Rhino 8
+on both the `net48` and `net7.0` runtimes, assembly resolution order, and the samples'
+on-canvas behavior have not been tested. These samples are only compile-checked.
+The per-sample interaction steps describe intended behavior for later operator testing.

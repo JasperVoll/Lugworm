@@ -609,7 +609,7 @@ namespace Lugworm.Core.Gcode
                 else if (prevEnd.HasValue) SeamTravel(prevEnd.Value, start);
 
                 RestoreAccel();   // extrude at the base (header) accel limits
-                L.Add(Invariant($"; layer {bi + 1}/{nlayers}"));
+                L.Add(LayerMarker.Format(bi + 1, nlayers));
                 if (c.Flavor == GcodeFlavor.Klipper)
                     L.Add(KlipperCommands.Format(KlipperCommands.SetPrintStatsInfo, ("CURRENT_LAYER", bi + 1)));
                 for (int ci = 0; ci < contours.Count; ci++)

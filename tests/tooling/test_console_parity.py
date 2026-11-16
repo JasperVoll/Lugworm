@@ -43,6 +43,20 @@ class ConsoleParityTests(unittest.TestCase):
         self.assertIn('s.StartLabel, ConsoleRole.Primary, b.Start, "start"', source("Lugworm/Ui/Console/Pages/JobPage.cs"))
         self.assertIn('.WithDryRun(_dryRun)', source("Lugworm/Components/DuetPrintConsoleComponent.cs"))
 
+    def test_scheduled_start_has_no_send_path_of_its_own(self):
+        # 0.2.0: a scheduled start runs the Start button's transaction, so M32/M37 have
+        # exactly one send site in the console, inside the shared StartJob body.
+        component = source("Lugworm/Components/DuetPrintConsoleComponent.cs")
+        self.assertEqual(1, component.count('client.StartPrintAsync('))
+        self.assertEqual(1, component.count('client.SimulatePrintAsync('))
+        body = component.split('void StartJob(StartBundle bundle, string label')[1].split('\n        }\n')[0]
+        self.assertIn('client.StartPrintAsync(', body)
+        self.assertIn('StateGate.Refuse(commitSnap', body)
+        # every id the form forwards from the schedule dialogs and the pages is handled
+        for marker in ['"schedule:set:"', '"schedule:cancel"', '"schedule:update"',
+                       '"pause:add:time:"', '"pause:add:layer:"', '"pause:remove:"']:
+            self.assertIn(marker, component, marker)
+
     def test_calibration_paging_and_exact_list_invalidation(self):
         view = source("Lugworm/Ui/Console/Pages/ControlPage.cs")
         self.assertIn('"pointnext"', view)

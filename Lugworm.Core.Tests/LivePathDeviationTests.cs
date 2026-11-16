@@ -10,12 +10,6 @@ namespace Lugworm.Core.Tests
         private static Vec3 P(double x, double y = 0, double z = 0) => new Vec3(x, y, z);
         private static LivePathSegment S(Vec3 a, Vec3 b) => new LivePathSegment(a, b);
 
-        [Fact]
-        public void ReferenceImplementationExists()
-        {
-            Assert.NotNull(typeof(Vec3).Assembly.GetType("Lugworm.Core.Duet.LivePathDeviation"));
-        }
-
         [Theory]
         [InlineData(5, 0, 0, 0)]
         [InlineData(5, 3, 4, 5)]

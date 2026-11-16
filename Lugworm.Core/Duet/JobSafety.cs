@@ -68,7 +68,7 @@ namespace Lugworm.Core.Duet
                     if (a == null || a.Max <= a.Min)
                         throw new DuetException($"firmware M208 {axis} limits are unverified - upload/start refused");
                 }
-                foreach (var finding in FirmwareLimitCheck.CompareFindings(snap, lim))
+                foreach (var finding in FirmwareLimitCheck.CompareFindings(snap, lim, RobotMechanism.Cartesian))
                     if (finding.Severity == Severity.Error)
                         throw new DuetException("firmware limit mismatch - " + finding.Message);
                 return;
@@ -95,14 +95,12 @@ namespace Lugworm.Core.Duet
                     : "firmware kinematics are unverified - move.kinematics was not readable from the object model; check that the board reports SCARA kinematics, then reconnect. Upload/start refused");
             if (client.Legacy)
             {
-                foreach (var axis in new[] { "X", "Y", "Z" })
-                {
-                    var a = snap.Axis(axis);
-                    if (a == null || a.Max <= a.Min)
-                        throw new DuetException($"firmware M208 {axis} limits are unverified - upload/start refused");
-                }
+                // Z only: the SCARA's X/Y box is the operator's and is not compared
+                var a = snap.Axis("Z");
+                if (a == null || a.Max <= a.Min)
+                    throw new DuetException("firmware M208 Z limits are unverified - upload/start refused");
             }
-            foreach (var finding in FirmwareLimitCheck.CompareFindings(snap, lim))
+            foreach (var finding in FirmwareLimitCheck.CompareFindings(snap, lim, RobotMechanism.Scara))
                 if (finding.Severity == Severity.Error)
                     throw new DuetException("firmware limit mismatch - " + finding.Message);
             foreach (var finding in FirmwareLimitCheck.CompareKinematics(client.Kinematics, lim))

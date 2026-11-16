@@ -124,6 +124,33 @@ public class WaveInfillTests
     }
 
     [Fact]
+    public void TangentRowStartingOnACrestIsKept()
+    {
+        // Two tangent rows across a 610 x 320 region. The wavelength divides the left
+        // edge's x, so every row starts on a crest of the triangle profile there: the
+        // upper row's first point lies on the region's top edge, half a pitch from its own
+        // centre-line. That whole row used to be assigned to a row that does not exist
+        // and was dropped, leaving the upper half of the region empty.
+        var region = new List<IReadOnlyList<Vec3>>
+        {
+            new List<Vec3>
+            {
+                new Vec3(-305, -160, 0), new Vec3(305, -160, 0), new Vec3(305, 160, 0),
+                new Vec3(-305, 160, 0), new Vec3(-305, -160, 0),
+            },
+        };
+        var triangle = new GraphProfile(GraphMap.Deserialize("Polyline;0;0;1;1"), repeat: false);
+        var wave = new Infill.WaveOptions { Wavelength = 152.5, Tangent = true, Resolution = 0.5 };
+
+        var spans = Infill.WaveSpans(region, 160.0, 0.0, 0.0, triangle, wave, out string? d);
+
+        Assert.Null(d);
+        var ys = spans.SelectMany(s => s).Select(p => p.Y).ToList();
+        Assert.True(ys.Min() < -150, $"lower row missing: lowest point at y={ys.Min()}");
+        Assert.True(ys.Max() > 150, $"upper row missing: highest point at y={ys.Max()}");
+    }
+
+    [Fact]
     public void RotatedByAngle_StillFills()
     {
         var spans = Infill.WaveSpans(Square, Spacing, 37.0, 1.5, new SineProfile(), Opts(), out string? d);

@@ -165,7 +165,7 @@ GUIDs join the retired UR ones in `-AllowedRemovals` rather than taking a change
 |---|---|---|
 | `a1a2c3d4-0023-4b7b-9c3d-aa0000000023` | Live View | `all` - the 4.0.0 rename (`name`), removed and added inputs AND outputs, `bed` promoted to core, and both the `beddef` and `log` groups gone: `inputs`, `all_input_specs`, `outputs`, `groups` and `active_groups` all move, in both records. See the 2026-09-09 note below |
 | `a1a2c3d4-0024-4b8b-9c3d-aa0000000024` | Print Bed | already `all` from 4.0.0; now also the appended `shape` input |
-| `b1a2c3d4-0002-4a2b-9c3d-aa0000000002` | Place | `bed` moved from the `beddef` group to the end of the input list, so the default record gains an input and the group lists shrink |
+| `b1a2c3d4-0002-4a2b-9c3d-aa0000000002` | Place | `bed` moved from the `beddef` group to the end of the input list, so the default record gains an input and the group lists shrink. `rotate` (2026-10-14) is appended after `bed` and is covered by the same entry |
 | `a1a2c3d4-0020-…0020`, `a1a2c3d4-0021-…0021` | Calib Points, Scara Fit | `-AllowedRemovals` - both components were removed; their indices are never reused |
 | `a1a2c3d4-0028-…0028` | Version | `-AllowedRemovals` - removed 2026-09-21; its index is never reused |
 

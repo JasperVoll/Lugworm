@@ -80,11 +80,11 @@ namespace Lugworm.Components
             new ParamSpec("reachMax", "Rx", "Maximum SCARA reach in mm (0 = L1 + L2)", "limits", PType.Number).Hint(0, 1200, 0, 0),
             new ParamSpec("reachMin", "Rn", "Minimum SCARA reach in mm (0 = the absolute difference between L1 and L2)", "limits", PType.Number).Hint(0, 500, 235, 0),
             new ParamSpec("zMax", "Zx", "Maximum machine Z in mm, corresponding to the firmware M208 limit", "limits", PType.Number).Hint(100, 2000, 400, 0),
-            new ParamSpec("xMin", "Xn", "Minimum machine X in mm, corresponding to the firmware M208 limit", "limits", PType.Number).Hint(-2000, 2000, -300, 0),
-            new ParamSpec("xMax", "Xx", "Maximum machine X in mm, corresponding to the firmware M208 limit", "limits", PType.Number).Hint(-2000, 12000, 10000, 0),
-            new ParamSpec("yMin", "Yn", "Minimum machine Y in mm, corresponding to the firmware M208 limit", "limits", PType.Number).Hint(-12000, 2000, -10000, 0),
-            new ParamSpec("yMax", "Yx", "Maximum machine Y in mm, corresponding to the firmware M208 limit", "limits", PType.Number).Hint(-2000, 2000, 0, 0),
-            new ParamSpec("checkEnvelope", "cE", "Check targets against the machine's Cartesian axis limits when true", "limits", PType.Boolean).HintBool(true),
+            new ParamSpec("xMin", "Xn", "Minimum machine X in mm, corresponding to the firmware M208 limit. Used by Cartesian machines only, a SCARA leaves the X/Y box to the operator", "limits", PType.Number).Hint(-2000, 2000, -300, 0),
+            new ParamSpec("xMax", "Xx", "Maximum machine X in mm, corresponding to the firmware M208 limit. Used by Cartesian machines only, a SCARA leaves the X/Y box to the operator", "limits", PType.Number).Hint(-2000, 12000, 10000, 0),
+            new ParamSpec("yMin", "Yn", "Minimum machine Y in mm, corresponding to the firmware M208 limit. Used by Cartesian machines only, a SCARA leaves the X/Y box to the operator", "limits", PType.Number).Hint(-12000, 2000, -10000, 0),
+            new ParamSpec("yMax", "Yx", "Maximum machine Y in mm, corresponding to the firmware M208 limit. Used by Cartesian machines only, a SCARA leaves the X/Y box to the operator", "limits", PType.Number).Hint(-2000, 2000, 0, 0),
+            new ParamSpec("checkEnvelope", "cE", "Check targets against the machine's Cartesian axis limits when true. Used by Cartesian machines only", "limits", PType.Boolean).HintBool(true),
             new ParamSpec("elbow", "E", "Fallback SCARA arm mode: 0 = up, 1 = down, overridden by a job's full home or the tracked session configuration", "limits", PType.Integer).Hint(0, 1, 1, 0),
             new ParamSpec("arcSupport", "AS", "Allow G2/G3 arcs in job validation when true, or reject jobs containing arcs when false", "limits", PType.Boolean).HintBool(true),
             new ParamSpec("blockWarnings", "Bw", "Block upload and start on validation warnings when true (errors and mast clearance violations always block)", "limits", PType.Boolean),
@@ -393,7 +393,7 @@ namespace Lugworm.Components
                                 if (dry) await client.SimulatePrintAsync(path, ct);
                                 else await client.StartPrintAsync(path, ct);
                                 if (gate.Checks.FinalConfiguration.Known)
-                                    session.SetArmConfiguration(gate.Checks.FinalConfiguration);
+                                    session.BeginJobConfiguration(gate.Checks.FinalConfiguration);
                             }
                             // Fail-closed cleanup, then rethrow: as in the Duet Console, a
                             // start that did not take must not leave the session believing it

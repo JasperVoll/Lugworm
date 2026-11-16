@@ -39,8 +39,6 @@ namespace Lugworm.Ui
             BackShine = 0.0,
         };
 
-        public static DisplayMaterial GhostMaterial() => _ghost;
-
         /// <summary>Draw posed link meshes as one ghost. Call from DrawViewportMeshes
         /// after the opaque scene so the body blends over it.</summary>
         public static void DrawGhost(DisplayPipeline display, IReadOnlyList<Mesh> meshes)

@@ -219,10 +219,6 @@ namespace Lugworm.Core.Duet
         /// retrieved and verified - and every later comparison then reports unavailable.</summary>
         public void SetIntendedPath(IIntendedPathReference? path) => _path = path;
 
-        public bool HasIntendedPath => _path != null;
-        /// <summary>Id of the segment observations are currently joining, 0 before the first.</summary>
-        public long CurrentSegment => _segment;
-
         /// <summary>Forgets the previous observation, so the next one starts a new segment.
         /// Used when the caller knows continuity is gone for a reason the observation does
         /// not carry (the session was replaced, the trail was cleared).</summary>

@@ -80,8 +80,7 @@ namespace Lugworm.Duet
     /// <summary>Process-wide job-log retention: one staging root under %LOCALAPPDATA%,
     /// one coordinator, one worker thread that performs every staging append and every
     /// destination synchronisation, and the console settings file. Sessions only
-    /// enqueue; the poll loop never touches a disk here (the same rule as
-    /// <see cref="PrintLogSink"/>). Nothing in this class calls WinForms or Skia.</summary>
+    /// enqueue; the poll loop never touches a disk here. Nothing in this class calls WinForms or Skia.</summary>
     public sealed class LogRetentionService : IDisposable
     {
         public const string ProductFolder = "Lugworm";

@@ -308,6 +308,7 @@ namespace Lugworm.Duet
                 // command lock. The console only projects them.
                 Recovery = session.Recovery,
                 SessionId = session.SessionId,
+                ConnectionGeneration = session.ConnectionGeneration,
                 ExpectedFingerprint = session.ExpectedFingerprint?.Value ?? "",
                 ExpectationConflict = session.ExpectationConflict,
                 // Job identity: the session's tracker is the truth about what is RUNNING.

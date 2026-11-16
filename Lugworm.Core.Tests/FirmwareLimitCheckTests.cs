@@ -36,13 +36,17 @@ public class FirmwareLimitCheckTests
         CheckEnvelope = true,
     };
 
+    static List<string> Messages(ObjectModelSnapshot snap, RobotLimits lim)
+        => FirmwareLimitCheck.CompareFindings(snap, lim, RobotMechanism.Scara)
+            .Select(f => f.Message).ToList();
+
     // ---- Z axis (unchanged contract) ---------------------------------------
 
     [Fact]
     public void SoftwareAllowsMoreZThanFirmware_HardWarning()
     {
         var lim = Defaults(zMax: 800.0);
-        var warns = FirmwareLimitCheck.Compare(Snap(0, 400, -300, 10000, -10000, 0), lim);
+        var warns = Messages(Snap(0, 400, -300, 10000, -10000, 0), lim);
         Assert.Contains(warns, w => w.Contains("exceeds the firmware"));
     }
 
@@ -50,7 +54,7 @@ public class FirmwareLimitCheckTests
     public void FirmwareAllowsMoreZ_InformationalOnly()
     {
         var lim = Defaults(zMax: 400.0);
-        var warns = FirmwareLimitCheck.Compare(Snap(0, 1100, -300, 10000, -10000, 0), lim);
+        var warns = Messages(Snap(0, 1100, -300, 10000, -10000, 0), lim);
         Assert.Contains(warns, w => w.Contains("informational"));
     }
 
@@ -59,17 +63,20 @@ public class FirmwareLimitCheckTests
     {
         var lim = Defaults(zMax: 800.0);
         // every axis 0/0 - no limit data on a legacy rr_status poll
-        Assert.Empty(FirmwareLimitCheck.Compare(Snap(0, 0, 0, 0, 0, 0), lim));
+        Assert.Empty(Messages(Snap(0, 0, 0, 0, 0, 0), lim));
     }
 
-    // ---- X/Y envelope (new signed per-bound contract) ----------------------
+    // ---- X/Y envelope: Cartesian machines only ------------------------------
+    // On the SCARA the X/Y box is the operator's and is not compared at all
+    // (ScaraOperatorLimitsTests). A Cartesian machine's box is its whole geometric
+    // guard, so the signed per-bound contract below still applies there.
 
     [Fact]
     public void RealBoardMatchesShippedDefaults_NoFindings()
     {
         // firmware X[-300,10000] Y[-10000,0] Z[0,400] == the shipped software envelope
         Assert.Empty(FirmwareLimitCheck.CompareFindings(
-            Snap(0, 400, -300, 10000, -10000, 0), Defaults()));
+            Snap(0, 400, -300, 10000, -10000, 0), Defaults(), RobotMechanism.Cartesian));
     }
 
     [Fact]
@@ -80,7 +87,7 @@ public class FirmwareLimitCheckTests
         var lim = Defaults();
         lim.YMax = 300;
         var findings = FirmwareLimitCheck.CompareFindings(
-            Snap(0, 400, -300, 10000, -10000, 0), lim);
+            Snap(0, 400, -300, 10000, -10000, 0), lim, RobotMechanism.Cartesian);
         Assert.Contains(findings, f => f.Severity == Severity.Error
             && f.Message.Contains("Y maximum") && f.Message.Contains("exceeds firmware"));
     }
@@ -91,7 +98,7 @@ public class FirmwareLimitCheckTests
         // firmware hand-edited to Y+300 while the software stays at Y0: the real drift
         // direction. Software is more restrictive (safe) - reported, but not blocking.
         var findings = FirmwareLimitCheck.CompareFindings(
-            Snap(0, 400, -300, 10000, -10000, 300), Defaults());
+            Snap(0, 400, -300, 10000, -10000, 300), Defaults(), RobotMechanism.Cartesian);
         Assert.DoesNotContain(findings, f => f.Severity == Severity.Error);
         Assert.Contains(findings, f => f.Severity == Severity.Info && f.Message.Contains("Y"));
     }
@@ -104,7 +111,7 @@ public class FirmwareLimitCheckTests
         var lim = Defaults();
         lim.XMax = 11000;
         var findings = FirmwareLimitCheck.CompareFindings(
-            Snap(0, 400, -300, 10000, -10000, 0), lim);
+            Snap(0, 400, -300, 10000, -10000, 0), lim, RobotMechanism.Cartesian);
         Assert.Contains(findings, f => f.Severity == Severity.Error && f.Message.Contains("X maximum"));
     }
 
@@ -115,7 +122,7 @@ public class FirmwareLimitCheckTests
         lim.YMax = 300;            // would otherwise error
         lim.CheckEnvelope = false;
         var findings = FirmwareLimitCheck.CompareFindings(
-            Snap(0, 400, -300, 10000, -10000, 0), lim);
+            Snap(0, 400, -300, 10000, -10000, 0), lim, RobotMechanism.Cartesian);
         Assert.DoesNotContain(findings, f => f.Message.Contains("Y") || f.Message.Contains("X"));
     }
 

@@ -38,6 +38,7 @@ namespace Lugworm.Core.Duet
         readonly byte[] _gcode;
         readonly object _linesSync = new object();
         IReadOnlyList<string>? _lines;
+        LayerMarkerIndex? _layerMarkerIndex;
 
         /// <summary>Unique id of this RUN. Two runs of identical bytes have different ids.</summary>
         public string RunId { get; }
@@ -117,6 +118,19 @@ namespace Lugworm.Core.Duet
                 _layerTotal = total;
                 _layerTotalKnown = true;
                 return total;
+            }
+        }
+
+        /// <summary>The strict byte-based marker index for this immutable job. It is
+        /// built once, so file-position checks never re-decode the job on a poll.</summary>
+        public LayerMarkerIndex LayerMarkers
+        {
+            get
+            {
+                lock (_linesSync)
+                {
+                    return _layerMarkerIndex ??= new LayerMarkerIndex(_gcode);
+                }
             }
         }
 
@@ -247,6 +261,23 @@ namespace Lugworm.Core.Duet
                 // A repeat print of identical bytes is a different run.
                 _active = _active != null && _active.SameContent(_prepared)
                     ? _prepared.AsNewRun(startedUtc) : _prepared;
+                return _active;
+            }
+        }
+
+        /// <summary>This session started <paramref name="expected"/>: the snapshot the start
+        /// transaction captured, not whatever the prepared slot holds by now. A canvas solve
+        /// can replace the prepared job while the transaction runs (for a scheduled start,
+        /// for hours), and the active run must still be the bytes M32 started. The prepared
+        /// slot is left as it is. Same repeat rule as the parameterless overload.</summary>
+        public JobSnapshot? StartPrepared(JobSnapshot expected, DateTime startedUtc)
+        {
+            if (expected == null) throw new ArgumentNullException(nameof(expected));
+            lock (_sync)
+            {
+                if (expected.Sha256.Length == 0) return null;
+                _active = _active != null && _active.SameContent(expected)
+                    ? expected.AsNewRun(startedUtc) : expected;
                 return _active;
             }
         }

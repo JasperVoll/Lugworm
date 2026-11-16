@@ -113,12 +113,15 @@ public class TelemetryRecorderSchemaTests
         Assert.Equal(TrailQuality.Invalid, bad.Quality);
         Assert.Equal("axis 'Y' is not reported", bad.PositionInvalidReason);
 
-        // and the CSV writes no coordinates at all for it
-        string row = PrintLogCsv.Row(bad);
-        var cells = PrintLogCsvReaderProbe.Split(row);
-        Assert.Equal("", cells[10]);
-        Assert.Equal("", cells[11]);
-        Assert.Equal("", cells[12]);
+        // and the CSV writes no coordinates at all for it, yet reads back as an unusable observation
+        string header = PrintLogCsv.Header(), row = PrintLogCsv.Row(bad);
+        Assert.DoesNotContain("\"", header + row);   // no quoted cells, so a plain split is exact
+        var columns = header.Split(',').ToList();
+        var cells = row.Split(',');
+        foreach (string axis in new[] { "x", "y", "z" }) Assert.Equal("", cells[columns.IndexOf(axis)]);
+        var back = Assert.Single(PrintLogCsvReader.Parse(new[] { header, row }).Records);
+        Assert.False(back.PositionValid);
+        Assert.Equal(bad.PositionInvalidReason, back.PositionInvalidReason);
     }
 
     [Fact]
@@ -247,7 +250,9 @@ public class TelemetryRecorderSchemaTests
     [Fact]
     public void Schema2Header_KeepsTheSchema1ColumnsInPlace()
     {
-        var cells = PrintLogCsvReaderProbe.Split(PrintLogCsv.Header());
+        string header = PrintLogCsv.Header();
+        Assert.DoesNotContain("\"", header);   // column names are never quoted, so a plain split is exact
+        var cells = header.Split(',');
         string[] schema1 =
         {
             "seq","kind","job_run","job_file","layer","layer_source","utc_iso","local_iso",
@@ -322,16 +327,5 @@ public class TelemetryRecorderSchemaTests
         var parsed = PrintLogCsvReader.Parse(lines);
         Assert.Empty(parsed.Records);
         Assert.Equal(1, parsed.SkippedRows);
-    }
-}
-
-/// <summary>Test-only access to the reader's RFC-4180 cell split.</summary>
-static class PrintLogCsvReaderProbe
-{
-    public static List<string> Split(string line)
-    {
-        var method = typeof(PrintLogCsvReader).GetMethod("SplitRow",
-            System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static)!;
-        return (List<string>)method.Invoke(null, new object[] { line })!;
     }
 }

@@ -25,7 +25,6 @@ namespace Lugworm.Core.Duet
         /// <see cref="_lastVerdict"/> while a run is being closed: those rows are dated by
         /// the previous poll and belong to the previous run and segment.</summary>
         TrailVerdict _emitVerdict;
-        string _runId = "";
         string _currentRunKey = "";
         string? _jobFile;
         DateTime _runStartUtc;
@@ -96,13 +95,6 @@ namespace Lugworm.Core.Duet
         public void SetIntendedPath(IIntendedPathReference? path)
         {
             lock (_sync) _continuity.SetIntendedPath(path);
-        }
-
-        /// <summary>Identity of the run being recorded. Two prints of the same file get
-        /// different ids, so their rows never share a segment.</summary>
-        public void SetRunId(string? runId)
-        {
-            lock (_sync) _runId = runId ?? "";
         }
 
         /// <summary>Continuity verdict of the LAST observed poll - including the polls no
@@ -580,7 +572,7 @@ namespace Lugworm.Core.Duet
                 || (_jobFile != null && incoming != null
                     && !string.Equals(_jobFile, incoming, StringComparison.Ordinal)))
                 run++;
-            string name = _runId.Length > 0 ? _runId : (incoming ?? _jobFile ?? "");
+            string name = incoming ?? _jobFile ?? "";
             return name + "#" + run.ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
 

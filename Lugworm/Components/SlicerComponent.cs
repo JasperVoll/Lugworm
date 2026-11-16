@@ -24,7 +24,7 @@ namespace Lugworm.Components
     {
         public SlicerComponent()
             : base("Slice", "Slice",
-                   "Press Compute with geometry supplied to slice it into printable layer contours.",
+                   "Slices geometry into layer contours. Press Compute to run.",
                    "Lugworm", "1 Slice")
         { }
 
@@ -43,59 +43,59 @@ namespace Lugworm.Components
 
         protected override IReadOnlyList<ParamSpec> InputSpecs => new[]
         {
-            new ParamSpec("geo", "G", "Meshes, Breps or surfaces to slice, one item or a list. Each object is sliced and printed in turn", "core", PType.Geometry, GH_ParamAccess.list),
-            new ParamSpec("layerHeight", "LH", "Layer spacing in mm, greater than 0", "core", PType.Number).Hint(0.2, 6, 3, 2),
-            new ParamSpec("firstLayer", "FL", "Height of the first section, mm (0 = half the layer spacing)", "core", PType.Number).Hint(0, 5, 3, 2),
-            new ParamSpec("wallCount", "WC", "Number of perimeters, at least 1", "core", PType.Integer).Hint(1, 6, 1),
-            new ParamSpec("spacing", "Sp", "Legacy curve spacing, mm. Fallback for wallDistance and infillDistance when they are unset", "core", PType.Number).Hint(0.5, 12, 10, 1),
-            new ParamSpec("wallDistance", "Wd", "Distance between walls and from the last wall to infill, mm (defaults to spacing)", "core", PType.Number).Hint(0.5, 12, 10, 1),
-            new ParamSpec("infillDistance", "Id", "Distance between infill passes, mm (defaults to spacing)", "core", PType.Number).Hint(0.5, 12, 10, 1),
-            new ParamSpec("mode", "Md", "Slicing mode: 0 = planar, 1 = conical (enable Conical inputs to adjust the angle)", "core", PType.Integer),
-            new ParamSpec("infill", "If", "0 = none, 1 = zigzag, 2 = concentric, 3 = spiral, 4 = fermat, 5 = sine wave, 6 = graph wave", "core", PType.Integer),
-            new ParamSpec("cornerRadius", "Cr", "Round sharp contour corners to this radius to correct overfill, mm (0 = off)", "core", PType.Number).Hint(0, 10, 0, 1),
-            new ParamSpec("tol", "T", "Slicing and linearization tolerance, mm", "core", PType.Number).Hint(0.001, 1, 0.001, 3),
+            new ParamSpec("geo", "G", "Meshes, Breps or surfaces. Several objects print one after another, in list order", "core", PType.Geometry, GH_ParamAccess.list),
+            new ParamSpec("layerHeight", "LH", "Layer height, mm", "core", PType.Number).Hint(0.2, 6, 3, 2),
+            new ParamSpec("firstLayer", "FL", "Height of the first cut above the base, mm. 0 = half a layer", "core", PType.Number).Hint(0, 5, 3, 2),
+            new ParamSpec("wallCount", "WC", "Number of walls, at least 1", "core", PType.Integer).Hint(1, 6, 1),
+            new ParamSpec("spacing", "Sp", "Default for wallDistance and infillDistance, mm. Kept for older files", "core", PType.Number).Hint(0.5, 12, 10, 1),
+            new ParamSpec("wallDistance", "Wd", "Distance between walls, and from the last wall to the infill, mm. Unwired = spacing", "core", PType.Number).Hint(0.5, 12, 10, 1),
+            new ParamSpec("infillDistance", "Id", "Distance between infill paths, mm. Unwired = spacing", "core", PType.Number).Hint(0.5, 12, 10, 1),
+            new ParamSpec("mode", "Md", "0 = planar, 1 = conical. Set the cone angle under Conical slicing", "core", PType.Integer),
+            new ParamSpec("infill", "If", "Infill pattern: 0 = none, 1 = zigzag, 2 = concentric, 3 = spiral, 4 = Fermat, 5 = sine wave, 6 = graph wave", "core", PType.Integer),
+            new ParamSpec("cornerRadius", "Cr", "Round sharp corners to this radius to reduce overfill, mm. 0 = off", "core", PType.Number).Hint(0, 10, 0, 1),
+            new ParamSpec("tol", "T", "Slicing and polyline tolerance, mm", "core", PType.Number).Hint(0.001, 1, 0.001, 3),
             // adaptive group
-            new ParamSpec("hMin", "hMin", "Adaptive minimum layer height, mm", "adaptive", PType.Number).Hint(0.2, 6, 1, 2),
-            new ParamSpec("hMax", "hMax", "Adaptive maximum layer height, mm", "adaptive", PType.Number).Hint(0.2, 8, 3, 2),
+            new ParamSpec("hMin", "hMin", "Smallest layer height, mm", "adaptive", PType.Number).Hint(0.2, 6, 1, 2),
+            new ParamSpec("hMax", "hMax", "Largest layer height, mm", "adaptive", PType.Number).Hint(0.2, 8, 3, 2),
             // conical group
-            new ParamSpec("coneAngle", "Ca", "Cone half-angle in deg for mode 1, affecting layer spacing, inner walls and infill", "conical", PType.Number).Hint(0, 45, 20, 0),
-            new ParamSpec("nozzleClear", "Nc", "Maximum conical surface angle in deg before slicing reports a nozzle-clearance warning", "conical", PType.Number).Hint(0, 60, 25, 0),
+            new ParamSpec("coneAngle", "Ca", "Cone half-angle, deg. Changes layer spacing, inner walls and infill", "conical", PType.Number).Hint(0, 45, 20, 0),
+            new ParamSpec("nozzleClear", "Nc", "Warn about nozzle clearance above this surface angle, deg", "conical", PType.Number).Hint(0, 60, 25, 0),
             // zigzag group
             new ParamSpec("angle", "An", "Zigzag direction, deg", "zigzag", PType.Number).Hint(0, 180, 0, 0),
             // wave infill group (infill 5 / 6)
-            new ParamSpec("profile", "Pf", "Graph Mapper map output for infill 6, used with Wave inputs enabled (empty = sine wave)", "wave", PType.Text),
+            new ParamSpec("profile", "Pf", "Graph Mapper map output for infill 6. Empty = sine", "wave", PType.Text),
             new ParamSpec("waveLen", "Wl", "Wave period along a row, mm", "wave", PType.Number).Hint(1, 200, 20, 1),
-            new ParamSpec("waveTangent", "Wt", "Make mirrored wave peaks touch when true, or separate them by waveClearance when false", "wave", PType.Boolean),
-            new ParamSpec("waveClearance", "Wc", "Gap left between mirrored peaks when waveTangent is off, mm (0 = 0.2 x infillDistance)", "wave", PType.Number).Hint(0, 20, 0, 2),
-            new ParamSpec("waveRes", "Wr", "Sampling step along a wave row, mm", "wave", PType.Number).Hint(0.1, 5, 0.5, 2),
-            new ParamSpec("waveRepeat", "Wp", "Repeat the graph forward when true, or alternate forward and backward for continuous joins when false", "wave", PType.Boolean),
+            new ParamSpec("waveTangent", "Wt", "True: mirrored peaks touch. False: keep waveClearance between them", "wave", PType.Boolean),
+            new ParamSpec("waveClearance", "Wc", "Gap between mirrored peaks when waveTangent is false, mm. 0 = 0.2 × infillDistance", "wave", PType.Number).Hint(0, 20, 0, 2),
+            new ParamSpec("waveRes", "Wr", "Sample step along a row, mm", "wave", PType.Number).Hint(0.1, 5, 0.5, 2),
+            new ParamSpec("waveRepeat", "Wp", "True: repeat the graph each period. False: mirror it so periods join smoothly", "wave", PType.Boolean),
             // bricklayer group
-            new ParamSpec("brickShift", "Bs", "Wall Z shift as a fraction from 0 to 1 of the local layer gap (0.5 = half a layer)", "bricklayer", PType.Number).Hint(0, 1, 0.5, 2),
-            new ParamSpec("brickOverlap", "Bo", "Minimum shared fraction of the shorter adjacent wall loop for interlocking, from 0 to 0.95", "bricklayer", PType.Number).Hint(0, 0.95, 0.5, 2),
-            new ParamSpec("brickOuter", "Bx", "Shift the outermost wall instead of leaving it flat. This changes the visible surface", "bricklayer", PType.Boolean),
-            new ParamSpec("brickRamp", "Br", "Layers left flat at the bottom and the top", "bricklayer", PType.Integer).Hint(0, 10, 1),
+            new ParamSpec("brickShift", "Bs", "Wall Z shift as a fraction of the local layer gap, 0 to 1. 0.5 = half a layer", "bricklayer", PType.Number).Hint(0, 1, 0.5, 2),
+            new ParamSpec("brickOverlap", "Bo", "Overlap two adjacent wall loops need to interlock, as a fraction of the shorter one. 0 to 0.95", "bricklayer", PType.Number).Hint(0, 0.95, 0.5, 2),
+            new ParamSpec("brickOuter", "Bx", "Shift the outer wall too. Changes the visible surface", "bricklayer", PType.Boolean),
+            new ParamSpec("brickRamp", "Br", "Layers kept flat at the bottom and top", "bricklayer", PType.Integer).Hint(0, 10, 1),
             // non-planar infill group
-            new ParamSpec("npAmp", "Na", "Infill Z wave amplitude in mm (0 = off), limited to 0.4 times each adjacent layer gap", "nonplanar", PType.Number).Hint(0, 5, 0.4, 2),
-            new ParamSpec("npWave", "Nw", "Infill Z wave period, mm", "nonplanar", PType.Number).Hint(1, 200, 20, 1),
-            new ParamSpec("npDir", "Nd", "Direction the Z wave travels, deg (default = the zigzag angle)", "nonplanar", PType.Number).Hint(0, 180, 0, 0),
-            new ParamSpec("npRes", "Nr", "Infill resampling step before modulation, mm", "nonplanar", PType.Number).Hint(0.1, 10, 1, 2),
-            new ParamSpec("npPhase", "Np", "Phase advance per layer, turns (0.5 = next layer's trough over this layer's crest)", "nonplanar", PType.Number).Hint(0, 1, 0.5, 2),
-            new ParamSpec("npRamp", "Nm", "Layers over which the amplitude ramps in and out", "nonplanar", PType.Integer).Hint(0, 10, 1),
-            new ParamSpec("npWallAmp", "Nwa", "Wall Z wave amplitude, mm (0 = off)", "nonplanar", PType.Number).Hint(0, 5, 0, 2),
-            new ParamSpec("npLoopPhase", "Nlp", "Phase advance per wall loop, turns", "nonplanar", PType.Number).Hint(0, 1, 0.25, 2),
-            new ParamSpec("npWallOuter", "Nwo", "Modulate the outermost wall. This changes the visible surface", "nonplanar", PType.Boolean),
+            new ParamSpec("npAmp", "Na", "Infill Z-wave amplitude, mm. 0 = off. Capped at 0.4 × the local layer gap", "nonplanar", PType.Number).Hint(0, 5, 0.4, 2),
+            new ParamSpec("npWave", "Nw", "Infill Z-wave period, mm", "nonplanar", PType.Number).Hint(1, 200, 20, 1),
+            new ParamSpec("npDir", "Nd", "Z-wave direction, deg. Unwired = zigzag angle", "nonplanar", PType.Number).Hint(0, 180, 0, 0),
+            new ParamSpec("npRes", "Nr", "Infill resample step before the Z wave, mm", "nonplanar", PType.Number).Hint(0.1, 10, 1, 2),
+            new ParamSpec("npPhase", "Np", "Phase shift per layer, turns. 0.5 = trough over crest", "nonplanar", PType.Number).Hint(0, 1, 0.5, 2),
+            new ParamSpec("npRamp", "Nm", "Layers to ramp the amplitude in and out", "nonplanar", PType.Integer).Hint(0, 10, 1),
+            new ParamSpec("npWallAmp", "Nwa", "Wall Z-wave amplitude, mm. 0 = off", "nonplanar", PType.Number).Hint(0, 5, 0, 2),
+            new ParamSpec("npLoopPhase", "Nlp", "Phase shift per wall loop, turns", "nonplanar", PType.Number).Hint(0, 1, 0.25, 2),
+            new ParamSpec("npWallOuter", "Nwo", "Wave the outer wall too. Changes the visible surface", "nonplanar", PType.Boolean),
             // multi-object group
         };
 
         protected override IReadOnlyList<(string, string)> ToggleGroups => new[]
         {
-            ("adaptive", "Adaptive layer height inputs"),
-            ("conical", "Conical (non-planar) inputs"),
-            ("zigzag", "Zigzag angle input"),
-            ("wave", "Wave infill inputs (infill 5 / 6): period, amplitude, graph curve"),
-            ("bricklayer", "Bricklayer: interlock adjacent wall loops by half a layer height"),
-            ("nonplanar", "Non-planar infill and walls: wave-modulate path Z"),
-            ("spiralize", "Spiralize (one continuous helix)"),
+            ("adaptive", "Adaptive layer height"),
+            ("conical", "Conical slicing"),
+            ("zigzag", "Zigzag angle"),
+            ("wave", "Wave infill (infill 5, 6)"),
+            ("bricklayer", "Bricklayer: interlock adjacent walls"),
+            ("nonplanar", "Non-planar: Z wave on infill and walls"),
+            ("spiralize", "Spiralize: one continuous helix"),
         };
 
         protected override IReadOnlyList<(string, string, (string, string)[])> ValueLists => new[]
@@ -109,9 +109,9 @@ namespace Lugworm.Components
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddCurveParameter("contours", "C", "One branch per layer, walls then infill. With several objects the branch path is object, then layer", GH_ParamAccess.tree);
-            pManager.AddIntegerParameter("layers", "L", "Number of layers over all objects", GH_ParamAccess.item);
-            pManager.AddTextParameter("info", "i", "Diagnostics and warnings", GH_ParamAccess.item);
+            pManager.AddCurveParameter("contours", "C", "Layer contours, walls then infill. Path {layer}, or {object; layer} for several objects", GH_ParamAccess.tree);
+            pManager.AddIntegerParameter("layers", "L", "Total layers, all objects", GH_ParamAccess.item);
+            pManager.AddTextParameter("info", "i", "Slice summary and warnings", GH_ParamAccess.item);
         }
 
         sealed class Result

@@ -432,6 +432,32 @@ namespace Lugworm.Ui.Console
                     "Lugworm Duet Console", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
                 return;
 
+            if (id == "schedule")
+            {
+                PrintConsoleState? state;
+                lock (_gate) state = _latestState;
+                if (state != null)
+                {
+                    string? action = ScheduleStartDialog.Show(this, state, state.ScheduledEstimate);
+                    if (action != null) _onAction(action);
+                }
+                return;
+            }
+            if (id == "pauseschedule")
+            {
+                PrintConsoleState? state;
+                lock (_gate) state = _latestState;
+                if (state != null)
+                {
+                    string? action = SchedulePauseDialog.Show(this, state, state.ActiveEstimate);
+                    if (action != null) _onAction(action);
+                }
+                return;
+            }
+            if (id == "schedulecancel") { _onAction("schedule:cancel"); return; }
+            if (id == "scheduleupdate") { _onAction("schedule:update"); return; }
+            if (id.StartsWith("pause:remove:", StringComparison.Ordinal)) { _onAction(id); return; }
+
             // ---- logging workspace: dialogs and confirmations are the form's job ----
             if (id == "log:keepall")
             {

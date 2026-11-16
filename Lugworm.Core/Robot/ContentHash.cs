@@ -51,8 +51,8 @@ namespace Lugworm.Core.Robot
         public static string LimitsKey(RobotLimits lim, int elbow, int firmware, bool arcSupport)
             => string.Join("|", lim.L1, lim.L2, lim.BaseH, lim.ReachMax, lim.ReachMin, lim.ZMax,
                 lim.ZMin, lim.XMin, lim.XMax, lim.YMin, lim.YMax, lim.CheckEnvelope,
-                lim.MaxFeed, lim.MaxJointSpeed, lim.JerkThresh, lim.J1Min, lim.J1Max,
-                lim.J3Min, lim.J3Max, lim.J2Min, lim.J2Max, lim.MastClearance, lim.ArcChordTol,
+                lim.MaxFeed, lim.MaxJointSpeed, lim.JerkThresh, lim.J1Min, lim.J1Max, lim.J1SeamMargin,
+                lim.J3Min, lim.J3Max, lim.J3ExtensionMargin, lim.J2Min, lim.J2Max, lim.MastClearance, lim.ArcChordTol,
                 lim.CheckJointRanges, lim.RequireCalibratedHomePose,
                 lim.CalibratedHomePose.HasValue ? lim.CalibratedHomePose.Value.X : double.NaN,
                 lim.CalibratedHomePose.HasValue ? lim.CalibratedHomePose.Value.Y : double.NaN,

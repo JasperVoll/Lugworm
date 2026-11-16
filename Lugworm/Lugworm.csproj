@@ -18,7 +18,7 @@
   
   <PropertyGroup>
     <!-- Specifies information for Assembly and Yak -->
-    <Version>0.1.1-beta</Version>
+    <Version>0.2.0-beta</Version>
     <Title>Lugworm</Title>
     <Company>Institute of Digital and Autonomous Construction (IDAC), Hamburg University of Technology</Company>
     <Authors>Jasper Vollmert</Authors>

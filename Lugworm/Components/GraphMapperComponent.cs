@@ -61,7 +61,7 @@ namespace Lugworm.Components
             pManager.AddNumberParameter("y", "y", "Remapped values, one per input", GH_ParamAccess.list);
             pManager.AddTextParameter("equation", "E", "The curve as a formula over normalized t", GH_ParamAccess.item);
             pManager.AddTextParameter("info", "i", "Graph type, domains, value count", GH_ParamAccess.item);
-            pManager.AddTextParameter("map", "M", "Curve definition text for Slice's profile input, used with infill 6 and Wave inputs enabled", GH_ParamAccess.item);
+            pManager.AddTextParameter("map", "M", "Curve text for Slice's profile input (infill 6, Wave infill on)", GH_ParamAccess.item);
         }
 
         // ── graph-type dropdown (on-canvas capsule) ──

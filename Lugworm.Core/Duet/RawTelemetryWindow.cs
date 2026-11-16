@@ -241,13 +241,11 @@ namespace Lugworm.Core.Duet
         }
 
         public int Capacity => _capacity;
-        public int MaxBodyChars => _maxBodyChars;
         public int Count => _ring.Count;
         /// <summary>Records dropped off the back of the ring without ever being captured.</summary>
         public long Overwritten => _overwritten;
         /// <summary>Captures handed to the sink.</summary>
         public long Captures => _captures;
-        public bool CapturePending => _pending != null;
 
         public void Add(RawTelemetryRecord record)
         {

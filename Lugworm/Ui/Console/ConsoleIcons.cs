@@ -11,7 +11,7 @@ namespace Lugworm.Ui.Console
     {
         None, Dashboard, Control, Job, Terminal, Logs, Connection, Home, Position, Validate, Upload,
         Start, Pause, Resume, Cancel, Save, Folder, Retry, Sync, Warning, Reset, EStop, Disconnect,
-        ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Target, Export, Trash, Check,
+        ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Target, Export, Trash, Check, Clock,
     }
 
     public static class ConsoleIcons
@@ -138,6 +138,9 @@ namespace Lugworm.Ui.Console
                 case ConsoleIcon.Trash:
                     c.DrawLine(4, 7, 20, 7, p); Path(c, p, "M6 7 L7 20 H17 L18 7"); Path(c, p, "M9.5 7 V4.5 H14.5 V7");
                     c.DrawLine(10, 10.5f, 10, 17, p); c.DrawLine(14, 10.5f, 14, 17, p);
+                    break;
+                case ConsoleIcon.Clock:
+                    c.DrawCircle(12, 12, 8.5f, p); c.DrawLine(12, 12, 12, 6, p); c.DrawLine(12, 12, 17, 15, p);
                     break;
             }
         }
